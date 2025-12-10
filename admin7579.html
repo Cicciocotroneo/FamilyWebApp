@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FamilyHub Super Admin</title>
+    <style>
+        body { font-family: sans-serif; padding: 40px; background: #333; color: white; }
+        .container { max-width: 500px; margin: 0 auto; background: #444; padding: 20px; border-radius: 10px; }
+        input, button { width: 100%; padding: 10px; margin-bottom: 10px; box-sizing: border-box; }
+        button { background: #4285f4; color: white; border: none; font-weight: bold; cursor: pointer; }
+        button:hover { background: #5a95f5; }
+        .success { color: #00ff00; }
+        .error { color: #ff5555; }
+        h2 { text-align: center; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>👑 Super Admin Panel</h2>
+        <p>Usa questo pannello per creare associazioni Utente -> Famiglia.</p>
+        
+        <label>Email Utente (Deve già esistere in Auth)</label>
+        <input type="email" id="user-email" placeholder="es. mario@rossi.it">
+
+        <label>Codice Famiglia (Inventalo tu)</label>
+        <input type="text" id="family-code" placeholder="es. ROSSI" style="text-transform: uppercase;">
+
+        <button onclick="associaUtente()">ASSOCIA UTENTE</button>
+        
+        <p id="status-msg"></p>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, setDoc } 
+        from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // --- INCOLLA QUI LA TUA CONFIGURAZIONE FIREBASE ---
+        const firebaseConfig = {
+  apiKey: "AIzaSyCV51Ge3znsE6TPnQrJeEiNasz5YXtFWXk",
+  authDomain: "drgfamilyhub.firebaseapp.com",
+  projectId: "drgfamilyhub",
+  storageBucket: "drgfamilyhub.firebasestorage.app",
+  messagingSenderId: "709925755710",
+  appId: "1:709925755710:web:6ebb2967fbc107447f6a6f"
+};
+        // --------------------------------------------------
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.associaUtente = async () => {
+            const email = document.getElementById('user-email').value.trim();
+            const code = document.getElementById('family-code').value.trim().toUpperCase();
+            const status = document.getElementById('status-msg');
+
+            if(!email || !code) {
+                status.innerText = "Compila tutti i campi!";
+                status.className = "error";
+                return;
+            }
+
+            try {
+                // Scrive nel database "registro_utenti"
+                await setDoc(doc(db, "registro_utenti", email), {
+                    famiglia: code
+                });
+                
+                status.innerText = `Successo! ${email} è ora associato alla famiglia ${code}.`;
+                status.className = "success";
+                
+                // Pulisci
+                document.getElementById('user-email').value = "";
+            } catch (error) {
+                console.error(error);
+                status.innerText = "Errore: " + error.message;
+                status.className = "error";
+            }
+        };
+    </script>
+</body>
+</html>
