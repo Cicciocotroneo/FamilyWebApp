@@ -3,67 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Family Hub</title>
+    <title>Family Hub Secure</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
+    <style>
+        /* STILI AGGIUNTIVI */
+        .date-badge {
+            background: #e8f0fe; color: #1967d2; padding: 5px 10px; border-radius: 8px;
+            text-align: center; margin-right: 15px; min-width: 45px;
+            display: flex; flex-direction: column; justify-content: center;
+        }
+        .date-day { font-size: 1.2rem; font-weight: bold; line-height: 1; }
+        .date-month { font-size: 0.7rem; text-transform: uppercase; }
+        
+        /* Categorie Visive */
+        .cat-dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+        .cat-famiglia { background-color: #4285f4; }
+        .cat-lavoro { background-color: #ea4335; } 
+        .cat-scuola { background-color: #fbbc05; }
+        .cat-sport { background-color: #34a853; }
+
+        /* Header Filtri */
+        .header-controls { display: flex; align-items: center; gap: 10px; }
+        #filter-select { padding: 5px; border-radius: 5px; border: 1px solid #ddd; font-size: 0.8rem; }
+        
+        /* Export buttons */
+        .actions-container { display: flex; align-items: center; gap: 5px; }
+        .icon-btn { background: none; border: none; cursor: pointer; padding: 5px; color: #888; border-radius: 50%; }
+        
+        /* Rubrica */
+        .contact-row { display: flex; flex-direction: column; }
+        .contact-links { margin-top: 5px; display: flex; gap: 10px; }
+        .contact-link { font-size: 0.8rem; color: #4285f4; text-decoration: none; display: flex; align-items: center; gap: 4px; }
+    </style>
 </head>
 <body>
 
     <div id="auth-container">
         <h1>🏠 Family Hub</h1>
-        <input type="email" id="email-input" placeholder="Email famigliare">
+        <p style="color:#666; margin-bottom:20px;">Accesso Sicuro</p>
+        
+        <input type="email" id="email-input" placeholder="La tua Email">
         <input type="password" id="password-input" placeholder="Password">
         <button id="login-btn">Entra</button>
-        <p id="login-error" style="color:red; font-size:0.8rem;"></p>
+        <p id="login-status" style="color:#666; font-size:0.8rem; margin-top:10px; min-height:20px;"></p>
     </div>
 
     <div id="app-container" class="hidden">
         <header>
-            <h2 id="page-title">Spesa</h2>
-            <span id="user-display" class="user-badge">Utente</span>
-            <button onclick="window.logout()" style="width:auto; padding:5px 10px; margin:0; font-size:0.8rem; background:#eee; color:#333;">Esci</button>
+            <div>
+                <h2 id="page-title">Agenda</h2>
+                <span id="family-display" style="font-size:0.7rem; color:gray;">Caricamento...</span>
+            </div>
+            
+            <div class="header-controls">
+                <select id="filter-select" onchange="window.applyFilter()">
+                    <option value="all">Tutti</option>
+                    <option value="famiglia">Famiglia</option>
+                    <option value="lavoro">Lavoro</option>
+                    <option value="scuola">Scuola</option>
+                    <option value="sport">Sport</option>
+                </select>
+                
+                <button onclick="window.logout()" style="width:auto; padding:5px; margin:0; background:none; color:#333;">
+                    <i class="material-icons">logout</i>
+                </button>
+            </div>
         </header>
 
         <main>
             <div class="add-bar">
-                <input type="text" id="new-item-input" placeholder="Aggiungi...">
                 
-                <select id="assign-select" class="hidden" style="width:100px; margin:0;">
-                    <option value="Tutti">Tutti</option>
-                    <option value="Mamma">Mamma</option>
-                    <option value="Papà">Papà</option>
-                    <option value="Figli">Figli</option>
+                <input type="date" id="date-input" class="hidden" style="width:110px;">
+
+                <select id="category-select" style="width: 90px; margin-right:5px; display:none;">
+                    <option value="famiglia">Casa</option>
+                    <option value="lavoro">Lavoro</option>
+                    <option value="scuola">Scuola</option>
+                    <option value="sport">Sport</option>
                 </select>
 
-                <button id="add-btn" style="width:50px; margin:0;">+</button>
+                <input type="text" id="contact-detail-input" class="hidden" placeholder="Tel o Email" style="width: 120px; margin-left:5px;">
+
+                <input type="text" id="new-item-input" placeholder="Aggiungi..." style="flex-grow:1;">
+                
+                <button id="add-btn" style="width:40px; margin:0;">+</button>
             </div>
 
             <div id="list-container"></div>
         </main>
 
         <nav class="bottom-nav">
-            <button class="nav-item active" onclick="window.nav('shopping')">
-                <i class="material-icons">shopping_cart</i> Spesa
-            </button>
-            <button class="nav-item" onclick="window.nav('todos')">
-                <i class="material-icons">check_circle</i> Compiti
-            </button>
-            <button class="nav-item" onclick="window.nav('notes')">
-                <i class="material-icons">sticky_note_2</i> Note
-            </button>
+            <button class="nav-item" onclick="window.nav('calendar')"><i class="material-icons">event</i> Agenda</button>
+            <button class="nav-item active" onclick="window.nav('shopping')"><i class="material-icons">shopping_cart</i> Spesa</button>
+            <button class="nav-item" onclick="window.nav('todos')"><i class="material-icons">check_circle</i> Compiti</button>
+            <button class="nav-item" onclick="window.nav('contacts')"><i class="material-icons">contacts</i> Rubrica</button>
+            <button class="nav-item" onclick="window.nav('notes')"><i class="material-icons">sticky_note_2</i> Note</button>
         </nav>
     </div>
 
     <script type="module">
-        // Importa le funzioni necessarie
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy, serverTimestamp } 
+        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy, serverTimestamp, getDoc } 
         from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } 
         from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        // --- INCOLLA QUI LA TUA CONFIGURAZIONE FIREBASE ---
+        // --- CONFIGURAZIONE FIREBASE (INCOLLA I TUOI DATI QUI) ---
         const firebaseConfig = {
   apiKey: "AIzaSyCV51Ge3znsE6TPnQrJeEiNasz5YXtFWXk",
   authDomain: "drgfamilyhub.firebaseapp.com",
@@ -72,40 +119,77 @@
   messagingSenderId: "709925755710",
   appId: "1:709925755710:web:6ebb2967fbc107447f6a6f"
 };
-        // ----------------------------------------------------
+        // ---------------------------------------------------------
 
-        // Inizializza
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        let currentSection = 'shopping'; // shopping, todos, notes
-        let unsubscribe = null; // Per fermare l'ascolto quando si cambia tab
+        let currentSection = 'shopping';
+        let currentFamily = null; // Sarà determinato automaticamente
+        let unsubscribe = null; 
+        let allDataCache = []; 
 
-        // ELEMENTI DOM
+        // DOM Elements
         const authContainer = document.getElementById('auth-container');
         const appContainer = document.getElementById('app-container');
         const listContainer = document.getElementById('list-container');
-        const assignSelect = document.getElementById('assign-select');
-        const title = document.getElementById('page-title');
+        const dateInput = document.getElementById('date-input');
+        const categorySelect = document.getElementById('category-select');
+        const filterSelect = document.getElementById('filter-select');
+        const contactInput = document.getElementById('contact-detail-input');
+        const loginStatus = document.getElementById('login-status');
 
-        // --- AUTENTICAZIONE ---
+        // --- LOGICA DI LOGIN BLINDATA ---
         document.getElementById('login-btn').addEventListener('click', () => {
             const email = document.getElementById('email-input').value;
             const pass = document.getElementById('password-input').value;
+            
+            if(!email || !pass) return;
+            loginStatus.innerText = "Verifica credenziali...";
+
             signInWithEmailAndPassword(auth, email, pass)
-                .catch(error => document.getElementById('login-error').innerText = "Errore: " + error.message);
+                .catch(e => loginStatus.innerText = "Errore: " + e.message);
         });
 
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
-                authContainer.classList.add('hidden');
-                appContainer.classList.remove('hidden');
-                document.getElementById('user-display').innerText = user.email.split('@')[0];
-                loadData(currentSection);
+                // UTENTE LOGGATO: ORA CERCHIAMO LA SUA FAMIGLIA
+                loginStatus.innerText = "Ricerca famiglia...";
+                
+                try {
+                    // Cerca nel registro_utenti usando l'email come ID documento
+                    const userDocRef = doc(db, "registro_utenti", user.email);
+                    const userDoc = await getDoc(userDocRef);
+
+                    if (userDoc.exists()) {
+                        // TROVATO!
+                        currentFamily = userDoc.data().famiglia;
+                        console.log("Famiglia trovata:", currentFamily);
+                        
+                        // Mostra App
+                        authContainer.classList.add('hidden');
+                        appContainer.classList.remove('hidden');
+                        document.getElementById('family-display').innerText = `Famiglia: ${currentFamily}`;
+                        
+                        // Carica dati
+                        loadData(currentSection);
+                    } else {
+                        // UTENTE SENZA FAMIGLIA ASSEGNATA
+                        alert("ERRORE: La tua email non è associata a nessuna famiglia. Contatta l'amministratore.");
+                        signOut(auth);
+                        loginStatus.innerText = "Utente non configurato.";
+                    }
+                } catch (error) {
+                    console.error(error);
+                    loginStatus.innerText = "Errore connessione database.";
+                }
+
             } else {
                 authContainer.classList.remove('hidden');
                 appContainer.classList.add('hidden');
+                loginStatus.innerText = "";
+                currentFamily = null;
             }
         });
 
@@ -114,115 +198,159 @@
         // --- NAVIGAZIONE ---
         window.nav = (section) => {
             currentSection = section;
-            
-            // Aggiorna UI
             document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
-            event.currentTarget.classList.add('active'); // Nota: event è globale nei click inline
+            event.currentTarget.classList.add('active'); 
             
-            // Titoli e input specifici
-            if(section === 'shopping') { 
-                title.innerText = "Lista Spesa"; 
-                assignSelect.classList.add('hidden');
-                document.getElementById('new-item-input').placeholder = "Cosa manca? (es. Latte)";
-            }
-            if(section === 'todos') { 
-                title.innerText = "Compiti Famiglia"; 
-                assignSelect.classList.remove('hidden');
-                document.getElementById('new-item-input').placeholder = "Nuovo compito...";
-            }
-            if(section === 'notes') { 
-                title.innerText = "Bacheca Note"; 
-                assignSelect.classList.add('hidden');
-                document.getElementById('new-item-input').placeholder = "Scrivi una nota...";
+            // UI Reset
+            dateInput.classList.add('hidden');
+            categorySelect.style.display = 'none'; 
+            contactInput.classList.add('hidden');
+            document.getElementById('new-item-input').style.display = 'block';
+            
+            const mainInput = document.getElementById('new-item-input');
+
+            if(section === 'calendar') {
+                dateInput.classList.remove('hidden');
+                categorySelect.style.display = 'block'; 
+                document.getElementById('page-title').innerText = "Agenda";
+                mainInput.placeholder = "Evento...";
+            } else if (section === 'todos') {
+                categorySelect.style.display = 'block';
+                document.getElementById('page-title').innerText = "Compiti";
+                mainInput.placeholder = "Nuovo compito...";
+            } else if (section === 'contacts') {
+                document.getElementById('page-title').innerText = "Rubrica";
+                contactInput.classList.remove('hidden');
+                mainInput.placeholder = "Nome...";
+            } else {
+                document.getElementById('page-title').innerText = section.toUpperCase();
+                mainInput.placeholder = "Scrivi...";
             }
 
             loadData(section);
         };
 
-        // --- CARICAMENTO DATI (REAL TIME) ---
-        function loadData(collectionName) {
-            listContainer.innerHTML = '<p style="text-align:center">Caricamento...</p>';
-            
-            // Se c'era un ascoltatore attivo, staccalo
+        // --- CARICAMENTO DATI ---
+        function loadData(section) {
+            listContainer.innerHTML = '<div style="text-align:center; padding:20px;">Caricamento...</div>';
             if (unsubscribe) unsubscribe();
+            if (!currentFamily) return; // Sicurezza extra
 
-            const q = query(collection(db, collectionName), orderBy("timestamp", "desc"));
+            const colName = `${currentFamily}_${section}`;
+            const sortField = section === 'calendar' ? 'date' : 'timestamp';
+            const sortDir = section === 'calendar' ? 'asc' : 'desc';
+
+            const q = query(collection(db, colName), orderBy(sortField, sortDir));
             
-            // onSnapshot è la magia che aggiorna la TV in tempo reale
             unsubscribe = onSnapshot(q, (snapshot) => {
-                listContainer.innerHTML = "";
-                snapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
-                    const id = docSnap.id;
-                    renderCard(id, data, collectionName);
+                allDataCache = []; 
+                snapshot.forEach(doc => {
+                    allDataCache.push({ id: doc.id, ...doc.data() });
                 });
+                renderList(); 
             });
         }
 
-        // --- RENDERIZZAZIONE SCHEDE ---
+        window.applyFilter = () => renderList();
+
+        function renderList() {
+            listContainer.innerHTML = "";
+            const filterVal = filterSelect.value;
+            const filteredData = allDataCache.filter(item => filterVal === 'all' || item.category === filterVal);
+
+            filteredData.forEach(item => renderCard(item.id, item, currentSection));
+            if(filteredData.length === 0) listContainer.innerHTML = "<p style='text-align:center;color:#ccc;margin-top:20px'>Vuoto.</p>";
+        }
+
+        // --- RENDER CARD (CON EXPORT E RUBRICA) ---
         function renderCard(id, data, type) {
             const div = document.createElement('div');
             div.className = 'card';
             
-            let contentHtml = '';
-            let metaHtml = '';
+            const catClass = data.category ? `cat-${data.category}` : 'cat-famiglia';
+            const catDot = `<span class="cat-dot ${catClass}"></span>`;
+            
+            let html = '';
+            let actions = '';
 
-            // Formattazione in base al tipo
-            if (type === 'shopping') {
-                const strike = data.done ? 'strike' : '';
-                contentHtml = `<span class="${strike}" onclick="window.toggleDone('${id}', '${type}', ${!data.done})" style="cursor:pointer; display:block; width:100%">${data.text}</span>`;
-            } 
-            else if (type === 'todos') {
-                const strike = data.done ? 'strike' : '';
-                contentHtml = `<span class="${strike}" onclick="window.toggleDone('${id}', '${type}', ${!data.done})" style="cursor:pointer; font-weight:bold;">${data.text}</span>`;
-                metaHtml = `<span class="card-meta">Assegnato a: <strong>${data.assigned || 'Tutti'}</strong></span>`;
-            }
-            else { // Notes
-                contentHtml = `<span>${data.text}</span>`;
-                metaHtml = `<span class="card-meta">${new Date(data.timestamp?.toDate()).toLocaleDateString()}</span>`;
+            // CALENDARIO E COMPITI: Export
+            if (type === 'calendar' || type === 'todos') {
+                const dateForExport = data.date || new Date().toISOString().split('T')[0];
+                actions = `
+                    <button class="icon-btn" onclick="window.exportGoogle('${data.text}', '${dateForExport}')"><i class="material-icons" style="color:#34a853; font-size:18px">add_to_queue</i></button>
+                    <button class="icon-btn" onclick="window.exportIcs('${data.text}', '${dateForExport}')"><i class="material-icons" style="color:#007aff; font-size:18px">ios_share</i></button>
+                `;
             }
 
-            div.innerHTML = `
-                <div class="card-content">
-                    ${contentHtml}
-                    ${metaHtml}
-                </div>
-                <button class="delete-btn" onclick="window.deleteItem('${id}', '${type}')">
-                    <i class="material-icons">delete</i>
-                </button>
-            `;
+            if (type === 'calendar') {
+                const d = new Date(data.date);
+                html = `
+                    <div class="date-badge">
+                        <span class="date-day">${d.getDate()}</span>
+                        <span class="date-month">${d.toLocaleString('it-IT', { month: 'short' })}</span>
+                    </div>
+                    <div style="flex-grow:1;">
+                        <div style="font-size:1.1rem; font-weight:500;">${catDot} ${data.text}</div>
+                        <span style="font-size:0.75rem; color:#666;">${['Dom','Lun','Mar','Mer','Gio','Ven','Sab'][d.getDay()]} • ${data.category || 'Generale'}</span>
+                    </div>`;
+            } else if (type === 'contacts') {
+                 const isEmail = data.detail.includes('@');
+                 const linkHref = isEmail ? `mailto:${data.detail}` : `tel:${data.detail}`;
+                 const icon = isEmail ? 'email' : 'call';
+                 html = `
+                    <div class="contact-row" style="flex-grow:1;">
+                        <span style="font-weight:bold; font-size:1.1rem;">${data.text}</span>
+                        <div class="contact-links">
+                            <a href="${linkHref}" class="contact-link"><i class="material-icons" style="font-size:14px">${icon}</i> ${data.detail}</a>
+                        </div>
+                    </div>`;
+            } else {
+                const strike = data.done ? 'text-decoration:line-through;opacity:0.6;' : '';
+                html = `<div style="flex-grow:1;">${type==='todos'?catDot:''} <span onclick="window.toggle('${id}', '${type}', ${!data.done})" style="cursor:pointer;${strike}">${data.text}</span></div>`;
+            }
+
+            div.innerHTML = `${html} <div class="actions-container">${actions} <button onclick="window.del('${id}', '${type}')" style="background:none;border:none;color:#f44336;margin-left:5px;"><i class="material-icons">delete</i></button></div>`;
             listContainer.appendChild(div);
         }
 
-        // --- AZIONI (AGGIUNGI, ELIMINA, TOGGLE) ---
-        document.getElementById('add-btn').addEventListener('click', addItem);
-        
-        async function addItem() {
-            const input = document.getElementById('new-item-input');
-            const text = input.value;
+        // --- AZIONI DB ---
+        document.getElementById('add-btn').addEventListener('click', async () => {
+            const text = document.getElementById('new-item-input').value;
             if (!text) return;
-
+            
             const newItem = {
                 text: text,
                 timestamp: serverTimestamp(),
-                done: false
+                done: false,
+                category: categorySelect.value 
             };
-
-            if (currentSection === 'todos') {
-                newItem.assigned = assignSelect.value;
+            if (currentSection === 'calendar') {
+                if(!dateInput.value) { alert("Data?"); return; }
+                newItem.date = dateInput.value;
+            }
+            if (currentSection === 'contacts') {
+                 if(!contactInput.value) { alert("Inserisci contatto"); return; }
+                 newItem.detail = contactInput.value;
             }
 
-            await addDoc(collection(db, currentSection), newItem);
-            input.value = ""; // Pulisci input
-        }
+            await addDoc(collection(db, `${currentFamily}_${currentSection}`), newItem);
+            document.getElementById('new-item-input').value = "";
+            contactInput.value = "";
+        });
 
-        // Espongo le funzioni all'oggetto window per poterle usare nell'HTML onclick
-        window.deleteItem = async (id, col) => {
-            if(confirm("Eliminare?")) await deleteDoc(doc(db, col, id));
+        window.del = async (id, sec) => { if(confirm("Eliminare?")) await deleteDoc(doc(db, `${currentFamily}_${sec}`, id)); };
+        window.toggle = async (id, sec, st) => { if(sec !== 'calendar' && sec !== 'contacts') await updateDoc(doc(db, `${currentFamily}_${sec}`, id), { done: st }); };
+
+        // Export Functions
+        window.exportGoogle = (text, dateStr) => {
+            const d = dateStr.replace(/-/g, ''); 
+            window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(text)}&dates=${d}/${d}`, '_blank');
         };
-
-        window.toggleDone = async (id, col, status) => {
-            await updateDoc(doc(db, col, id), { done: status });
+        window.exportIcs = (text, dateStr) => {
+            const d = dateStr.replace(/-/g, '');
+            const icsContent = `BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nDTSTART;VALUE=DATE:${d}\nDTEND;VALUE=DATE:${d}\nSUMMARY:${text}\nEND:VEVENT\nEND:VCALENDAR`;
+            const blob = new Blob([icsContent], { type: 'text/calendar' });
+            const a = document.createElement('a'); a.href = window.URL.createObjectURL(blob); a.download = `${text}.ics`; a.click();
         };
     </script>
 </body>
