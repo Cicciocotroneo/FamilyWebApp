@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Family Hub</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+    <div id="auth-container">
+        <h1>🏠 Family Hub</h1>
+        <input type="email" id="email-input" placeholder="Email famigliare">
+        <input type="password" id="password-input" placeholder="Password">
+        <button id="login-btn">Entra</button>
+        <p id="login-error" style="color:red; font-size:0.8rem;"></p>
+    </div>
+
+    <div id="app-container" class="hidden">
+        <header>
+            <h2 id="page-title">Spesa</h2>
+            <span id="user-display" class="user-badge">Utente</span>
+            <button onclick="window.logout()" style="width:auto; padding:5px 10px; margin:0; font-size:0.8rem; background:#eee; color:#333;">Esci</button>
+        </header>
+
+        <main>
+            <div class="add-bar">
+                <input type="text" id="new-item-input" placeholder="Aggiungi...">
+                
+                <select id="assign-select" class="hidden" style="width:100px; margin:0;">
+                    <option value="Tutti">Tutti</option>
+                    <option value="Mamma">Mamma</option>
+                    <option value="Papà">Papà</option>
+                    <option value="Figli">Figli</option>
+                </select>
+
+                <button id="add-btn" style="width:50px; margin:0;">+</button>
+            </div>
+
+            <div id="list-container"></div>
+        </main>
+
+        <nav class="bottom-nav">
+            <button class="nav-item active" onclick="window.nav('shopping')">
+                <i class="material-icons">shopping_cart</i> Spesa
+            </button>
+            <button class="nav-item" onclick="window.nav('todos')">
+                <i class="material-icons">check_circle</i> Compiti
+            </button>
+            <button class="nav-item" onclick="window.nav('notes')">
+                <i class="material-icons">sticky_note_2</i> Note
+            </button>
+        </nav>
+    </div>
+
+    <script type="module">
+        // Importa le funzioni necessarie
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy, serverTimestamp } 
+        from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } 
+        from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        // --- INCOLLA QUI LA TUA CONFIGURAZIONE FIREBASE ---
+        const firebaseConfig = {
+  apiKey: "AIzaSyCV51Ge3znsE6TPnQrJeEiNasz5YXtFWXk",
+  authDomain: "drgfamilyhub.firebaseapp.com",
+  projectId: "drgfamilyhub",
+  storageBucket: "drgfamilyhub.firebasestorage.app",
+  messagingSenderId: "709925755710",
+  appId: "1:709925755710:web:6ebb2967fbc107447f6a6f"
+};
+        // ----------------------------------------------------
+
+        // Inizializza
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        let currentSection = 'shopping'; // shopping, todos, notes
+        let unsubscribe = null; // Per fermare l'ascolto quando si cambia tab
+
+        // ELEMENTI DOM
+        const authContainer = document.getElementById('auth-container');
+        const appContainer = document.getElementById('app-container');
+        const listContainer = document.getElementById('list-container');
+        const assignSelect = document.getElementById('assign-select');
+        const title = document.getElementById('page-title');
+
+        // --- AUTENTICAZIONE ---
+        document.getElementById('login-btn').addEventListener('click', () => {
+            const email = document.getElementById('email-input').value;
+            const pass = document.getElementById('password-input').value;
+            signInWithEmailAndPassword(auth, email, pass)
+                .catch(error => document.getElementById('login-error').innerText = "Errore: " + error.message);
+        });
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                authContainer.classList.add('hidden');
+                appContainer.classList.remove('hidden');
+                document.getElementById('user-display').innerText = user.email.split('@')[0];
+                loadData(currentSection);
+            } else {
+                authContainer.classList.remove('hidden');
+                appContainer.classList.add('hidden');
+            }
+        });
+
+        window.logout = () => signOut(auth);
+
+        // --- NAVIGAZIONE ---
+        window.nav = (section) => {
+            currentSection = section;
+            
+            // Aggiorna UI
+            document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
+            event.currentTarget.classList.add('active'); // Nota: event è globale nei click inline
+            
+            // Titoli e input specifici
+            if(section === 'shopping') { 
+                title.innerText = "Lista Spesa"; 
+                assignSelect.classList.add('hidden');
+                document.getElementById('new-item-input').placeholder = "Cosa manca? (es. Latte)";
+            }
+            if(section === 'todos') { 
+                title.innerText = "Compiti Famiglia"; 
+                assignSelect.classList.remove('hidden');
+                document.getElementById('new-item-input').placeholder = "Nuovo compito...";
+            }
+            if(section === 'notes') { 
+                title.innerText = "Bacheca Note"; 
+                assignSelect.classList.add('hidden');
+                document.getElementById('new-item-input').placeholder = "Scrivi una nota...";
+            }
+
+            loadData(section);
+        };
+
+        // --- CARICAMENTO DATI (REAL TIME) ---
+        function loadData(collectionName) {
+            listContainer.innerHTML = '<p style="text-align:center">Caricamento...</p>';
+            
+            // Se c'era un ascoltatore attivo, staccalo
+            if (unsubscribe) unsubscribe();
+
+            const q = query(collection(db, collectionName), orderBy("timestamp", "desc"));
+            
+            // onSnapshot è la magia che aggiorna la TV in tempo reale
+            unsubscribe = onSnapshot(q, (snapshot) => {
+                listContainer.innerHTML = "";
+                snapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const id = docSnap.id;
+                    renderCard(id, data, collectionName);
+                });
+            });
+        }
+
+        // --- RENDERIZZAZIONE SCHEDE ---
+        function renderCard(id, data, type) {
+            const div = document.createElement('div');
+            div.className = 'card';
+            
+            let contentHtml = '';
+            let metaHtml = '';
+
+            // Formattazione in base al tipo
+            if (type === 'shopping') {
+                const strike = data.done ? 'strike' : '';
+                contentHtml = `<span class="${strike}" onclick="window.toggleDone('${id}', '${type}', ${!data.done})" style="cursor:pointer; display:block; width:100%">${data.text}</span>`;
+            } 
+            else if (type === 'todos') {
+                const strike = data.done ? 'strike' : '';
+                contentHtml = `<span class="${strike}" onclick="window.toggleDone('${id}', '${type}', ${!data.done})" style="cursor:pointer; font-weight:bold;">${data.text}</span>`;
+                metaHtml = `<span class="card-meta">Assegnato a: <strong>${data.assigned || 'Tutti'}</strong></span>`;
+            }
+            else { // Notes
+                contentHtml = `<span>${data.text}</span>`;
+                metaHtml = `<span class="card-meta">${new Date(data.timestamp?.toDate()).toLocaleDateString()}</span>`;
+            }
+
+            div.innerHTML = `
+                <div class="card-content">
+                    ${contentHtml}
+                    ${metaHtml}
+                </div>
+                <button class="delete-btn" onclick="window.deleteItem('${id}', '${type}')">
+                    <i class="material-icons">delete</i>
+                </button>
+            `;
+            listContainer.appendChild(div);
+        }
+
+        // --- AZIONI (AGGIUNGI, ELIMINA, TOGGLE) ---
+        document.getElementById('add-btn').addEventListener('click', addItem);
+        
+        async function addItem() {
+            const input = document.getElementById('new-item-input');
+            const text = input.value;
+            if (!text) return;
+
+            const newItem = {
+                text: text,
+                timestamp: serverTimestamp(),
+                done: false
+            };
+
+            if (currentSection === 'todos') {
+                newItem.assigned = assignSelect.value;
+            }
+
+            await addDoc(collection(db, currentSection), newItem);
+            input.value = ""; // Pulisci input
+        }
+
+        // Espongo le funzioni all'oggetto window per poterle usare nell'HTML onclick
+        window.deleteItem = async (id, col) => {
+            if(confirm("Eliminare?")) await deleteDoc(doc(db, col, id));
+        };
+
+        window.toggleDone = async (id, col, status) => {
+            await updateDoc(doc(db, col, id), { done: status });
+        };
+    </script>
+</body>
+</html>
