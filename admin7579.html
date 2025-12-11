@@ -5,40 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FamilyHub Super Admin</title>
     <style>
-        body { font-family: sans-serif; padding: 40px; background: #333; color: white; }
-        .container { max-width: 500px; margin: 0 auto; background: #444; padding: 20px; border-radius: 10px; }
-        input, button { width: 100%; padding: 10px; margin-bottom: 10px; box-sizing: border-box; }
-        button { background: #4285f4; color: white; border: none; font-weight: bold; cursor: pointer; }
-        button:hover { background: #5a95f5; }
-        .success { color: #00ff00; }
-        .error { color: #ff5555; }
-        h2 { text-align: center; }
+        body { font-family: sans-serif; padding: 40px; background: #222; color: white; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 400px; background: #333; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        input, button { width: 100%; padding: 12px; margin-bottom: 15px; box-sizing: border-box; border-radius: 5px; border: 1px solid #555; }
+        input { background: #444; color: white; }
+        button { background: #ff9800; color: #222; border: none; font-weight: bold; cursor: pointer; font-size: 16px; }
+        button:hover { background: #ffb74d; }
+        h2 { text-align: center; color: #ff9800; margin-top: 0; }
+        .hidden { display: none; }
+        .success { color: #4caf50; text-align: center; margin-top: 10px; }
+        .error { color: #f44336; text-align: center; margin-top: 10px; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h2>👑 Super Admin Panel</h2>
-        <p>Usa questo pannello per creare associazioni Utente -> Famiglia.</p>
-        
-        <label>Email Utente (Deve già esistere in Auth)</label>
-        <input type="email" id="user-email" placeholder="es. mario@rossi.it">
+        <h2>👑 Super Admin</h2>
 
-        <label>Codice Famiglia (Inventalo tu)</label>
-        <input type="text" id="family-code" placeholder="es. ROSSI" style="text-transform: uppercase;">
+        <div id="admin-login">
+            <p style="text-align:center; color:#ccc;">Accedi come Super Admin</p>
+            <input type="email" id="admin-email" placeholder="Email Admin">
+            <input type="password" id="admin-pass" placeholder="Password">
+            <button onclick="adminLogin()">Login Admin</button>
+        </div>
 
-        <button onclick="associaUtente()">ASSOCIA UTENTE</button>
+        <div id="admin-panel" class="hidden">
+            <p style="text-align:center; margin-bottom:20px;">Associa Utente a Famiglia</p>
+            
+            <label>Email Utente (Cliente)</label>
+            <input type="email" id="user-email" placeholder="es. mario@rossi.it">
+
+            <label>Codice Famiglia</label>
+            <input type="text" id="family-code" placeholder="es. ROSSI" style="text-transform: uppercase;">
+
+            <button onclick="associaUtente()">ASSOCIA ORA</button>
+            <button onclick="logout()" style="background:#555; color:white; margin-top:10px;">Esci</button>
+        </div>
         
         <p id="status-msg"></p>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, setDoc } 
-        from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        // --- INCOLLA QUI LA TUA CONFIGURAZIONE FIREBASE ---
-        const firebaseConfig = {
+        // --- INCOLLA LA TUA CONFIGURAZIONE QUI ---
+  const firebaseConfig = {
   apiKey: "AIzaSyCV51Ge3znsE6TPnQrJeEiNasz5YXtFWXk",
   authDomain: "drgfamilyhub.firebaseapp.com",
   projectId: "drgfamilyhub",
@@ -46,37 +59,55 @@
   messagingSenderId: "709925755710",
   appId: "1:709925755710:web:6ebb2967fbc107447f6a6f"
 };
-        // --------------------------------------------------
-
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const auth = getAuth(app);
 
+        // GESTIONE LOGIN ADMIN
+        const loginDiv = document.getElementById('admin-login');
+        const panelDiv = document.getElementById('admin-panel');
+        const statusMsg = document.getElementById('status-msg');
+
+        window.adminLogin = () => {
+            const email = document.getElementById('admin-email').value;
+            const pass = document.getElementById('admin-pass').value;
+            signInWithEmailAndPassword(auth, email, pass)
+                .catch(e => { statusMsg.innerText = "Errore: " + e.message; statusMsg.className = "error"; });
+        };
+
+        window.logout = () => signOut(auth);
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // Se loggato, mostra pannello
+                loginDiv.classList.add('hidden');
+                panelDiv.classList.remove('hidden');
+                statusMsg.innerText = "";
+            } else {
+                // Se non loggato, mostra login
+                loginDiv.classList.remove('hidden');
+                panelDiv.classList.add('hidden');
+            }
+        });
+
+        // FUNZIONE ASSOCIAZIONE
         window.associaUtente = async () => {
             const email = document.getElementById('user-email').value.trim();
             const code = document.getElementById('family-code').value.trim().toUpperCase();
-            const status = document.getElementById('status-msg');
 
-            if(!email || !code) {
-                status.innerText = "Compila tutti i campi!";
-                status.className = "error";
-                return;
-            }
+            if(!email || !code) return alert("Compila tutto!");
 
             try {
-                // Scrive nel database "registro_utenti"
-                await setDoc(doc(db, "registro_utenti", email), {
-                    famiglia: code
-                });
+                // Scrive nel DB (Funziona solo se sei il Super Admin definito nelle Regole)
+                await setDoc(doc(db, "registro_utenti", email), { famiglia: code });
                 
-                status.innerText = `Successo! ${email} è ora associato alla famiglia ${code}.`;
-                status.className = "success";
-                
-                // Pulisci
+                statusMsg.innerText = `✅ Fatto! ${email} -> ${code}`;
+                statusMsg.className = "success";
                 document.getElementById('user-email').value = "";
             } catch (error) {
                 console.error(error);
-                status.innerText = "Errore: " + error.message;
-                status.className = "error";
+                statusMsg.innerText = "⛔ ERRORE PERMESSI: " + error.message;
+                statusMsg.className = "error";
             }
         };
     </script>
