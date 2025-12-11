@@ -4,115 +4,110 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Family Hub</title>
-    <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
     <style>
-        /* --- STILI GENERALI --- */
-        body { background-color: #f4f6f8; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-        
-        /* HEADER */
+        /* --- RESET E BASI --- */
+        body { background-color: #f4f6f8; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+        * { box-sizing: border-box; } 
+
+        /* --- HEADER --- */
         header { 
             background: white; padding: 15px 20px; position: sticky; top: 0; z-index: 100; 
             box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; 
         }
-        .header-controls { display: flex; align-items: center; gap: 15px; } /* Più spazio tra icone */
+        .header-controls { display: flex; align-items: center; gap: 15px; }
         
-        /* --- OTTIMIZZAZIONE BARRA INSERIMENTO (MOBILE GRID) --- */
+        /* --- BARRA INSERIMENTO (MOBILE OPTIMIZED) --- */
         .add-bar {
             background: white;
             padding: 15px;
-            margin-bottom: 20px;
+            margin: 15px;
             border-radius: 16px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.05);
             display: grid;
-            grid-template-columns: 1fr 1fr; /* Griglia a 2 colonne */
-            gap: 12px; /* Spazio tra i campi */
+            grid-template-columns: 1fr 1fr; 
+            gap: 12px; 
+            align-items: start;
         }
 
-        /* Stile comune per input e select: grandi e comodi */
-        .add-bar select, .add-bar input {
+        .add-bar select, 
+        .add-bar input,
+        #add-btn {
+            height: 48px !important; 
             width: 100%;
-            height: 48px; /* Altezza comoda per il dito */
             border: 1px solid #e0e0e0;
             border-radius: 12px;
-            background-color: #f9f9f9;
-            font-size: 16px; /* Evita zoom su iPhone */
+            background-color: #fff;
+            font-size: 16px; 
             padding: 0 12px;
             color: #333;
-            box-sizing: border-box; /* Importante per i bordi */
-            appearance: none; /* Rimuove lo stile default brutto */
+            margin: 0;
+            appearance: none; 
             -webkit-appearance: none;
+            outline: none;
+        }
+
+        .add-bar select {
             background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
             background-repeat: no-repeat;
             background-position: right 12px top 50%;
             background-size: 10px auto;
         }
 
-        /* Input testo non ha la freccia */
-        .add-bar input { background-image: none; }
-
-        /* Colori specifici per differenziare */
-        #assign-who { background-color: #fff8e1; border-color: #ffecb3; color: #ff6f00; font-weight: 500; }
-        #date-input { font-family: sans-serif; }
-
-        /* Gruppo Input Testo + Bottone (Occupa tutta la larghezza in basso) */
+        #assign-who { background-color: #fff8e1; border-color: #ffecb3; color: #ff6f00; font-weight: 600; }
+        
         .input-text-group {
-            grid-column: 1 / -1; /* Spazia su entrambe le colonne */
-            display: flex;
+            grid-column: 1 / -1; 
+            display: flex; 
             gap: 10px;
-            margin-top: 5px;
+            align-items: stretch; 
         }
 
         #new-item-input {
-            flex-grow: 1;
-            background: white;
-            border: 2px solid #4285f4; /* Bordo blu per evidenziare dove scrivere */
+            flex-grow: 1; 
+            border: 2px solid #4285f4; 
+            background-image: none; 
         }
         
-        #contact-detail-input {
-             grid-column: 1 / -1; /* Anche la rubrica prende tutto lo spazio */
-        }
+        #contact-detail-input { grid-column: 1 / -1; }
 
         #add-btn {
-            width: 50px; height: 48px;
-            background: #4285f4; color: white; border: none; border-radius: 12px;
-            font-size: 24px; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 10px rgba(66, 133, 244, 0.3);
+            width: 50px !important; 
+            padding: 0; 
+            background: #4285f4; 
+            color: white; 
+            border: none;
+            display: flex; align-items: center; justify-content: center;
             cursor: pointer;
+            box-shadow: 0 4px 10px rgba(66, 133, 244, 0.3);
         }
         #add-btn:active { transform: scale(0.95); }
 
-        /* --- CLASSI DI UTILITÀ PER NASCONDERE CAMPI --- */
-        /* Sovrascriviamo la classe hidden per il layout grid */
         .hidden { display: none !important; }
 
-        /* --- STILI LISTE E CARD (Invariati ma puliti) --- */
+        #list-container { padding: 0 15px 100px 15px; } 
         .card { background: white; padding: 16px; margin-bottom: 12px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; }
-        .date-badge { background: #e8f0fe; color: #1967d2; padding: 6px 10px; border-radius: 10px; text-align: center; margin-right: 15px; min-width: 48px; display: flex; flex-direction: column; justify-content: center; font-weight: bold; }
+        
+        .date-badge { background: #e8f0fe; color: #1967d2; padding: 6px 10px; border-radius: 10px; text-align: center; margin-right: 15px; min-width: 50px; display: flex; flex-direction: column; justify-content: center; font-weight: bold; }
         .date-day { font-size: 1.4rem; line-height: 1; }
         .date-month { font-size: 0.7rem; text-transform: uppercase; margin-top: 2px; }
         
-        .cat-dot { height: 12px; width: 12px; border-radius: 50%; display: inline-block; margin-right: 8px; vertical-align: middle; }
+        .cat-dot { height: 12px; width: 12px; border-radius: 50%; display: inline-block; margin-right: 8px; vertical-align: middle; border: 1px solid rgba(0,0,0,0.1); }
         .assigned-badge { font-size: 0.75rem; background: #eee; color: #555; padding: 3px 8px; border-radius: 6px; margin-left: 8px; display: inline-block; vertical-align: middle; }
         
-        /* Bottom Nav */
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; border-top: 1px solid #eee; display: flex; justify-content: space-around; padding: 12px 0 25px 0; z-index: 200; box-shadow: 0 -2px 10px rgba(0,0,0,0.03); }
         .nav-item { background: none; border: none; color: #999; display: flex; flex-direction: column; align-items: center; font-size: 0.7rem; }
         .nav-item.active { color: #4285f4; }
         .nav-item i { font-size: 26px; margin-bottom: 4px; }
         
-        /* Pagine Admin/Impostazioni */
-        .settings-view { padding: 20px; }
-        .settings-section { background: white; border-radius: 12px; padding: 15px; margin-bottom: 15px; }
-        .settings-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+        .settings-view { padding: 20px; padding-bottom: 100px; }
+        .settings-section { background: white; border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .settings-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
         
-        /* Login */
         #auth-container { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; background: white; }
-        #auth-container input { width: 100%; height: 50px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 10px; padding: 0 15px; font-size: 16px; box-sizing: border-box; }
+        #auth-container input { width: 100%; height: 50px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 10px; padding: 0 15px; font-size: 16px; }
         #login-btn { width: 100%; height: 50px; background: #4285f4; color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; }
-
-        /* Filtri Header */
         #filter-select { border: none; background: #f0f2f5; padding: 8px 12px; border-radius: 8px; font-weight: 600; color: #333; font-size: 0.9rem; }
     </style>
 </head>
@@ -142,8 +137,7 @@
             </div>
         </header>
 
-        <main style="padding: 15px; padding-bottom: 100px;">
-            
+        <main>
             <div id="add-bar-container" class="add-bar">
                 
                 <input type="date" id="date-input" class="hidden">
@@ -213,12 +207,13 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy, serverTimestamp, getDoc, setDoc } 
+        // NOTA: Ho aggiunto 'where' agli import qui sotto
+        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy, serverTimestamp, getDoc, setDoc, where } 
         from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } 
         from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        // --- CONFIGURAZIONE FIREBASE (INCOLLA QUI I TUOI DATI) ---
+        // --- INCOLLA QUI LA TUA CONFIGURAZIONE FIREBASE ---
         const firebaseConfig = {
   apiKey: "AIzaSyCV51Ge3znsE6TPnQrJeEiNasz5YXtFWXk",
   authDomain: "drgfamilyhub.firebaseapp.com",
@@ -239,7 +234,6 @@
         let allDataCache = []; 
         let familySettings = { pin: "0000", members: ["Mamma", "Papà"], categories: [{name:"Casa", color:"#4285f4"}] };
 
-        // DOM REFERENCES
         const authContainer = document.getElementById('auth-container');
         const appContainer = document.getElementById('app-container');
         const listContainer = document.getElementById('list-container');
@@ -247,7 +241,6 @@
         const addBarContainer = document.getElementById('add-bar-container');
         const loginStatus = document.getElementById('login-status');
         
-        // Inputs
         const categorySelect = document.getElementById('category-select');
         const assignWho = document.getElementById('assign-who');
         const filterSelect = document.getElementById('filter-select');
@@ -256,7 +249,6 @@
         const contactInput = document.getElementById('contact-detail-input');
         const newItemInput = document.getElementById('new-item-input');
 
-        // LOGIN
         document.getElementById('login-btn').addEventListener('click', () => {
             const email = document.getElementById('email-input').value;
             const pass = document.getElementById('password-input').value;
@@ -283,7 +275,6 @@
 
         window.logout = () => signOut(auth);
 
-        // SETTINGS
         async function loadSettings() {
             onSnapshot(doc(db, "settings", currentFamily), (docSnap) => {
                 if (docSnap.exists()) familySettings = { ...familySettings, ...docSnap.data() };
@@ -306,7 +297,6 @@
             familySettings.members.forEach(mem => assignWho.innerHTML += `<option value="${mem}">${mem}</option>`);
         }
 
-        // NAVIGAZIONE MIGLIORATA
         window.nav = (section) => {
             if (section === 'settings') {
                 const pin = prompt("PIN Amministratore:");
@@ -314,7 +304,7 @@
                 
                 currentSection = 'settings';
                 listContainer.classList.add('hidden');
-                addBarContainer.classList.add('hidden'); // Nasconde la barra input
+                addBarContainer.classList.add('hidden'); 
                 settingsView.classList.remove('hidden');
                 document.getElementById('page-title').innerText = "Impostazioni";
                 return;
@@ -328,7 +318,6 @@
             document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
             if(event && event.currentTarget) event.currentTarget.classList.add('active'); 
             
-            // RESET VISIBILITÀ CAMPI (Usa la classe hidden)
             dateInput.classList.add('hidden');
             recurrenceSelect.classList.add('hidden');
             categorySelect.classList.add('hidden'); 
@@ -336,25 +325,20 @@
             contactInput.classList.add('hidden');
             newItemInput.placeholder = "Aggiungi...";
             
-            // LOGICA SPECIFICA PER SEZIONE
             const title = document.getElementById('page-title');
             
             if(section === 'calendar') {
                 title.innerText = "Agenda";
                 dateInput.classList.remove('hidden');
                 recurrenceSelect.classList.remove('hidden'); 
-                categorySelect.classList.remove('hidden'); // Usa display grid se togliamo hidden
-                categorySelect.style.display = 'block'; // Forza display
-                assignWho.classList.remove('hidden');
-                assignWho.style.display = 'block';
+                categorySelect.classList.remove('hidden'); categorySelect.style.display = 'block';
+                assignWho.classList.remove('hidden'); assignWho.style.display = 'block';
                 newItemInput.placeholder = "Evento...";
             } 
             else if (section === 'todos') {
                 title.innerText = "Compiti";
-                categorySelect.classList.remove('hidden');
-                categorySelect.style.display = 'block';
-                assignWho.classList.remove('hidden');
-                assignWho.style.display = 'block';
+                categorySelect.classList.remove('hidden'); categorySelect.style.display = 'block';
+                assignWho.classList.remove('hidden'); assignWho.style.display = 'block';
                 newItemInput.placeholder = "Compito...";
             } 
             else if (section === 'contacts') {
@@ -371,7 +355,6 @@
             loadData(section);
         };
 
-        // RENDER SETTINGS VIEW
         function renderSettingsView() {
             document.getElementById('admin-pin-input').value = familySettings.pin;
             const memList = document.getElementById('members-list');
@@ -391,16 +374,28 @@
         window.addCategory = async () => { const n = document.getElementById('new-cat-name').value; const c=document.getElementById('new-cat-color').value; if(n){familySettings.categories.push({name:n, color:c}); await saveSettings(); document.getElementById('new-cat-name').value="";}};
         window.removeCategory = async (i) => { if(confirm("Eliminare?")){familySettings.categories.splice(i,1); await saveSettings();}};
 
-        // DATA LOADING
+        // --- CARICAMENTO DATI CON FILTRO DATA ---
         function loadData(section) {
             listContainer.innerHTML = '<div style="text-align:center; padding:30px; color:#ccc;">Caricamento...</div>';
             if (unsubscribe) unsubscribe();
             if (!currentFamily) return;
             const col = `${currentFamily}_${section}`;
-            const sortField = section === 'calendar' ? 'date' : 'timestamp';
-            const sortDir = section === 'calendar' ? 'asc' : 'desc';
             
-            unsubscribe = onSnapshot(query(collection(db, col), orderBy(sortField, sortDir)), (snap) => {
+            // Logica Filtro
+            let q;
+            if (section === 'calendar') {
+                // Calcola oggi in formato YYYY-MM-DD locale
+                const d = new Date();
+                const today = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,'0') + "-" + String(d.getDate()).padStart(2,'0');
+                
+                // Query: Dammi solo date >= oggi, ordinate per data crescente
+                q = query(collection(db, col), where("date", ">=", today), orderBy("date", "asc"));
+            } else {
+                // Per le altre sezioni (spesa, note) ordina per inserimento decrescente
+                q = query(collection(db, col), orderBy("timestamp", "desc"));
+            }
+            
+            unsubscribe = onSnapshot(q, (snap) => {
                 allDataCache = []; snap.forEach(d => allDataCache.push({id:d.id, ...d.data()}));
                 renderList();
             });
@@ -423,7 +418,6 @@
                 
                 let html = "", actions = "";
                 
-                // Pulsanti Export
                 if(currentSection === 'calendar' || currentSection === 'todos') {
                    const dStr = data.date || new Date().toISOString().split('T')[0];
                    actions = `<i class="material-icons" style="color:#ccc; margin-left:10px; cursor:pointer;" onclick="window.exportGoogle('${data.text}','${dStr}')">event</i>`;
@@ -448,7 +442,6 @@
             });
         }
 
-        // AZIONI DB
         document.getElementById('add-btn').addEventListener('click', async () => {
             const txt = newItemInput.value; if(!txt) return;
             const cat = categorySelect.value;
@@ -480,7 +473,6 @@
 
         window.del = async (id) => { if(confirm("Eliminare?")) await deleteDoc(doc(db, `${currentFamily}_${currentSection}`, id)); };
         window.toggle = async (id, st) => { if(currentSection!=='calendar' && currentSection!=='contacts') await updateDoc(doc(db, `${currentFamily}_${currentSection}`, id), {done:st}); };
-        
         window.exportGoogle = (t,d) => { const x=d.replace(/-/g,''); window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(t)}&dates=${x}/${x}`,'_blank');};
 
     </script>
