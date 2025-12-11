@@ -603,5 +603,15 @@ const firebaseConfig = {
         window.exportGoogle = (t,d) => { const x=d.replace(/-/g,''); window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(t)}&dates=${x}/${x}`,'_blank');};
 
     </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('Service Worker registrato!', reg))
+                    .catch(err => console.log('Errore SW:', err));
+            });
+        }
+    </script>
 </body>
 </html>
+
