@@ -7,73 +7,103 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
     <style>
-        /* --- STILI BASE --- */
+        /* --- RESET E BASI --- */
         body { background-color: #f4f6f8; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         * { box-sizing: border-box; } 
 
-        /* HEADER */
-        header { background: white; padding: 15px 20px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; }
+        /* --- HEADER --- */
+        header { 
+            background: white; padding: 15px 20px; position: sticky; top: 0; z-index: 100; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; 
+        }
         .header-controls { display: flex; align-items: center; gap: 15px; }
         
-        /* BARRA INSERIMENTO */
+        /* --- BARRA INSERIMENTO (MOBILE PERFECT) --- */
         .add-bar {
             background: white; padding: 15px; margin: 15px; border-radius: 16px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.05);
             display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: start;
         }
 
-        /* INPUT UNIFICATI */
-        .add-bar select, .add-bar input, #add-btn, .note-editor input, .note-editor button, .admin-panel input, .admin-panel button {
-            height: 48px !important; width: 100%; border: 1px solid #e0e0e0; border-radius: 12px;
-            background-color: #fff; font-size: 16px; padding: 0 12px; color: #333; margin: 0; 
-            appearance: none; -webkit-appearance: none; outline: none;
+        /* Stili Unificati per Input/Select/Button */
+        .add-bar select, .add-bar input, #add-btn,
+        .note-editor input, .note-editor button, .admin-panel input, .admin-panel button {
+            height: 48px !important; width: 100%;
+            border: 1px solid #e0e0e0; border-radius: 12px;
+            background-color: #fff; font-size: 16px; padding: 0 12px;
+            color: #333; margin: 0; appearance: none; -webkit-appearance: none; outline: none;
         }
 
-        .add-bar select { background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 12px top 50%; background-size: 10px auto; }
+        /* Icona per le select */
+        .add-bar select {
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat; background-position: right 12px top 50%; background-size: 10px auto;
+        }
+
+        /* Colori Assegnazione */
         #assign-who { background-color: #fff8e1; border-color: #ffecb3; color: #ff6f00; font-weight: 600; }
         
-        /* GRUPPI INPUT */
-        .input-text-group { grid-column: 1 / -1; display: flex; gap: 10px; align-items: stretch; }
+        /* GRUPPO TESTO + BOTTONE (FIX ALLINEAMENTO) */
+        .input-text-group { 
+            grid-column: 1 / -1; display: flex; gap: 10px; align-items: stretch; /* Altezza uguale forzata */
+        }
         #new-item-input { flex-grow: 1; border: 2px solid #4285f4; background-image: none; }
         #contact-detail-input { grid-column: 1 / -1; }
-        #add-btn { width: 50px !important; padding: 0; background: #4285f4; color: white; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(66, 133, 244, 0.3); }
-        
-        /* EDITOR NOTE */
-        .note-editor { background: #fff9c4; padding: 15px; margin: 15px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); display: flex; flex-direction: column; gap: 10px; border: 1px solid #fbc02d; }
-        .note-editor textarea { width: 100%; height: 150px; border: 1px solid #e0e0e0; border-radius: 12px; background-color: #fff; font-size: 16px; padding: 12px; color: #333; font-family: inherit; resize: none; outline: none; }
-        #save-note-btn { background: #fbc02d; color: #333; font-weight: bold; border: none; box-shadow: 0 4px 10px rgba(251, 192, 45, 0.3); }
+
+        #add-btn { 
+            width: 50px !important; padding: 0; background: #4285f4; color: white; border: none; 
+            display: flex; align-items: center; justify-content: center; cursor: pointer; 
+            box-shadow: 0 4px 10px rgba(66, 133, 244, 0.3); 
+        }
+        #add-btn:active { transform: scale(0.95); }
+
+        /* --- EDITOR NOTE --- */
+        .note-editor {
+            background: #fff9c4; padding: 15px; margin: 15px; border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            display: flex; flex-direction: column; gap: 10px; border: 1px solid #fbc02d;
+        }
+        .note-editor textarea {
+            width: 100%; height: 150px; border: 1px solid #e0e0e0; border-radius: 12px;
+            background-color: #fff; font-size: 16px; padding: 12px;
+            color: #333; font-family: inherit; resize: none; outline: none;
+        }
+        #save-note-btn { background: #fbc02d; color: #333; font-weight: bold; border: none; box-shadow: 0 4px 10px rgba(251, 192, 45, 0.3); cursor: pointer; }
 
         .hidden { display: none !important; }
+
+        /* LISTE */
         #list-container { padding: 0 15px 120px 15px; } 
-        
-        /* CARDS */
         .card { background: white; padding: 16px; margin-bottom: 12px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; scroll-margin-top: 140px; }
+        
+        /* NOTE CARD */
         .note-card { flex-direction: column; align-items: flex-start; gap: 10px; border-left: 5px solid #fbc02d; }
         .note-title { font-weight: 800; font-size: 1.1rem; color: #333; width: 100%; }
         .note-body { white-space: pre-wrap; color: #555; font-size: 0.95rem; line-height: 1.4; width: 100%; }
         .note-footer { width: 100%; display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; border-top: 1px solid #eee; padding-top: 10px; }
 
+        /* AGENDA STYLES */
         .date-badge { background: #e8f0fe; color: #1967d2; padding: 6px 10px; border-radius: 10px; text-align: center; margin-right: 15px; min-width: 50px; display: flex; flex-direction: column; justify-content: center; font-weight: bold; }
         .date-day { font-size: 1.4rem; line-height: 1; }
         .date-month { font-size: 0.7rem; text-transform: uppercase; margin-top: 2px; }
-        .today-card { border-left: 5px solid #4285f4; background: #f8fbff; }
+        .today-card { border-left: 5px solid #4285f4; background: #f8fbff; } /* Evidenzia Oggi */
         .time-display { font-size: 0.85rem; background: #eee; padding: 2px 6px; border-radius: 4px; margin-right: 5px; color: #333; font-weight: bold; }
         .due-date-display { font-size: 0.75rem; color: #d32f2f; font-weight: bold; display: block; margin-top: 2px; }
-
+        
         .cat-dot { height: 12px; width: 12px; border-radius: 50%; display: inline-block; margin-right: 8px; vertical-align: middle; border: 1px solid rgba(0,0,0,0.1); }
         .assigned-badge { font-size: 0.75rem; background: #eee; color: #555; padding: 3px 8px; border-radius: 6px; margin-left: 8px; display: inline-block; vertical-align: middle; }
         
+        /* NAVIGAZIONE */
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; border-top: 1px solid #eee; display: flex; justify-content: space-around; padding: 12px 0 25px 0; z-index: 200; box-shadow: 0 -2px 10px rgba(0,0,0,0.03); }
         .nav-item { background: none; border: none; color: #999; display: flex; flex-direction: column; align-items: center; font-size: 0.7rem; }
         .nav-item.active { color: #4285f4; }
         .nav-item i { font-size: 26px; margin-bottom: 4px; }
         
-        /* SETTINGS & ADMIN */
+        /* IMPOSTAZIONI & LOGIN */
         .settings-view { padding: 20px; padding-bottom: 100px; }
         .settings-section { background: white; border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         .settings-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
-        
-        .admin-panel { border: 2px solid #ff9800; background: #fff3e0; } /* Stile distintivo Admin */
+        .admin-panel { border: 2px solid #ff9800; background: #fff3e0; }
         
         #auth-container { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; background: white; }
         #auth-container input { width: 100%; height: 50px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 10px; padding: 0 15px; font-size: 16px; }
@@ -89,6 +119,9 @@
         <input type="email" id="email-input" placeholder="Email">
         <input type="password" id="password-input" placeholder="Password">
         <button id="login-btn">Entra</button>
+        
+        <p onclick="window.resetPassword()" style="color:#4285f4; cursor:pointer; margin-top:15px; text-decoration:underline;">Password dimenticata?</p>
+        
         <p id="login-status" style="margin-top: 20px; color: #666; font-size: 0.9rem;"></p>
     </div>
 
@@ -198,18 +231,20 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy, serverTimestamp, getDoc, setDoc, where } 
         from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, updatePassword, reauthenticateWithCredential, EmailAuthProvider } 
+        // Import Completo per Auth e Reset
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, updatePassword, reauthenticateWithCredential, EmailAuthProvider, sendPasswordResetEmail } 
         from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        // CONFIGURAZIONE FIREBASE (INSERISCI I TUOI DATI)
-const firebaseConfig = {
-  apiKey: "AIzaSyCV51Ge3znsE6TPnQrJeEiNasz5YXtFWXk",
-  authDomain: "drgfamilyhub.firebaseapp.com",
-  projectId: "drgfamilyhub",
-  storageBucket: "drgfamilyhub.firebasestorage.app",
-  messagingSenderId: "709925755710",
-  appId: "1:709925755710:web:6ebb2967fbc107447f6a6f"
-};
+        // --- CONFIGURAZIONE FIREBASE ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyDxxxxxxxxx...", 
+            authDomain: "familyhub-xxxx.firebaseapp.com",
+            projectId: "familyhub-xxxx",
+            storageBucket: "familyhub-xxxx.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:xxxxxx"
+        };
+        // --------------------------------
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
@@ -238,7 +273,7 @@ const firebaseConfig = {
         const assignWho = document.getElementById('assign-who');
         const filterSelect = document.getElementById('filter-select');
         const dateInput = document.getElementById('date-input');
-        const timeInput = document.getElementById('time-input'); // NUOVO
+        const timeInput = document.getElementById('time-input'); 
         const recurrenceSelect = document.getElementById('recurrence-select');
         const contactInput = document.getElementById('contact-detail-input');
         const newItemInput = document.getElementById('new-item-input');
@@ -256,9 +291,21 @@ const firebaseConfig = {
             signInWithEmailAndPassword(auth, email, pass).catch(e => loginStatus.innerText = "Errore: " + e.message);
         });
 
+        // NUOVA FUNZIONE: RESET PASSWORD DIMENTICATA
+        window.resetPassword = async () => {
+            const email = document.getElementById('email-input').value;
+            if(!email) return alert("Inserisci prima la tua email nel campo qui sopra!");
+            if(confirm(`Inviare link di reset password a: ${email}?`)) {
+                try {
+                    await sendPasswordResetEmail(auth, email);
+                    alert("Link inviato! Controlla la posta (anche spam).");
+                } catch (error) { alert("Errore: " + error.message); }
+            }
+        };
+
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                // CONTROLLO SUPER ADMIN
+                // SUPER ADMIN CHECK
                 if (user.email === SUPER_ADMIN_EMAIL) {
                     document.getElementById('super-admin-area').classList.remove('hidden');
                 } else {
@@ -275,12 +322,11 @@ const firebaseConfig = {
                         await loadSettings();
                         loadData(currentSection);
                     } else { 
-                        // Se è il super admin e non ha famiglia, lascialo entrare per configurare
                         if (user.email === SUPER_ADMIN_EMAIL) {
-                            currentFamily = "ADMIN"; // Famiglia fittizia
+                            currentFamily = "ADMIN"; 
                             authContainer.classList.add('hidden');
                             appContainer.classList.remove('hidden');
-                            window.nav('settings'); // Vai subito alle impostazioni
+                            window.nav('settings'); 
                         } else {
                             alert("Utente non configurato."); signOut(auth); 
                         }
@@ -291,7 +337,7 @@ const firebaseConfig = {
 
         window.logout = () => signOut(auth);
 
-        // --- FUNZIONE SUPER ADMIN ---
+        // FUNZIONE SUPER ADMIN
         window.adminAssociate = async () => {
             const email = document.getElementById('admin-user-email').value.trim();
             const code = document.getElementById('admin-family-code').value.trim().toUpperCase();
@@ -374,7 +420,7 @@ const firebaseConfig = {
                 
                 if(section === 'calendar') {
                     title.innerText = "Agenda"; 
-                    dateInput.classList.remove('hidden'); timeInput.classList.remove('hidden'); // Ora Visibile
+                    dateInput.classList.remove('hidden'); timeInput.classList.remove('hidden'); 
                     recurrenceSelect.classList.remove('hidden'); 
                     categorySelect.classList.remove('hidden'); categorySelect.style.display = 'block'; 
                     assignWho.classList.remove('hidden'); assignWho.style.display = 'block'; 
@@ -382,7 +428,7 @@ const firebaseConfig = {
                 } 
                 else if (section === 'todos') {
                     title.innerText = "Compiti"; 
-                    dateInput.classList.remove('hidden'); // Data scadenza visibile per task
+                    dateInput.classList.remove('hidden'); // Data scadenza
                     categorySelect.classList.remove('hidden'); categorySelect.style.display = 'block'; 
                     assignWho.classList.remove('hidden'); assignWho.style.display = 'block'; 
                     newItemInput.placeholder = "Compito...";
@@ -475,7 +521,7 @@ const firebaseConfig = {
                 } else if (currentSection === 'todos') {
                     const strike = data.done ? 'text-decoration:line-through; color:#ccc;' : '';
                     const checkColor = data.done ? '#4285f4' : '#ccc';
-                    // SCADENZA COMPITO
+                    // SCADENZA
                     let dueDateHtml = "";
                     if(data.date) {
                         const dd = new Date(data.date);
@@ -488,7 +534,6 @@ const firebaseConfig = {
                                 ${dueDateHtml}
                             </div>`;
                 } else {
-                    // Spesa
                     const strike = data.done ? 'text-decoration:line-through; color:#ccc;' : '';
                     const checkColor = data.done ? '#4285f4' : '#ccc';
                     html = `<i class="material-icons" style="color:${checkColor}; margin-right:15px; cursor:pointer;" onclick="window.toggle('${data.id}',${!data.done})">${data.done ? 'check_circle' : 'radio_button_unchecked'}</i>
@@ -511,7 +556,7 @@ const firebaseConfig = {
             const txt = newItemInput.value; if(!txt) return;
             const cat = categorySelect.value; const rec = recurrenceSelect.value; const who = assignWho.value; 
             let dVal = dateInput.value;
-            const tVal = timeInput.value; // ORARIO
+            const tVal = timeInput.value; 
 
             let loops = 1; if(currentSection === 'calendar' && rec !== 'none') loops = (rec==='weekly'?4 : (rec==='monthly'?6:5));
             
@@ -520,12 +565,12 @@ const firebaseConfig = {
                 
                 if(currentSection === 'calendar') {
                     if(!dVal) return alert("Inserisci Data");
-                    item.time = tVal; // Salva orario
+                    item.time = tVal; 
                     if(i>0) { const d = new Date(dVal); if(rec==='weekly') d.setDate(d.getDate()+(7*i)); if(rec==='monthly') d.setMonth(d.getMonth()+i); if(rec==='yearly') d.setFullYear(d.getFullYear()+i); item.date = d.toISOString().split('T')[0]; } else item.date = dVal;
                 }
                 
                 if(currentSection === 'todos') {
-                    if(dVal) item.date = dVal; // Salva scadenza se c'è
+                    if(dVal) item.date = dVal; 
                 }
 
                 if(currentSection === 'contacts') item.detail = contactInput.value || "";
