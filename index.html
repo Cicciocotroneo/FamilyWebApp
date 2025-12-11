@@ -8,108 +8,195 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
     <style>
-        /* (STILI INVARIATI - Per brevità includo solo le modifiche rilevanti) */
-        .date-badge { background: #e8f0fe; color: #1967d2; padding: 5px 8px; border-radius: 8px; text-align: center; margin-right: 12px; min-width: 45px; display: flex; flex-direction: column; justify-content: center; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-        .date-day { font-size: 1.3rem; font-weight: 800; line-height: 1; }
-        .date-month { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; margin-top: 2px;}
-        .cat-dot { height: 12px; width: 12px; border-radius: 50%; display: inline-block; margin-right: 6px; border: 1px solid rgba(0,0,0,0.1); }
-        .assigned-badge { font-size: 0.7rem; background: #eee; color: #555; padding: 2px 6px; border-radius: 4px; margin-left: 8px; font-weight: normal; border: 1px solid #ddd; }
-        .header-controls { display: flex; align-items: center; gap: 8px; }
-        #filter-select { padding: 5px; border-radius: 6px; border: 1px solid #ddd; font-size: 0.8rem; background: #f9f9f9; }
-        .actions-container { display: flex; align-items: center; gap: 8px; margin-left: 10px; }
-        .export-btn { border: none; border-radius: 6px; cursor: pointer; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
-        .btn-google { background-color: #e8f5e9; color: #2e7d32; }
-        .btn-apple { background-color: #e3f2fd; color: #1565c0; }
-        .btn-delete { background: none; color: #ef5350; }
-        .contact-row { display: flex; flex-direction: column; }
-        .contact-links { margin-top: 4px; display: flex; gap: 10px; }
-        .contact-link { font-size: 0.85rem; color: #4285f4; text-decoration: none; display: flex; align-items: center; gap: 4px; font-weight: 500;}
+        /* --- STILI GENERALI --- */
+        body { background-color: #f4f6f8; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        .settings-section { background: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .settings-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
-        .settings-input-group { display: flex; gap: 10px; margin-top: 10px; }
-        .color-picker { width: 40px; height: 40px; padding: 0; border: none; border-radius: 50%; overflow: hidden; cursor: pointer; }
+        /* HEADER */
+        header { 
+            background: white; padding: 15px 20px; position: sticky; top: 0; z-index: 100; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; 
+        }
+        .header-controls { display: flex; align-items: center; gap: 15px; } /* Più spazio tra icone */
+        
+        /* --- OTTIMIZZAZIONE BARRA INSERIMENTO (MOBILE GRID) --- */
+        .add-bar {
+            background: white;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Griglia a 2 colonne */
+            gap: 12px; /* Spazio tra i campi */
+        }
+
+        /* Stile comune per input e select: grandi e comodi */
+        .add-bar select, .add-bar input {
+            width: 100%;
+            height: 48px; /* Altezza comoda per il dito */
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            background-color: #f9f9f9;
+            font-size: 16px; /* Evita zoom su iPhone */
+            padding: 0 12px;
+            color: #333;
+            box-sizing: border-box; /* Importante per i bordi */
+            appearance: none; /* Rimuove lo stile default brutto */
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px top 50%;
+            background-size: 10px auto;
+        }
+
+        /* Input testo non ha la freccia */
+        .add-bar input { background-image: none; }
+
+        /* Colori specifici per differenziare */
+        #assign-who { background-color: #fff8e1; border-color: #ffecb3; color: #ff6f00; font-weight: 500; }
+        #date-input { font-family: sans-serif; }
+
+        /* Gruppo Input Testo + Bottone (Occupa tutta la larghezza in basso) */
+        .input-text-group {
+            grid-column: 1 / -1; /* Spazia su entrambe le colonne */
+            display: flex;
+            gap: 10px;
+            margin-top: 5px;
+        }
+
+        #new-item-input {
+            flex-grow: 1;
+            background: white;
+            border: 2px solid #4285f4; /* Bordo blu per evidenziare dove scrivere */
+        }
+        
+        #contact-detail-input {
+             grid-column: 1 / -1; /* Anche la rubrica prende tutto lo spazio */
+        }
+
+        #add-btn {
+            width: 50px; height: 48px;
+            background: #4285f4; color: white; border: none; border-radius: 12px;
+            font-size: 24px; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 10px rgba(66, 133, 244, 0.3);
+            cursor: pointer;
+        }
+        #add-btn:active { transform: scale(0.95); }
+
+        /* --- CLASSI DI UTILITÀ PER NASCONDERE CAMPI --- */
+        /* Sovrascriviamo la classe hidden per il layout grid */
+        .hidden { display: none !important; }
+
+        /* --- STILI LISTE E CARD (Invariati ma puliti) --- */
+        .card { background: white; padding: 16px; margin-bottom: 12px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; }
+        .date-badge { background: #e8f0fe; color: #1967d2; padding: 6px 10px; border-radius: 10px; text-align: center; margin-right: 15px; min-width: 48px; display: flex; flex-direction: column; justify-content: center; font-weight: bold; }
+        .date-day { font-size: 1.4rem; line-height: 1; }
+        .date-month { font-size: 0.7rem; text-transform: uppercase; margin-top: 2px; }
+        
+        .cat-dot { height: 12px; width: 12px; border-radius: 50%; display: inline-block; margin-right: 8px; vertical-align: middle; }
+        .assigned-badge { font-size: 0.75rem; background: #eee; color: #555; padding: 3px 8px; border-radius: 6px; margin-left: 8px; display: inline-block; vertical-align: middle; }
+        
+        /* Bottom Nav */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; border-top: 1px solid #eee; display: flex; justify-content: space-around; padding: 12px 0 25px 0; z-index: 200; box-shadow: 0 -2px 10px rgba(0,0,0,0.03); }
+        .nav-item { background: none; border: none; color: #999; display: flex; flex-direction: column; align-items: center; font-size: 0.7rem; }
+        .nav-item.active { color: #4285f4; }
+        .nav-item i { font-size: 26px; margin-bottom: 4px; }
+        
+        /* Pagine Admin/Impostazioni */
+        .settings-view { padding: 20px; }
+        .settings-section { background: white; border-radius: 12px; padding: 15px; margin-bottom: 15px; }
+        .settings-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+        
+        /* Login */
+        #auth-container { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; background: white; }
+        #auth-container input { width: 100%; height: 50px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 10px; padding: 0 15px; font-size: 16px; box-sizing: border-box; }
+        #login-btn { width: 100%; height: 50px; background: #4285f4; color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; }
+
+        /* Filtri Header */
+        #filter-select { border: none; background: #f0f2f5; padding: 8px 12px; border-radius: 8px; font-weight: 600; color: #333; font-size: 0.9rem; }
     </style>
 </head>
 <body>
 
     <div id="auth-container">
-        <h1>🏠 Family Hub</h1>
-        <p style="color:#666; margin-bottom:20px;">Accesso Sicuro</p>
-        <input type="email" id="email-input" placeholder="La tua Email">
+        <h1 style="color:#4285f4; font-size: 2.5rem; margin-bottom: 10px;">Family Hub</h1>
+        <p style="color:#888; margin-bottom: 40px;">Il centro della tua casa.</p>
+        <input type="email" id="email-input" placeholder="Email">
         <input type="password" id="password-input" placeholder="Password">
         <button id="login-btn">Entra</button>
-        <p id="login-status" style="color:#666; font-size:0.8rem; margin-top:10px; min-height:20px;"></p>
+        <p id="login-status" style="margin-top: 20px; color: #666; font-size: 0.9rem;"></p>
     </div>
 
     <div id="app-container" class="hidden">
         <header>
             <div>
-                <h2 id="page-title">Agenda</h2>
-                <span id="family-display" style="font-size:0.7rem; color:gray;">Caricamento...</span>
+                <h2 id="page-title" style="margin:0; font-size: 1.4rem;">Agenda</h2>
+                <span id="family-display" style="font-size:0.75rem; color:#888; font-weight: 500;">Caricamento...</span>
             </div>
-            
             <div class="header-controls">
                 <select id="filter-select" onchange="window.applyFilter()">
-                    <option value="all">Vista: Tutti</option>
+                    <option value="all">Tutti</option>
                 </select>
-                <button onclick="window.nav('settings')" style="width:auto; padding:5px; background:none; border:none; color:#555;">
-                    <i class="material-icons">settings</i>
-                </button>
-                <button onclick="window.logout()" style="width:auto; padding:5px; background:none; border:none; color:#333;">
-                    <i class="material-icons">logout</i>
-                </button>
+                <i class="material-icons" onclick="window.nav('settings')" style="color:#555; cursor:pointer;">settings</i>
+                <i class="material-icons" onclick="window.logout()" style="color:#333; cursor:pointer;">logout</i>
             </div>
         </header>
 
-        <main id="main-content">
-            <div id="add-bar-container" class="add-bar" style="flex-wrap: wrap; gap:5px;">
-                <input type="date" id="date-input" class="hidden" style="width:110px;">
-                <select id="recurrence-select" class="hidden" style="width:90px; font-size:0.8rem;">
+        <main style="padding: 15px; padding-bottom: 100px;">
+            
+            <div id="add-bar-container" class="add-bar">
+                
+                <input type="date" id="date-input" class="hidden">
+                <select id="recurrence-select" class="hidden">
                     <option value="none">1 volta</option>
                     <option value="weekly">Settimana</option>
                     <option value="monthly">Mese</option>
                     <option value="yearly">Anno</option>
                 </select>
-                <select id="category-select" style="width: 90px; display:none;"></select>
-                <select id="assign-who" class="hidden" style="width: 90px; background:#fff3e0;"></select>
-                <input type="text" id="contact-detail-input" class="hidden" placeholder="Tel o Email" style="width: 120px;">
-                <input type="text" id="new-item-input" placeholder="Aggiungi..." style="flex-grow:1; min-width: 140px;">
-                <button id="add-btn" style="width:40px; margin:0;">+</button>
+
+                <select id="category-select" class="hidden"></select>
+                <select id="assign-who" class="hidden"></select>
+
+                <input type="text" id="contact-detail-input" class="hidden" placeholder="Numero o Email">
+
+                <div class="input-text-group">
+                    <input type="text" id="new-item-input" placeholder="Aggiungi...">
+                    <button id="add-btn"><i class="material-icons">add</i></button>
+                </div>
             </div>
 
             <div id="list-container"></div>
 
-            <div id="settings-view" class="hidden" style="padding:10px;">
-                <h3>⚙️ Gestione Famiglia</h3>
+            <div id="settings-view" class="hidden settings-view">
+                <h3 style="margin-top:0;">Gestione Famiglia</h3>
                 
                 <div class="settings-section">
-                    <h4>Sicurezza</h4>
+                    <h4 style="margin:0 0 10px 0;">Sicurezza</h4>
                     <div class="settings-row">
-                        <span>PIN Amministratore</span>
-                        <div style="display:flex; gap:5px;">
-                            <input type="text" id="admin-pin-input" style="width:60px; text-align:center;" maxlength="4">
-                            <button onclick="window.savePin()" style="width:auto;">Salva</button>
+                        <span>PIN Admin</span>
+                        <div style="display:flex; gap:10px;">
+                            <input type="text" id="admin-pin-input" style="width:70px; text-align:center; margin:0;" maxlength="4">
+                            <button onclick="window.savePin()" style="background:#4285f4; color:white; border:none; padding:5px 15px; border-radius:8px;">Salva</button>
                         </div>
                     </div>
                 </div>
 
                 <div class="settings-section">
-                    <h4>Membri Famiglia</h4>
+                    <h4 style="margin:0 0 10px 0;">Membri</h4>
                     <div id="members-list"></div>
-                    <div class="settings-input-group">
-                        <input type="text" id="new-member-name" placeholder="Nome nuovo membro">
-                        <button onclick="window.addMember()" style="width:auto;">Aggiungi</button>
+                    <div style="display:flex; gap:10px; margin-top:10px;">
+                        <input type="text" id="new-member-name" placeholder="Nuovo membro" style="margin:0; flex-grow:1;">
+                        <button onclick="window.addMember()" style="background:#4285f4; color:white; border:none; width:40px; border-radius:8px;">+</button>
                     </div>
                 </div>
 
                 <div class="settings-section">
-                    <h4>Categorie & Colori</h4>
+                    <h4 style="margin:0 0 10px 0;">Categorie</h4>
                     <div id="categories-list"></div>
-                    <div class="settings-input-group">
-                        <input type="text" id="new-cat-name" placeholder="Nuova categoria" style="flex-grow:1;">
-                        <input type="color" id="new-cat-color" class="color-picker" value="#4285f4">
-                        <button onclick="window.addCategory()" style="width:auto;">Crea</button>
+                    <div style="display:flex; gap:10px; margin-top:10px;">
+                        <input type="text" id="new-cat-name" placeholder="Categoria" style="margin:0; flex-grow:1;">
+                        <input type="color" id="new-cat-color" value="#4285f4" style="width:40px; padding:0; height:40px; border:none; border-radius:50%; margin:0;">
+                        <button onclick="window.addCategory()" style="background:#4285f4; color:white; border:none; width:40px; border-radius:8px;">+</button>
                     </div>
                 </div>
             </div>
@@ -131,7 +218,7 @@
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } 
         from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        // --- INCOLLA QUI LA TUA CONFIGURAZIONE FIREBASE ---
+        // --- CONFIGURAZIONE FIREBASE (INCOLLA QUI I TUOI DATI) ---
         const firebaseConfig = {
   apiKey: "AIzaSyCV51Ge3znsE6TPnQrJeEiNasz5YXtFWXk",
   authDomain: "drgfamilyhub.firebaseapp.com",
@@ -150,29 +237,24 @@
         let currentFamily = null;
         let unsubscribe = null; 
         let allDataCache = []; 
-        
-        let familySettings = {
-            pin: "0000", // Default
-            members: ["Mamma", "Papà", "Figli"],
-            categories: [
-                { name: "Casa", color: "#4285f4" },
-                { name: "Lavoro", color: "#ea4335" },
-                { name: "Scuola", color: "#fbbc05" }
-            ]
-        };
+        let familySettings = { pin: "0000", members: ["Mamma", "Papà"], categories: [{name:"Casa", color:"#4285f4"}] };
 
+        // DOM REFERENCES
         const authContainer = document.getElementById('auth-container');
         const appContainer = document.getElementById('app-container');
         const listContainer = document.getElementById('list-container');
         const settingsView = document.getElementById('settings-view');
         const addBarContainer = document.getElementById('add-bar-container');
         const loginStatus = document.getElementById('login-status');
+        
+        // Inputs
         const categorySelect = document.getElementById('category-select');
         const assignWho = document.getElementById('assign-who');
         const filterSelect = document.getElementById('filter-select');
         const dateInput = document.getElementById('date-input');
         const recurrenceSelect = document.getElementById('recurrence-select');
         const contactInput = document.getElementById('contact-detail-input');
+        const newItemInput = document.getElementById('new-item-input');
 
         // LOGIN
         document.getElementById('login-btn').addEventListener('click', () => {
@@ -194,69 +276,45 @@
                         document.getElementById('family-display').innerText = `Famiglia: ${currentFamily}`;
                         await loadSettings();
                         loadData(currentSection);
-                    } else {
-                        alert("Utente non configurato. Contatta l'amministratore."); signOut(auth);
-                    }
+                    } else { alert("Utente non configurato."); signOut(auth); }
                 } catch (error) { loginStatus.innerText = "Errore connessione."; }
-            } else {
-                authContainer.classList.remove('hidden'); appContainer.classList.add('hidden');
-            }
+            } else { authContainer.classList.remove('hidden'); appContainer.classList.add('hidden'); }
         });
 
         window.logout = () => signOut(auth);
 
-        // SETTINGS MANAGERS
+        // SETTINGS
         async function loadSettings() {
             onSnapshot(doc(db, "settings", currentFamily), (docSnap) => {
-                if (docSnap.exists()) {
-                    familySettings = { ...familySettings, ...docSnap.data() }; // Merge con default per sicurezza
-                } else {
-                    setDoc(doc(db, "settings", currentFamily), familySettings);
-                }
-                renderDropdowns(); 
-                renderSettingsView(); 
+                if (docSnap.exists()) familySettings = { ...familySettings, ...docSnap.data() };
+                else setDoc(doc(db, "settings", currentFamily), familySettings);
+                renderDropdowns(); renderSettingsView();
             });
         }
-
-        async function saveSettings() {
-            await setDoc(doc(db, "settings", currentFamily), familySettings);
-        }
-        
-        // NUOVO: Salvataggio PIN
+        async function saveSettings() { await setDoc(doc(db, "settings", currentFamily), familySettings); }
         window.savePin = async () => {
             const newPin = document.getElementById('admin-pin-input').value;
-            if(newPin && newPin.length >= 4) {
-                familySettings.pin = newPin;
-                await saveSettings();
-                alert("PIN aggiornato!");
-            } else {
-                alert("Il PIN deve essere di almeno 4 caratteri.");
-            }
+            if(newPin.length >= 4) { familySettings.pin = newPin; await saveSettings(); alert("PIN Salvato"); }
         };
 
         function renderDropdowns() {
             categorySelect.innerHTML = "";
             familySettings.categories.forEach(cat => categorySelect.innerHTML += `<option value="${cat.name}">${cat.name}</option>`);
-            
-            filterSelect.innerHTML = `<option value="all">Vista: Tutti</option>`;
-            familySettings.categories.forEach(cat => filterSelect.innerHTML += `<option value="${cat.name}">Solo ${cat.name}</option>`);
-            
+            filterSelect.innerHTML = `<option value="all">Tutti</option>`;
+            familySettings.categories.forEach(cat => filterSelect.innerHTML += `<option value="${cat.name}">${cat.name}</option>`);
             assignWho.innerHTML = `<option value="">Per: Tutti</option>`;
             familySettings.members.forEach(mem => assignWho.innerHTML += `<option value="${mem}">${mem}</option>`);
         }
 
+        // NAVIGAZIONE MIGLIORATA
         window.nav = (section) => {
-            // VERIFICA PIN DINAMICA
             if (section === 'settings') {
-                const pin = prompt("Inserisci PIN Amministratore:");
-                if (pin !== familySettings.pin) {
-                    alert("PIN Errato");
-                    return;
-                }
+                const pin = prompt("PIN Amministratore:");
+                if (pin !== familySettings.pin) return alert("PIN Errato");
                 
                 currentSection = 'settings';
                 listContainer.classList.add('hidden');
-                addBarContainer.classList.add('hidden');
+                addBarContainer.classList.add('hidden'); // Nasconde la barra input
                 settingsView.classList.remove('hidden');
                 document.getElementById('page-title').innerText = "Impostazioni";
                 return;
@@ -270,90 +328,81 @@
             document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
             if(event && event.currentTarget) event.currentTarget.classList.add('active'); 
             
+            // RESET VISIBILITÀ CAMPI (Usa la classe hidden)
             dateInput.classList.add('hidden');
             recurrenceSelect.classList.add('hidden');
-            categorySelect.style.display = 'none'; 
+            categorySelect.classList.add('hidden'); 
             assignWho.classList.add('hidden');
             contactInput.classList.add('hidden');
-            document.getElementById('new-item-input').style.display = 'block';
+            newItemInput.placeholder = "Aggiungi...";
             
-            const mainInput = document.getElementById('new-item-input');
-
+            // LOGICA SPECIFICA PER SEZIONE
+            const title = document.getElementById('page-title');
+            
             if(section === 'calendar') {
+                title.innerText = "Agenda";
                 dateInput.classList.remove('hidden');
                 recurrenceSelect.classList.remove('hidden'); 
-                categorySelect.style.display = 'block'; 
+                categorySelect.classList.remove('hidden'); // Usa display grid se togliamo hidden
+                categorySelect.style.display = 'block'; // Forza display
                 assignWho.classList.remove('hidden');
-                document.getElementById('page-title').innerText = "Agenda";
-                mainInput.placeholder = "Evento...";
-            } else if (section === 'todos') {
+                assignWho.style.display = 'block';
+                newItemInput.placeholder = "Evento...";
+            } 
+            else if (section === 'todos') {
+                title.innerText = "Compiti";
+                categorySelect.classList.remove('hidden');
                 categorySelect.style.display = 'block';
                 assignWho.classList.remove('hidden');
-                document.getElementById('page-title').innerText = "Compiti";
-                mainInput.placeholder = "Nuovo compito...";
-            } else if (section === 'contacts') {
-                document.getElementById('page-title').innerText = "Rubrica";
+                assignWho.style.display = 'block';
+                newItemInput.placeholder = "Compito...";
+            } 
+            else if (section === 'contacts') {
+                title.innerText = "Rubrica";
                 contactInput.classList.remove('hidden');
-                mainInput.placeholder = "Nome...";
-            } else {
-                document.getElementById('page-title').innerText = section.toUpperCase();
-                mainInput.placeholder = "Scrivi...";
+                newItemInput.placeholder = "Nome...";
+            } 
+            else if (section === 'shopping') {
+                title.innerText = "Spesa";
+                newItemInput.placeholder = "Cosa manca?";
             }
+            else { title.innerText = "Note"; newItemInput.placeholder = "Scrivi..."; }
+
             loadData(section);
         };
 
+        // RENDER SETTINGS VIEW
         function renderSettingsView() {
-            document.getElementById('admin-pin-input').value = familySettings.pin; // Mostra PIN attuale
-
+            document.getElementById('admin-pin-input').value = familySettings.pin;
             const memList = document.getElementById('members-list');
             memList.innerHTML = "";
-            familySettings.members.forEach((mem, index) => {
-                memList.innerHTML += `<div class="settings-row"><span>${mem}</span><button class="btn-delete" onclick="window.removeMember(${index})"><i class="material-icons">delete</i></button></div>`;
+            familySettings.members.forEach((mem, i) => {
+                memList.innerHTML += `<div class="settings-row"><span>${mem}</span><i class="material-icons" style="color:red; cursor:pointer;" onclick="window.removeMember(${i})">delete</i></div>`;
             });
-
             const catList = document.getElementById('categories-list');
             catList.innerHTML = "";
-            familySettings.categories.forEach((cat, index) => {
-                catList.innerHTML += `
-                    <div class="settings-row">
-                        <div style="display:flex; align-items:center;">
-                            <span style="display:inline-block; width:20px; height:20px; background:${cat.color}; border-radius:50%; margin-right:10px;"></span>
-                            <span>${cat.name}</span>
-                        </div>
-                        <button class="btn-delete" onclick="window.removeCategory(${index})"><i class="material-icons">delete</i></button>
-                    </div>`;
+            familySettings.categories.forEach((cat, i) => {
+                catList.innerHTML += `<div class="settings-row"><div style="display:flex;align-items:center"><span style="width:20px;height:20px;background:${cat.color};border-radius:50%;margin-right:10px;"></span>${cat.name}</div><i class="material-icons" style="color:red; cursor:pointer;" onclick="window.removeCategory(${i})">delete</i></div>`;
             });
         }
 
-        window.addMember = async () => {
-            const name = document.getElementById('new-member-name').value;
-            if(name) { familySettings.members.push(name); await saveSettings(); document.getElementById('new-member-name').value = ""; }
-        };
-        window.removeMember = async (index) => {
-            if(confirm("Rimuovere membro?")) { familySettings.members.splice(index, 1); await saveSettings(); }
-        };
-        window.addCategory = async () => {
-            const name = document.getElementById('new-cat-name').value;
-            const color = document.getElementById('new-cat-color').value;
-            if(name) { familySettings.categories.push({ name, color }); await saveSettings(); document.getElementById('new-cat-name').value = ""; }
-        };
-        window.removeCategory = async (index) => {
-            if(confirm("Rimuovere categoria?")) { familySettings.categories.splice(index, 1); await saveSettings(); }
-        };
+        window.addMember = async () => { const n = document.getElementById('new-member-name').value; if(n){familySettings.members.push(n); await saveSettings(); document.getElementById('new-member-name').value="";}};
+        window.removeMember = async (i) => { if(confirm("Eliminare?")){familySettings.members.splice(i,1); await saveSettings();}};
+        window.addCategory = async () => { const n = document.getElementById('new-cat-name').value; const c=document.getElementById('new-cat-color').value; if(n){familySettings.categories.push({name:n, color:c}); await saveSettings(); document.getElementById('new-cat-name').value="";}};
+        window.removeCategory = async (i) => { if(confirm("Eliminare?")){familySettings.categories.splice(i,1); await saveSettings();}};
 
+        // DATA LOADING
         function loadData(section) {
-            listContainer.innerHTML = '<div style="text-align:center; padding:20px; color:#aaa;">Caricamento...</div>';
+            listContainer.innerHTML = '<div style="text-align:center; padding:30px; color:#ccc;">Caricamento...</div>';
             if (unsubscribe) unsubscribe();
             if (!currentFamily) return;
-
-            const colName = `${currentFamily}_${section}`;
+            const col = `${currentFamily}_${section}`;
             const sortField = section === 'calendar' ? 'date' : 'timestamp';
             const sortDir = section === 'calendar' ? 'asc' : 'desc';
             
-            unsubscribe = onSnapshot(query(collection(db, colName), orderBy(sortField, sortDir)), (snapshot) => {
-                allDataCache = []; 
-                snapshot.forEach(doc => allDataCache.push({ id: doc.id, ...doc.data() }));
-                renderList(); 
+            unsubscribe = onSnapshot(query(collection(db, col), orderBy(sortField, sortDir)), (snap) => {
+                allDataCache = []; snap.forEach(d => allDataCache.push({id:d.id, ...d.data()}));
+                renderList();
             });
         }
 
@@ -361,107 +410,79 @@
 
         function renderList() {
             listContainer.innerHTML = "";
-            const filterVal = filterSelect.value;
-            const filteredData = allDataCache.filter(item => filterVal === 'all' || item.category === filterVal);
-
-            filteredData.forEach(item => renderCard(item.id, item, currentSection));
-            if(filteredData.length === 0) listContainer.innerHTML = "<p style='text-align:center;color:#ccc;margin-top:20px'>Vuoto.</p>";
-        }
-
-        function renderCard(id, data, type) {
-            const div = document.createElement('div');
-            div.className = 'card';
+            const filter = filterSelect.value;
+            const filtered = allDataCache.filter(i => filter === 'all' || i.category === filter);
             
-            const catObj = familySettings.categories.find(c => c.name === data.category);
-            const color = catObj ? catObj.color : '#ccc';
-            const catDot = `<span class="cat-dot" style="background-color:${color}"></span>`;
-            let assignedHtml = data.assigned ? `<span class="assigned-badge">Per: ${data.assigned}</span>` : "";
-            
-            let html = '';
-            let actions = '';
+            if(filtered.length === 0) listContainer.innerHTML = "<div style='text-align:center;color:#ccc;margin-top:40px'>Nessun elemento.</div>";
 
-            if (type === 'calendar' || type === 'todos') {
-                const dateForExport = data.date || new Date().toISOString().split('T')[0];
-                actions = `
-                    <button class="export-btn btn-google" onclick="window.exportGoogle('${data.text}', '${dateForExport}')"><i class="material-icons" style="font-size:18px">edit_calendar</i></button>
-                    <button class="export-btn btn-apple" onclick="window.exportIcs('${data.text}', '${dateForExport}')"><i class="material-icons" style="font-size:18px">file_download</i></button>
-                `;
-            }
-
-            if (type === 'calendar') {
-                const d = new Date(data.date);
-                html = `
-                    <div class="date-badge">
-                        <span class="date-day">${d.getDate()}</span>
-                        <span class="date-month">${d.toLocaleString('it-IT', { month: 'short' })}</span>
-                    </div>
-                    <div style="flex-grow:1;">
-                        <div style="font-size:1.05rem; font-weight:600; color:#333;">${catDot} ${data.text}</div>
-                        <span style="font-size:0.75rem; color:#666;">
-                            ${['Dom','Lun','Mar','Mer','Gio','Ven','Sab'][d.getDay()]} • ${data.category || 'Generale'} 
-                            ${assignedHtml}
-                        </span>
-                    </div>`;
-            } else if (type === 'contacts') {
-                 html = `<div class="contact-row" style="flex-grow:1;"><span style="font-weight:bold; font-size:1.1rem;">${data.text}</span><div class="contact-links"><a href="tel:${data.detail}" class="contact-link"><i class="material-icons" style="font-size:14px">call</i> ${data.detail}</a></div></div>`;
-            } else { 
-                const strike = data.done ? 'text-decoration:line-through;opacity:0.6;' : '';
-                html = `<div style="flex-grow:1;">${type==='todos'?catDot:''} <span onclick="window.toggle('${id}', '${type}', ${!data.done})" style="cursor:pointer;${strike}">${data.text}</span>${assignedHtml}</div>`;
-            }
-
-            div.innerHTML = `${html} <div class="actions-container">${actions} <button class="export-btn btn-delete" onclick="window.del('${id}', '${type}')"><i class="material-icons">delete</i></button></div>`;
-            listContainer.appendChild(div);
-        }
-
-        document.getElementById('add-btn').addEventListener('click', async () => {
-            const text = document.getElementById('new-item-input').value;
-            if (!text) return;
-            const cat = categorySelect.value; 
-            const recurrence = recurrenceSelect.value;
-            const assignedPerson = assignWho.value; 
-            let dateVal = dateInput.value;
-
-            let loops = 1;
-            if (currentSection === 'calendar' && recurrence !== 'none') {
-                if (recurrence === 'weekly') loops = 4;
-                if (recurrence === 'monthly') loops = 6;
-                if (recurrence === 'yearly') loops = 5;
-            }
-
-            for (let i = 0; i < loops; i++) {
-                const newItem = {
-                    text: text,
-                    timestamp: serverTimestamp(),
-                    done: false,
-                    category: cat,
-                    assigned: assignedPerson 
-                };
+            filtered.forEach(data => {
+                const div = document.createElement('div'); div.className = 'card';
+                const catObj = familySettings.categories.find(c => c.name === data.category);
+                const color = catObj ? catObj.color : '#ccc';
+                const assigned = data.assigned ? `<span class="assigned-badge">${data.assigned}</span>` : "";
+                
+                let html = "", actions = "";
+                
+                // Pulsanti Export
+                if(currentSection === 'calendar' || currentSection === 'todos') {
+                   const dStr = data.date || new Date().toISOString().split('T')[0];
+                   actions = `<i class="material-icons" style="color:#ccc; margin-left:10px; cursor:pointer;" onclick="window.exportGoogle('${data.text}','${dStr}')">event</i>`;
+                }
 
                 if (currentSection === 'calendar') {
-                    if(!dateVal) { alert("Data?"); return; }
-                    if (i > 0) {
-                        const d = new Date(dateVal);
-                        if (recurrence === 'weekly') d.setDate(d.getDate() + (7 * i));
-                        if (recurrence === 'monthly') d.setMonth(d.getMonth() + i);
-                        if (recurrence === 'yearly') d.setFullYear(d.getFullYear() + i);
-                        newItem.date = d.toISOString().split('T')[0];
-                    } else { newItem.date = dateVal; }
+                    const d = new Date(data.date);
+                    html = `<div class="date-badge"><span class="date-day">${d.getDate()}</span><span class="date-month">${d.toLocaleString('it-IT',{month:'short'})}</span></div>
+                            <div style="flex-grow:1"><div style="font-weight:600; font-size:1.1rem; margin-bottom:4px;">${data.text}</div>
+                            <div style="font-size:0.8rem; color:#666;"><span class="cat-dot" style="background:${color}"></span>${data.category||'Generale'} ${assigned}</div></div>`;
+                } else if (currentSection === 'contacts') {
+                    html = `<div style="flex-grow:1"><div style="font-weight:600; font-size:1.1rem;">${data.text}</div><a href="tel:${data.detail}" style="color:#4285f4; text-decoration:none; display:flex; align-items:center; margin-top:5px;"><i class="material-icons" style="font-size:16px; margin-right:5px;">call</i>${data.detail}</a></div>`;
+                } else {
+                    const strike = data.done ? 'text-decoration:line-through; color:#ccc;' : '';
+                    const checkColor = data.done ? '#4285f4' : '#ccc';
+                    html = `<i class="material-icons" style="color:${checkColor}; margin-right:15px; cursor:pointer;" onclick="window.toggle('${data.id}',${!data.done})">${data.done ? 'check_circle' : 'radio_button_unchecked'}</i>
+                            <div style="flex-grow:1; ${strike}"><span class="cat-dot" style="background:${color}"></span>${data.text} ${assigned}</div>`;
                 }
-                if (currentSection === 'contacts') newItem.detail = contactInput.value || "No info";
 
-                await addDoc(collection(db, `${currentFamily}_${currentSection}`), newItem);
-                if (currentSection !== 'calendar') break; 
+                div.innerHTML = `${html} <div style="display:flex; align-items:center;">${actions}<i class="material-icons" style="color:#ff5252; margin-left:15px; cursor:pointer;" onclick="window.del('${data.id}')">delete</i></div>`;
+                listContainer.appendChild(div);
+            });
+        }
+
+        // AZIONI DB
+        document.getElementById('add-btn').addEventListener('click', async () => {
+            const txt = newItemInput.value; if(!txt) return;
+            const cat = categorySelect.value;
+            const rec = recurrenceSelect.value;
+            const who = assignWho.value;
+            let dVal = dateInput.value;
+            
+            let loops = 1;
+            if(currentSection === 'calendar' && rec !== 'none') loops = (rec==='weekly'?4 : (rec==='monthly'?6:5));
+
+            for(let i=0; i<loops; i++) {
+                const item = { text: txt, timestamp: serverTimestamp(), done: false, category: cat, assigned: who };
+                if(currentSection === 'calendar') {
+                    if(!dVal) return alert("Inserisci Data");
+                    if(i>0) {
+                        const d = new Date(dVal);
+                        if(rec==='weekly') d.setDate(d.getDate()+(7*i));
+                        if(rec==='monthly') d.setMonth(d.getMonth()+i);
+                        if(rec==='yearly') d.setFullYear(d.getFullYear()+i);
+                        item.date = d.toISOString().split('T')[0];
+                    } else item.date = dVal;
+                }
+                if(currentSection === 'contacts') item.detail = contactInput.value || "";
+                await addDoc(collection(db, `${currentFamily}_${currentSection}`), item);
+                if(currentSection !== 'calendar') break;
             }
-            document.getElementById('new-item-input').value = "";
-            contactInput.value = "";
-            recurrenceSelect.value = "none";
-            assignWho.value = "";
+            newItemInput.value=""; contactInput.value=""; recurrenceSelect.value="none";
         });
 
-        window.del = async (id, sec) => { if(confirm("Eliminare?")) await deleteDoc(doc(db, `${currentFamily}_${sec}`, id)); };
-        window.toggle = async (id, sec, st) => { if(sec !== 'calendar' && sec !== 'contacts') await updateDoc(doc(db, `${currentFamily}_${sec}`, id), { done: st }); };
-        window.exportGoogle = (text, dateStr) => { const d = dateStr.replace(/-/g, ''); window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(text)}&dates=${d}/${d}`, '_blank'); };
-        window.exportIcs = (text, dateStr) => { const d = dateStr.replace(/-/g, ''); const ics = `BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nDTSTART;VALUE=DATE:${d}\nDTEND;VALUE=DATE:${d}\nSUMMARY:${text}\nEND:VEVENT\nEND:VCALENDAR`; const b = new Blob([ics], { type: 'text/calendar' }); const a = document.createElement('a'); a.href = window.URL.createObjectURL(b); a.download = `${text}.ics`; a.click(); };
+        window.del = async (id) => { if(confirm("Eliminare?")) await deleteDoc(doc(db, `${currentFamily}_${currentSection}`, id)); };
+        window.toggle = async (id, st) => { if(currentSection!=='calendar' && currentSection!=='contacts') await updateDoc(doc(db, `${currentFamily}_${currentSection}`, id), {done:st}); };
+        
+        window.exportGoogle = (t,d) => { const x=d.replace(/-/g,''); window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(t)}&dates=${x}/${x}`,'_blank');};
+
     </script>
 </body>
 </html>
