@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+        <!DOCTYPE html>
 <html lang="it">
 <head>
     <meta charset="UTF-8">
@@ -18,77 +18,66 @@
         }
         .header-controls { display: flex; align-items: center; gap: 15px; }
         
-        /* --- BARRA INSERIMENTO (MOBILE OPTIMIZED) --- */
+        /* --- BARRA INSERIMENTO (Standard) --- */
         .add-bar {
-            background: white;
-            padding: 15px;
-            margin: 15px;
-            border-radius: 16px;
+            background: white; padding: 15px; margin: 15px; border-radius: 16px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            display: grid;
-            grid-template-columns: 1fr 1fr; 
-            gap: 12px; 
-            align-items: start;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: start;
         }
 
-        .add-bar select, 
-        .add-bar input,
-        #add-btn {
-            height: 48px !important; 
-            width: 100%;
-            border: 1px solid #e0e0e0;
-            border-radius: 12px;
-            background-color: #fff;
-            font-size: 16px; 
-            padding: 0 12px;
-            color: #333;
-            margin: 0;
-            appearance: none; 
-            -webkit-appearance: none;
-            outline: none;
+        /* --- EDITOR NOTE --- */
+        .note-editor {
+            background: #fff9c4; padding: 15px; margin: 15px; border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            display: flex; flex-direction: column; gap: 10px; border: 1px solid #fbc02d;
+        }
+
+        /* Stili Input Comuni */
+        .add-bar select, .add-bar input, #add-btn,
+        .note-editor input, .note-editor button {
+            height: 48px !important; width: 100%;
+            border: 1px solid #e0e0e0; border-radius: 12px;
+            background-color: #fff; font-size: 16px; padding: 0 12px;
+            color: #333; margin: 0; appearance: none; -webkit-appearance: none; outline: none;
+        }
+        
+        /* Textarea note */
+        .note-editor textarea {
+            width: 100%; height: 150px; 
+            border: 1px solid #e0e0e0; border-radius: 12px;
+            background-color: #fff; font-size: 16px; padding: 12px;
+            color: #333; font-family: inherit; resize: none; outline: none;
         }
 
         .add-bar select {
             background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-            background-repeat: no-repeat;
-            background-position: right 12px top 50%;
-            background-size: 10px auto;
+            background-repeat: no-repeat; background-position: right 12px top 50%; background-size: 10px auto;
         }
 
         #assign-who { background-color: #fff8e1; border-color: #ffecb3; color: #ff6f00; font-weight: 600; }
         
-        .input-text-group {
-            grid-column: 1 / -1; 
-            display: flex; 
-            gap: 10px;
-            align-items: stretch; 
-        }
-
-        #new-item-input {
-            flex-grow: 1; 
-            border: 2px solid #4285f4; 
-            background-image: none; 
-        }
-        
+        .input-text-group { grid-column: 1 / -1; display: flex; gap: 10px; align-items: stretch; }
+        #new-item-input { flex-grow: 1; border: 2px solid #4285f4; background-image: none; }
         #contact-detail-input { grid-column: 1 / -1; }
 
-        #add-btn {
-            width: 50px !important; 
-            padding: 0; 
-            background: #4285f4; 
-            color: white; 
-            border: none;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(66, 133, 244, 0.3);
-        }
+        #add-btn { width: 50px !important; padding: 0; background: #4285f4; color: white; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(66, 133, 244, 0.3); }
         #add-btn:active { transform: scale(0.95); }
+
+        #save-note-btn { background: #fbc02d; color: #333; font-weight: bold; border: none; box-shadow: 0 4px 10px rgba(251, 192, 45, 0.3); cursor: pointer; }
 
         .hidden { display: none !important; }
 
-        #list-container { padding: 0 15px 100px 15px; } 
+        #list-container { padding: 0 15px 120px 15px; } 
+        
+        /* CARD STYLES */
         .card { background: white; padding: 16px; margin-bottom: 12px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; }
         
+        /* Note Card */
+        .note-card { flex-direction: column; align-items: flex-start; gap: 10px; border-left: 5px solid #fbc02d; }
+        .note-title { font-weight: 800; font-size: 1.1rem; color: #333; width: 100%; }
+        .note-body { white-space: pre-wrap; color: #555; font-size: 0.95rem; line-height: 1.4; width: 100%; }
+        .note-footer { width: 100%; display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; border-top: 1px solid #eee; padding-top: 10px; }
+
         .date-badge { background: #e8f0fe; color: #1967d2; padding: 6px 10px; border-radius: 10px; text-align: center; margin-right: 15px; min-width: 50px; display: flex; flex-direction: column; justify-content: center; font-weight: bold; }
         .date-day { font-size: 1.4rem; line-height: 1; }
         .date-month { font-size: 0.7rem; text-transform: uppercase; margin-top: 2px; }
@@ -101,10 +90,12 @@
         .nav-item.active { color: #4285f4; }
         .nav-item i { font-size: 26px; margin-bottom: 4px; }
         
+        /* SETTINGS */
         .settings-view { padding: 20px; padding-bottom: 100px; }
         .settings-section { background: white; border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         .settings-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
         
+        /* LOGIN */
         #auth-container { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; background: white; }
         #auth-container input { width: 100%; height: 50px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 10px; padding: 0 15px; font-size: 16px; }
         #login-btn { width: 100%; height: 50px; background: #4285f4; color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; }
@@ -139,7 +130,6 @@
 
         <main>
             <div id="add-bar-container" class="add-bar">
-                
                 <input type="date" id="date-input" class="hidden">
                 <select id="recurrence-select" class="hidden">
                     <option value="none">1 volta</option>
@@ -150,7 +140,6 @@
 
                 <select id="category-select" class="hidden"></select>
                 <select id="assign-who" class="hidden"></select>
-
                 <input type="text" id="contact-detail-input" class="hidden" placeholder="Numero o Email">
 
                 <div class="input-text-group">
@@ -159,15 +148,34 @@
                 </div>
             </div>
 
+            <div id="note-editor-container" class="note-editor hidden">
+                <h4 style="margin:0; color:#f9a825;">Nuova Nota</h4>
+                <input type="text" id="note-title-input" placeholder="Titolo della nota (es. Regali Natale)">
+                <textarea id="note-content-input" placeholder="Scrivi qui il contenuto... (puoi andare a capo)"></textarea>
+                <button id="save-note-btn">SALVA NOTA</button>
+                <input type="hidden" id="editing-note-id">
+            </div>
+
             <div id="list-container"></div>
 
             <div id="settings-view" class="hidden settings-view">
                 <h3 style="margin-top:0;">Gestione Famiglia</h3>
                 
+                <div class="settings-section" style="border:1px solid #4285f4;">
+                    <h4 style="margin:0 0 10px 0; color:#4285f4;">Il Tuo Account</h4>
+                    <div class="settings-row" style="display:block;">
+                        <span style="display:block; margin-bottom:5px; font-size:0.9rem;">Cambia la tua Password</span>
+                        <div style="display:flex; gap:10px;">
+                            <input type="password" id="new-password-input" placeholder="Nuova Password" style="margin:0; flex-grow:1;">
+                            <button onclick="window.changeUserPassword()" style="background:#4285f4; color:white; border:none; width:auto; padding:0 15px; border-radius:8px;">Aggiorna</button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="settings-section">
-                    <h4 style="margin:0 0 10px 0;">Sicurezza</h4>
+                    <h4 style="margin:0 0 10px 0;">Sicurezza Famiglia</h4>
                     <div class="settings-row">
-                        <span>PIN Admin</span>
+                        <span>PIN Admin (Settings)</span>
                         <div style="display:flex; gap:10px;">
                             <input type="text" id="admin-pin-input" style="width:70px; text-align:center; margin:0;" maxlength="4">
                             <button onclick="window.savePin()" style="background:#4285f4; color:white; border:none; padding:5px 15px; border-radius:8px;">Salva</button>
@@ -207,13 +215,13 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        // NOTA: Ho aggiunto 'where' agli import qui sotto
         import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy, serverTimestamp, getDoc, setDoc, where } 
         from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } 
+        // IMPORTANTE: Aggiunto updatePassword
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, updatePassword } 
         from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        // --- INCOLLA QUI LA TUA CONFIGURAZIONE FIREBASE ---
+        // CONFIGURAZIONE FIREBASE
         const firebaseConfig = {
   apiKey: "AIzaSyCV51Ge3znsE6TPnQrJeEiNasz5YXtFWXk",
   authDomain: "drgfamilyhub.firebaseapp.com",
@@ -222,7 +230,6 @@
   messagingSenderId: "709925755710",
   appId: "1:709925755710:web:6ebb2967fbc107447f6a6f"
 };
-        // ---------------------------------------------
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
@@ -234,11 +241,14 @@
         let allDataCache = []; 
         let familySettings = { pin: "0000", members: ["Mamma", "Papà"], categories: [{name:"Casa", color:"#4285f4"}] };
 
+        // DOM
         const authContainer = document.getElementById('auth-container');
         const appContainer = document.getElementById('app-container');
         const listContainer = document.getElementById('list-container');
         const settingsView = document.getElementById('settings-view');
+        
         const addBarContainer = document.getElementById('add-bar-container');
+        const noteEditorContainer = document.getElementById('note-editor-container');
         const loginStatus = document.getElementById('login-status');
         
         const categorySelect = document.getElementById('category-select');
@@ -248,6 +258,10 @@
         const recurrenceSelect = document.getElementById('recurrence-select');
         const contactInput = document.getElementById('contact-detail-input');
         const newItemInput = document.getElementById('new-item-input');
+        
+        const noteTitleInput = document.getElementById('note-title-input');
+        const noteContentInput = document.getElementById('note-content-input');
+        const editingNoteId = document.getElementById('editing-note-id');
 
         document.getElementById('login-btn').addEventListener('click', () => {
             const email = document.getElementById('email-input').value;
@@ -288,6 +302,23 @@
             if(newPin.length >= 4) { familySettings.pin = newPin; await saveSettings(); alert("PIN Salvato"); }
         };
 
+        // --- NUOVO: CAMBIO PASSWORD ---
+        window.changeUserPassword = async () => {
+            const newPass = document.getElementById('new-password-input').value;
+            if(newPass.length < 6) return alert("La password deve avere almeno 6 caratteri!");
+            
+            const user = auth.currentUser;
+            if(user) {
+                try {
+                    await updatePassword(user, newPass);
+                    alert("Password aggiornata con successo! Usala al prossimo login.");
+                    document.getElementById('new-password-input').value = "";
+                } catch (error) {
+                    alert("Errore: " + error.message + "\n(Se l'accesso è vecchio, prova a fare logout e login prima di cambiare password)");
+                }
+            }
+        };
+
         function renderDropdowns() {
             categorySelect.innerHTML = "";
             familySettings.categories.forEach(cat => categorySelect.innerHTML += `<option value="${cat.name}">${cat.name}</option>`);
@@ -301,10 +332,10 @@
             if (section === 'settings') {
                 const pin = prompt("PIN Amministratore:");
                 if (pin !== familySettings.pin) return alert("PIN Errato");
-                
                 currentSection = 'settings';
                 listContainer.classList.add('hidden');
                 addBarContainer.classList.add('hidden'); 
+                noteEditorContainer.classList.add('hidden');
                 settingsView.classList.remove('hidden');
                 document.getElementById('page-title').innerText = "Impostazioni";
                 return;
@@ -312,12 +343,12 @@
 
             currentSection = section;
             listContainer.classList.remove('hidden');
-            addBarContainer.classList.remove('hidden');
             settingsView.classList.add('hidden');
 
             document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
             if(event && event.currentTarget) event.currentTarget.classList.add('active'); 
             
+            // RESET
             dateInput.classList.add('hidden');
             recurrenceSelect.classList.add('hidden');
             categorySelect.classList.add('hidden'); 
@@ -327,31 +358,37 @@
             
             const title = document.getElementById('page-title');
             
-            if(section === 'calendar') {
-                title.innerText = "Agenda";
-                dateInput.classList.remove('hidden');
-                recurrenceSelect.classList.remove('hidden'); 
-                categorySelect.classList.remove('hidden'); categorySelect.style.display = 'block';
-                assignWho.classList.remove('hidden'); assignWho.style.display = 'block';
-                newItemInput.placeholder = "Evento...";
-            } 
-            else if (section === 'todos') {
-                title.innerText = "Compiti";
-                categorySelect.classList.remove('hidden'); categorySelect.style.display = 'block';
-                assignWho.classList.remove('hidden'); assignWho.style.display = 'block';
-                newItemInput.placeholder = "Compito...";
-            } 
-            else if (section === 'contacts') {
-                title.innerText = "Rubrica";
-                contactInput.classList.remove('hidden');
-                newItemInput.placeholder = "Nome...";
-            } 
-            else if (section === 'shopping') {
-                title.innerText = "Spesa";
-                newItemInput.placeholder = "Cosa manca?";
+            if (section === 'notes') {
+                addBarContainer.classList.add('hidden'); 
+                noteEditorContainer.classList.remove('hidden'); 
+                title.innerText = "Note";
+                noteTitleInput.value = ""; noteContentInput.value = ""; editingNoteId.value = "";
+                document.getElementById('save-note-btn').innerText = "SALVA NOTA";
+            } else {
+                addBarContainer.classList.remove('hidden'); 
+                noteEditorContainer.classList.add('hidden'); 
+                
+                if(section === 'calendar') {
+                    title.innerText = "Agenda";
+                    dateInput.classList.remove('hidden');
+                    recurrenceSelect.classList.remove('hidden'); 
+                    categorySelect.classList.remove('hidden'); categorySelect.style.display = 'block';
+                    assignWho.classList.remove('hidden'); assignWho.style.display = 'block';
+                    newItemInput.placeholder = "Evento...";
+                } 
+                else if (section === 'todos') {
+                    title.innerText = "Compiti";
+                    categorySelect.classList.remove('hidden'); categorySelect.style.display = 'block';
+                    assignWho.classList.remove('hidden'); assignWho.style.display = 'block';
+                    newItemInput.placeholder = "Compito...";
+                } 
+                else if (section === 'contacts') {
+                    title.innerText = "Rubrica";
+                    contactInput.classList.remove('hidden');
+                    newItemInput.placeholder = "Nome...";
+                } 
+                else { title.innerText = "Spesa"; newItemInput.placeholder = "Cosa manca?"; }
             }
-            else { title.innerText = "Note"; newItemInput.placeholder = "Scrivi..."; }
-
             loadData(section);
         };
 
@@ -374,24 +411,18 @@
         window.addCategory = async () => { const n = document.getElementById('new-cat-name').value; const c=document.getElementById('new-cat-color').value; if(n){familySettings.categories.push({name:n, color:c}); await saveSettings(); document.getElementById('new-cat-name').value="";}};
         window.removeCategory = async (i) => { if(confirm("Eliminare?")){familySettings.categories.splice(i,1); await saveSettings();}};
 
-        // --- CARICAMENTO DATI CON FILTRO DATA ---
         function loadData(section) {
             listContainer.innerHTML = '<div style="text-align:center; padding:30px; color:#ccc;">Caricamento...</div>';
             if (unsubscribe) unsubscribe();
             if (!currentFamily) return;
             const col = `${currentFamily}_${section}`;
             
-            // Logica Filtro
             let q;
             if (section === 'calendar') {
-                // Calcola oggi in formato YYYY-MM-DD locale
                 const d = new Date();
                 const today = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,'0') + "-" + String(d.getDate()).padStart(2,'0');
-                
-                // Query: Dammi solo date >= oggi, ordinate per data crescente
                 q = query(collection(db, col), where("date", ">=", today), orderBy("date", "asc"));
             } else {
-                // Per le altre sezioni (spesa, note) ordina per inserimento decrescente
                 q = query(collection(db, col), orderBy("timestamp", "desc"));
             }
             
@@ -411,13 +442,21 @@
             if(filtered.length === 0) listContainer.innerHTML = "<div style='text-align:center;color:#ccc;margin-top:40px'>Nessun elemento.</div>";
 
             filtered.forEach(data => {
-                const div = document.createElement('div'); div.className = 'card';
+                const div = document.createElement('div'); 
+                if (currentSection === 'notes') {
+                    div.className = 'card note-card';
+                    const title = data.title || "Senza titolo";
+                    div.innerHTML = `<div class="note-title">${title}</div><div class="note-body">${data.text}</div><div class="note-footer"><i class="material-icons" style="color:#fbc02d; cursor:pointer;" onclick="window.editNote('${data.id}')">edit</i><i class="material-icons" style="color:#ff5252; cursor:pointer;" onclick="window.del('${data.id}')">delete</i></div>`;
+                    listContainer.appendChild(div);
+                    return;
+                }
+
+                div.className = 'card';
                 const catObj = familySettings.categories.find(c => c.name === data.category);
                 const color = catObj ? catObj.color : '#ccc';
                 const assigned = data.assigned ? `<span class="assigned-badge">${data.assigned}</span>` : "";
                 
                 let html = "", actions = "";
-                
                 if(currentSection === 'calendar' || currentSection === 'todos') {
                    const dStr = data.date || new Date().toISOString().split('T')[0];
                    actions = `<i class="material-icons" style="color:#ccc; margin-left:10px; cursor:pointer;" onclick="window.exportGoogle('${data.text}','${dStr}')">event</i>`;
@@ -471,8 +510,27 @@
             newItemInput.value=""; contactInput.value=""; recurrenceSelect.value="none";
         });
 
+        document.getElementById('save-note-btn').addEventListener('click', async () => {
+            const title = noteTitleInput.value; const content = noteContentInput.value; const editId = editingNoteId.value;
+            if(!content) return alert("Scrivi qualcosa!");
+            if (editId) {
+                await updateDoc(doc(db, `${currentFamily}_notes`, editId), { title: title, text: content, timestamp: serverTimestamp() });
+                editingNoteId.value = ""; document.getElementById('save-note-btn').innerText = "SALVA NOTA";
+            } else { await addDoc(collection(db, `${currentFamily}_notes`), { title: title, text: content, timestamp: serverTimestamp() }); }
+            noteTitleInput.value = ""; noteContentInput.value = "";
+        });
+
         window.del = async (id) => { if(confirm("Eliminare?")) await deleteDoc(doc(db, `${currentFamily}_${currentSection}`, id)); };
-        window.toggle = async (id, st) => { if(currentSection!=='calendar' && currentSection!=='contacts') await updateDoc(doc(db, `${currentFamily}_${currentSection}`, id), {done:st}); };
+        window.toggle = async (id, st) => { if(currentSection!=='calendar' && currentSection!=='contacts' && currentSection!=='notes') await updateDoc(doc(db, `${currentFamily}_${currentSection}`, id), {done:st}); };
+        
+        window.editNote = (id) => {
+            const note = allDataCache.find(n => n.id === id);
+            if (note) {
+                noteTitleInput.value = note.title || ""; noteContentInput.value = note.text || ""; editingNoteId.value = id;
+                document.getElementById('save-note-btn').innerText = "AGGIORNA NOTA"; window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        };
+
         window.exportGoogle = (t,d) => { const x=d.replace(/-/g,''); window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(t)}&dates=${x}/${x}`,'_blank');};
 
     </script>
