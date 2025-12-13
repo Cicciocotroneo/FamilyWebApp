@@ -1,20 +1,18 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
- <meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Family Hub</title>
     
     <link rel="manifest" href="manifest.json">
-    
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Family Hub">
-    
     <link rel="apple-touch-icon" href="icon.png">
     
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    
     <style>
         /* --- RESET E BASI --- */
         body { background-color: #f4f6f8; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
@@ -27,14 +25,13 @@
         }
         .header-controls { display: flex; align-items: center; gap: 15px; }
         
-        /* --- BARRA INSERIMENTO (MOBILE PERFECT) --- */
+        /* --- BARRA INSERIMENTO --- */
         .add-bar {
             background: white; padding: 15px; margin: 15px; border-radius: 16px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.05);
             display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: start;
         }
 
-        /* Stili Unificati per Input/Select/Button */
         .add-bar select, .add-bar input, #add-btn,
         .note-editor input, .note-editor button, .admin-panel input, .admin-panel button {
             height: 48px !important; width: 100%;
@@ -43,19 +40,24 @@
             color: #333; margin: 0; appearance: none; -webkit-appearance: none; outline: none;
         }
 
+        /* RICORRENZA AVANZATA */
+        #recurrence-wrapper {
+            grid-column: 1 / -1; 
+            background: #f8fbff; border: 1px solid #e8f0fe; border-radius: 12px; padding: 8px;
+            display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+        }
+        .rec-input-small { flex: 1; min-width: 60px; text-align: center; }
+        .rec-label { font-size: 0.8rem; color: #666; white-space: nowrap; }
+
         /* Icona per le select */
         .add-bar select {
             background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
             background-repeat: no-repeat; background-position: right 12px top 50%; background-size: 10px auto;
         }
 
-        /* Colori Assegnazione */
         #assign-who { background-color: #fff8e1; border-color: #ffecb3; color: #ff6f00; font-weight: 600; }
         
-        /* GRUPPO TESTO + BOTTONE (FIX ALLINEAMENTO) */
-        .input-text-group { 
-            grid-column: 1 / -1; display: flex; gap: 10px; align-items: stretch; /* Altezza uguale forzata */
-        }
+        .input-text-group { grid-column: 1 / -1; display: flex; gap: 10px; align-items: stretch; }
         #new-item-input { flex-grow: 1; border: 2px solid #4285f4; background-image: none; }
         #contact-detail-input { grid-column: 1 / -1; }
 
@@ -66,7 +68,7 @@
         }
         #add-btn:active { transform: scale(0.95); }
 
-        /* --- EDITOR NOTE --- */
+        /* EDITOR NOTE */
         .note-editor {
             background: #fff9c4; padding: 15px; margin: 15px; border-radius: 16px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
@@ -84,8 +86,6 @@
         /* LISTE */
         #list-container { padding: 0 15px 120px 15px; } 
         .card { background: white; padding: 16px; margin-bottom: 12px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; scroll-margin-top: 140px; }
-        
-        /* NOTE CARD */
         .note-card { flex-direction: column; align-items: flex-start; gap: 10px; border-left: 5px solid #fbc02d; }
         .note-title { font-weight: 800; font-size: 1.1rem; color: #333; width: 100%; }
         .note-body { white-space: pre-wrap; color: #555; font-size: 0.95rem; line-height: 1.4; width: 100%; }
@@ -95,7 +95,7 @@
         .date-badge { background: #e8f0fe; color: #1967d2; padding: 6px 10px; border-radius: 10px; text-align: center; margin-right: 15px; min-width: 50px; display: flex; flex-direction: column; justify-content: center; font-weight: bold; }
         .date-day { font-size: 1.4rem; line-height: 1; }
         .date-month { font-size: 0.7rem; text-transform: uppercase; margin-top: 2px; }
-        .today-card { border-left: 5px solid #4285f4; background: #f8fbff; } /* Evidenzia Oggi */
+        .today-card { border-left: 5px solid #4285f4; background: #f8fbff; }
         .time-display { font-size: 0.85rem; background: #eee; padding: 2px 6px; border-radius: 4px; margin-right: 5px; color: #333; font-weight: bold; }
         .due-date-display { font-size: 0.75rem; color: #d32f2f; font-weight: bold; display: block; margin-top: 2px; }
         
@@ -108,7 +108,7 @@
         .nav-item.active { color: #4285f4; }
         .nav-item i { font-size: 26px; margin-bottom: 4px; }
         
-        /* IMPOSTAZIONI & LOGIN */
+        /* SETTINGS & AUTH */
         .settings-view { padding: 20px; padding-bottom: 100px; }
         .settings-section { background: white; border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         .settings-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
@@ -128,9 +128,7 @@
         <input type="email" id="email-input" placeholder="Email">
         <input type="password" id="password-input" placeholder="Password">
         <button id="login-btn">Entra</button>
-        
         <p onclick="window.resetPassword()" style="color:#4285f4; cursor:pointer; margin-top:15px; text-decoration:underline;">Password dimenticata?</p>
-        
         <p id="login-status" style="margin-top: 20px; color: #666; font-size: 0.9rem;"></p>
     </div>
 
@@ -155,19 +153,28 @@
                 <input type="date" id="date-input" class="hidden">
                 <input type="time" id="time-input" class="hidden" style="width:100%;">
                 
-                <select id="recurrence-select" class="hidden">
-                    <option value="none">1 volta</option>
-                    <option value="weekly">Settimana</option>
-                    <option value="monthly">Mese</option>
-                    <option value="yearly">Anno</option>
-                </select>
+                <div id="recurrence-wrapper" class="hidden">
+                    <select id="rec-unit" style="flex:2;" onchange="window.toggleRecurrenceInputs()">
+                        <option value="none">Ripeti: No</option>
+                        <option value="day">Giorni</option>
+                        <option value="week">Settimane</option>
+                        <option value="month">Mesi</option>
+                        <option value="year">Anni</option>
+                    </select>
+                    
+                    <span class="rec-hidden-parts hidden rec-label">Ogni</span>
+                    <input type="number" id="rec-interval" class="rec-hidden-parts hidden rec-input-small" value="1" min="1">
+                    <span class="rec-hidden-parts hidden rec-label">Per</span>
+                    <input type="number" id="rec-count" class="rec-hidden-parts hidden rec-input-small" value="1" min="1">
+                    <span class="rec-hidden-parts hidden rec-label">volte</span>
+                </div>
 
                 <select id="category-select" class="hidden"></select>
                 <select id="assign-who" class="hidden"></select>
                 <input type="text" id="contact-detail-input" class="hidden" placeholder="Numero o Email">
 
                 <div class="input-text-group">
-                    <input type="text" id="new-item-input" placeholder="Aggiungi...">
+                    <input type="text" id="new-item-input" placeholder="Evento...">
                     <button id="add-btn"><i class="material-icons">add</i></button>
                 </div>
             </div>
@@ -183,29 +190,22 @@
             <div id="list-container"></div>
 
             <div id="settings-view" class="hidden settings-view">
-                
                 <div id="super-admin-area" class="settings-section admin-panel hidden">
                     <h4 style="margin:0 0 10px 0; color:#e65100;">👑 Console Super Admin</h4>
-                    <p style="font-size:0.8rem; margin-bottom:10px;">Associa nuovi utenti a famiglie.</p>
                     <input type="email" id="admin-user-email" placeholder="Email Utente" style="margin-bottom:10px;">
                     <input type="text" id="admin-family-code" placeholder="Codice Famiglia (es. ROSSI)" style="margin-bottom:10px; text-transform:uppercase;">
                     <button onclick="window.adminAssociate()" style="background:#e65100; color:white; border:none; width:100%;">ASSOCIA ORA</button>
                     <p id="admin-status" style="font-size:0.8rem; margin-top:5px;"></p>
                 </div>
-
-                <h3 style="margin-top:0;">Gestione Famiglia</h3>
-                
                 <div class="settings-section" style="border:1px solid #4285f4;">
-                    <h4 style="margin:0 0 10px 0; color:#4285f4;">Il Tuo Account</h4>
+                    <h4 style="margin:0 0 10px 0; color:#4285f4;">Account</h4>
                     <div class="settings-row" style="display:block;">
-                        <span style="display:block; margin-bottom:5px; font-size:0.9rem;">Cambia la tua Password</span>
                         <div style="display:flex; gap:10px;">
                             <input type="password" id="new-password-input" placeholder="Nuova Password" style="margin:0; flex-grow:1;">
-                            <button onclick="window.changeUserPassword()" style="background:#4285f4; color:white; border:none; width:auto; padding:0 15px; border-radius:8px;">Aggiorna</button>
+                            <button onclick="window.changeUserPassword()" style="background:#4285f4; color:white; border:none; width:auto; padding:0 15px; border-radius:8px;">Salva</button>
                         </div>
                     </div>
                 </div>
-
                 <div class="settings-section">
                     <h4 style="margin:0 0 10px 0;">Membri</h4>
                     <div id="members-list"></div>
@@ -214,7 +214,6 @@
                         <button onclick="window.addMember()" style="background:#4285f4; color:white; border:none; width:40px; border-radius:8px;">+</button>
                     </div>
                 </div>
-
                 <div class="settings-section">
                     <h4 style="margin:0 0 10px 0;">Categorie</h4>
                     <div id="categories-list"></div>
@@ -228,8 +227,8 @@
         </main>
 
         <nav class="bottom-nav">
-            <button class="nav-item" onclick="window.nav('calendar')"><i class="material-icons">event</i> Agenda</button>
-            <button class="nav-item active" onclick="window.nav('shopping')"><i class="material-icons">shopping_cart</i> Spesa</button>
+            <button class="nav-item active" onclick="window.nav('calendar')"><i class="material-icons">event</i> Agenda</button>
+            <button class="nav-item" onclick="window.nav('shopping')"><i class="material-icons">shopping_cart</i> Spesa</button>
             <button class="nav-item" onclick="window.nav('todos')"><i class="material-icons">check_circle</i> Compiti</button>
             <button class="nav-item" onclick="window.nav('contacts')"><i class="material-icons">contacts</i> Rubrica</button>
             <button class="nav-item" onclick="window.nav('notes')"><i class="material-icons">sticky_note_2</i> Note</button>
@@ -238,14 +237,13 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy, serverTimestamp, getDoc, setDoc, where } 
+        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy, serverTimestamp, getDoc, setDoc } 
         from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        // Import Completo per Auth e Reset
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, updatePassword, reauthenticateWithCredential, EmailAuthProvider, sendPasswordResetEmail } 
         from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        // --- CONFIGURAZIONE FIREBASE ---
-const firebaseConfig = {
+        // --- CONFIGURAZIONE FIREBASE (INSERISCI I TUOI DATI QUI) ---
+        const firebaseConfig = {
   apiKey: "AIzaSyCV51Ge3znsE6TPnQrJeEiNasz5YXtFWXk",
   authDomain: "drgfamilyhub.firebaseapp.com",
   projectId: "drgfamilyhub",
@@ -258,17 +256,14 @@ const firebaseConfig = {
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
-
-        // --- EMAIL SUPER ADMIN ---
         const SUPER_ADMIN_EMAIL = "antonioderosa@gmail.com";
 
-        let currentSection = 'shopping';
+        let currentSection = 'calendar'; // AVVIO SU AGENDA
         let currentFamily = null;
         let unsubscribe = null; 
         let allDataCache = []; 
         let familySettings = { members: ["Mamma", "Papà"], categories: [{name:"Casa", color:"#4285f4"}] };
 
-        // DOM ELEMENTS
         const authContainer = document.getElementById('auth-container');
         const appContainer = document.getElementById('app-container');
         const listContainer = document.getElementById('list-container');
@@ -277,16 +272,21 @@ const firebaseConfig = {
         const noteEditorContainer = document.getElementById('note-editor-container');
         const loginStatus = document.getElementById('login-status');
         
-        // Inputs
+        // Input fields
         const categorySelect = document.getElementById('category-select');
         const assignWho = document.getElementById('assign-who');
         const filterSelect = document.getElementById('filter-select');
         const dateInput = document.getElementById('date-input');
         const timeInput = document.getElementById('time-input'); 
-        const recurrenceSelect = document.getElementById('recurrence-select');
         const contactInput = document.getElementById('contact-detail-input');
         const newItemInput = document.getElementById('new-item-input');
         
+        // Recurrence Inputs
+        const recurrenceWrapper = document.getElementById('recurrence-wrapper');
+        const recUnit = document.getElementById('rec-unit');
+        const recInterval = document.getElementById('rec-interval');
+        const recCount = document.getElementById('rec-count');
+
         // Notes
         const noteTitleInput = document.getElementById('note-title-input');
         const noteContentInput = document.getElementById('note-content-input');
@@ -300,27 +300,18 @@ const firebaseConfig = {
             signInWithEmailAndPassword(auth, email, pass).catch(e => loginStatus.innerText = "Errore: " + e.message);
         });
 
-        // NUOVA FUNZIONE: RESET PASSWORD DIMENTICATA
         window.resetPassword = async () => {
             const email = document.getElementById('email-input').value;
-            if(!email) return alert("Inserisci prima la tua email nel campo qui sopra!");
-            if(confirm(`Inviare link di reset password a: ${email}?`)) {
-                try {
-                    await sendPasswordResetEmail(auth, email);
-                    alert("Link inviato! Controlla la posta (anche spam).");
-                } catch (error) { alert("Errore: " + error.message); }
+            if(!email) return alert("Inserisci email!");
+            if(confirm(`Inviare reset a ${email}?`)) {
+                try { await sendPasswordResetEmail(auth, email); alert("Email inviata!"); } 
+                catch (error) { alert("Errore: " + error.message); }
             }
         };
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                // SUPER ADMIN CHECK
-                if (user.email === SUPER_ADMIN_EMAIL) {
-                    document.getElementById('super-admin-area').classList.remove('hidden');
-                } else {
-                    document.getElementById('super-admin-area').classList.add('hidden');
-                }
-
+                if (user.email === SUPER_ADMIN_EMAIL) document.getElementById('super-admin-area').classList.remove('hidden');
                 try {
                     const userDoc = await getDoc(doc(db, "registro_utenti", user.email));
                     if (userDoc.exists()) {
@@ -329,45 +320,36 @@ const firebaseConfig = {
                         appContainer.classList.remove('hidden');
                         document.getElementById('family-display').innerText = `Famiglia: ${currentFamily}`;
                         await loadSettings();
-                        loadData(currentSection);
+                        window.nav(currentSection); // CARICA SUBITO L'AGENDA E LA UI
                     } else { 
-                        if (user.email === SUPER_ADMIN_EMAIL) {
-                            currentFamily = "ADMIN"; 
-                            authContainer.classList.add('hidden');
-                            appContainer.classList.remove('hidden');
-                            window.nav('settings'); 
-                        } else {
-                            alert("Utente non configurato."); signOut(auth); 
-                        }
+                        if (user.email === SUPER_ADMIN_EMAIL) { currentFamily = "ADMIN"; authContainer.classList.add('hidden'); appContainer.classList.remove('hidden'); window.nav('settings'); } 
+                        else { alert("Utente non abilitato."); signOut(auth); }
                     }
                 } catch (error) { loginStatus.innerText = "Errore connessione."; }
             } else { authContainer.classList.remove('hidden'); appContainer.classList.add('hidden'); }
         });
 
         window.logout = () => signOut(auth);
+        
+        // VISIBILITÀ CAMPI RICORRENZA
+        window.toggleRecurrenceInputs = () => {
+            const isRecurrent = recUnit.value !== 'none';
+            const hiddenParts = document.querySelectorAll('.rec-hidden-parts');
+            hiddenParts.forEach(el => isRecurrent ? el.classList.remove('hidden') : el.classList.add('hidden'));
+        };
 
-        // FUNZIONE SUPER ADMIN
+        // ADMIN E SETTINGS
         window.adminAssociate = async () => {
             const email = document.getElementById('admin-user-email').value.trim();
             const code = document.getElementById('admin-family-code').value.trim().toUpperCase();
-            const status = document.getElementById('admin-status');
-            
-            if(!email || !code) return alert("Compila tutto");
-            try {
-                await setDoc(doc(db, "registro_utenti", email), { famiglia: code });
-                status.innerText = `✅ Successo: ${email} -> ${code}`;
-                status.style.color = "green";
-                document.getElementById('admin-user-email').value = "";
-            } catch(e) {
-                status.innerText = "Errore: " + e.message;
-                status.style.color = "red";
-            }
+            if(!email || !code) return;
+            await setDoc(doc(db, "registro_utenti", email), { famiglia: code });
+            document.getElementById('admin-status').innerText = `✅ Fatto: ${email}`;
         };
 
         async function loadSettings() {
             onSnapshot(doc(db, "settings", currentFamily), (docSnap) => {
                 if (docSnap.exists()) familySettings = { ...familySettings, ...docSnap.data() };
-                else setDoc(doc(db, "settings", currentFamily), familySettings);
                 renderDropdowns(); renderSettingsView();
             });
         }
@@ -375,21 +357,9 @@ const firebaseConfig = {
 
         window.changeUserPassword = async () => {
             const newPass = document.getElementById('new-password-input').value;
-            if(newPass.length < 6) return alert("Minimo 6 caratteri!");
-            try { await updatePassword(auth.currentUser, newPass); alert("Password aggiornata!"); document.getElementById('new-password-input').value=""; }
-            catch (error) {
-                if (error.code === 'auth/requires-recent-login') {
-                    const currentPass = prompt("Reinserisci la tua password ATTUALE per sicurezza:");
-                    if(currentPass) {
-                        try {
-                            await reauthenticateWithCredential(auth.currentUser, EmailAuthProvider.credential(auth.currentUser.email, currentPass));
-                            await updatePassword(auth.currentUser, newPass);
-                            alert("Password aggiornata!");
-                            document.getElementById('new-password-input').value="";
-                        } catch(e) { alert("Password errata."); }
-                    }
-                } else alert("Errore: " + error.message);
-            }
+            if(newPass.length < 6) return alert("Min 6 caratteri");
+            try { await updatePassword(auth.currentUser, newPass); alert("Password aggiornata!"); }
+            catch (e) { alert("Errore: riloggati e riprova."); }
         };
 
         function renderDropdowns() {
@@ -413,9 +383,10 @@ const firebaseConfig = {
             listContainer.classList.remove('hidden'); settingsView.classList.add('hidden');
             document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
             if(event && event.currentTarget) event.currentTarget.classList.add('active'); 
-            
-            // RESET
-            dateInput.classList.add('hidden'); timeInput.classList.add('hidden'); recurrenceSelect.classList.add('hidden'); 
+            else if(section === 'calendar') document.querySelector('.nav-item').classList.add('active');
+
+            // RESET UI
+            dateInput.classList.add('hidden'); timeInput.classList.add('hidden'); recurrenceWrapper.classList.add('hidden');
             categorySelect.classList.add('hidden'); assignWho.classList.add('hidden'); contactInput.classList.add('hidden'); 
             newItemInput.placeholder = "Aggiungi...";
             const title = document.getElementById('page-title');
@@ -430,14 +401,14 @@ const firebaseConfig = {
                 if(section === 'calendar') {
                     title.innerText = "Agenda"; 
                     dateInput.classList.remove('hidden'); timeInput.classList.remove('hidden'); 
-                    recurrenceSelect.classList.remove('hidden'); 
+                    recurrenceWrapper.classList.remove('hidden'); 
                     categorySelect.classList.remove('hidden'); categorySelect.style.display = 'block'; 
                     assignWho.classList.remove('hidden'); assignWho.style.display = 'block'; 
                     newItemInput.placeholder = "Evento...";
                 } 
                 else if (section === 'todos') {
                     title.innerText = "Compiti"; 
-                    dateInput.classList.remove('hidden'); // Data scadenza
+                    dateInput.classList.remove('hidden'); 
                     categorySelect.classList.remove('hidden'); categorySelect.style.display = 'block'; 
                     assignWho.classList.remove('hidden'); assignWho.style.display = 'block'; 
                     newItemInput.placeholder = "Compito...";
@@ -467,11 +438,8 @@ const firebaseConfig = {
             const col = `${currentFamily}_${section}`;
             
             let q;
-            if (section === 'calendar') {
-                q = query(collection(db, col), orderBy("date", "asc"));
-            } else {
-                q = query(collection(db, col), orderBy("timestamp", "desc"));
-            }
+            if (section === 'calendar') q = query(collection(db, col), orderBy("date", "asc"));
+            else q = query(collection(db, col), orderBy("timestamp", "desc"));
             
             unsubscribe = onSnapshot(q, (snap) => {
                 allDataCache = []; snap.forEach(d => allDataCache.push({id:d.id, ...d.data()}));
@@ -487,9 +455,7 @@ const firebaseConfig = {
             const filtered = allDataCache.filter(i => filter === 'all' || i.category === filter);
             
             if(filtered.length === 0) listContainer.innerHTML = "<div style='text-align:center;color:#ccc;margin-top:40px'>Nessun elemento.</div>";
-
-            let scrolled = false;
-            const today = new Date().toISOString().split('T')[0];
+            let scrolled = false; const today = new Date().toISOString().split('T')[0];
 
             filtered.forEach(data => {
                 const div = document.createElement('div'); 
@@ -497,8 +463,7 @@ const firebaseConfig = {
                 if (currentSection === 'notes') {
                     div.className = 'card note-card';
                     div.innerHTML = `<div class="note-title">${data.title||"Senza titolo"}</div><div class="note-body">${data.text}</div><div class="note-footer"><i class="material-icons" style="color:#fbc02d; cursor:pointer;" onclick="window.editNote('${data.id}')">edit</i><i class="material-icons" style="color:#ff5252; cursor:pointer;" onclick="window.del('${data.id}')">delete</i></div>`;
-                    listContainer.appendChild(div);
-                    return;
+                    listContainer.appendChild(div); return;
                 }
 
                 div.className = 'card';
@@ -512,41 +477,28 @@ const firebaseConfig = {
                 const assigned = data.assigned ? `<span class="assigned-badge">${data.assigned}</span>` : "";
                 
                 let html = "", actions = "";
-                if(currentSection === 'calendar' || currentSection === 'todos') {
-                   const dStr = data.date || new Date().toISOString().split('T')[0];
+                if(currentSection === 'calendar') {
+                   const dStr = data.date || today;
                    actions = `<i class="material-icons" style="color:#ccc; margin-left:10px; cursor:pointer;" onclick="window.exportGoogle('${data.text}','${dStr}')">event</i>`;
                 }
 
                 if (currentSection === 'calendar') {
                     const d = new Date(data.date);
-                    // ORARIO
                     const timeDisplay = data.time ? `<span class="time-display">${data.time}</span>` : "";
-                    
                     html = `<div class="date-badge"><span class="date-day">${d.getDate()}</span><span class="date-month">${d.toLocaleString('it-IT',{month:'short'})}</span></div>
                             <div style="flex-grow:1"><div style="font-weight:600; font-size:1.1rem; margin-bottom:4px;">${timeDisplay}${data.text}</div>
                             <div style="font-size:0.8rem; color:#666;"><span class="cat-dot" style="background:${color}"></span>${data.category||'Generale'} ${assigned}</div></div>`;
                 } else if (currentSection === 'contacts') {
                     html = `<div style="flex-grow:1"><div style="font-weight:600; font-size:1.1rem;">${data.text}</div><a href="tel:${data.detail}" style="color:#4285f4; text-decoration:none; display:flex; align-items:center; margin-top:5px;"><i class="material-icons" style="font-size:16px; margin-right:5px;">call</i>${data.detail}</a></div>`;
-                } else if (currentSection === 'todos') {
-                    const strike = data.done ? 'text-decoration:line-through; color:#ccc;' : '';
-                    const checkColor = data.done ? '#4285f4' : '#ccc';
-                    // SCADENZA
-                    let dueDateHtml = "";
-                    if(data.date) {
-                        const dd = new Date(data.date);
-                        dueDateHtml = `<span class="due-date-display">Scadenza: ${dd.getDate()}/${dd.getMonth()+1}</span>`;
-                    }
-
-                    html = `<i class="material-icons" style="color:${checkColor}; margin-right:15px; cursor:pointer;" onclick="window.toggle('${data.id}',${!data.done})">${data.done ? 'check_circle' : 'radio_button_unchecked'}</i>
-                            <div style="flex-grow:1; ${strike}">
-                                <span class="cat-dot" style="background:${color}"></span>${data.text} ${assigned}
-                                ${dueDateHtml}
-                            </div>`;
                 } else {
                     const strike = data.done ? 'text-decoration:line-through; color:#ccc;' : '';
                     const checkColor = data.done ? '#4285f4' : '#ccc';
+                    let dateHtml = "";
+                    if(data.date && currentSection === 'todos') {
+                        const dd = new Date(data.date); dateHtml = `<span class="due-date-display">Scadenza: ${dd.getDate()}/${dd.getMonth()+1}</span>`;
+                    }
                     html = `<i class="material-icons" style="color:${checkColor}; margin-right:15px; cursor:pointer;" onclick="window.toggle('${data.id}',${!data.done})">${data.done ? 'check_circle' : 'radio_button_unchecked'}</i>
-                            <div style="flex-grow:1; ${strike}"><span class="cat-dot" style="background:${color}"></span>${data.text} ${assigned}</div>`;
+                            <div style="flex-grow:1; ${strike}"><span class="cat-dot" style="background:${color}"></span>${data.text} ${assigned} ${dateHtml}</div>`;
                 }
 
                 div.innerHTML = `${html} <div style="display:flex; align-items:center;">${actions}<i class="material-icons" style="color:#ff5252; margin-left:15px; cursor:pointer;" onclick="window.del('${data.id}')">delete</i></div>`;
@@ -554,39 +506,50 @@ const firebaseConfig = {
             });
 
             if(currentSection === 'calendar') {
-                setTimeout(() => {
-                    const el = document.getElementById('scroll-target');
-                    if(el) el.scrollIntoView({behavior: "smooth", block: "center"});
-                }, 300);
+                setTimeout(() => { const el = document.getElementById('scroll-target'); if(el) el.scrollIntoView({behavior: "smooth", block: "center"}); }, 300);
             }
         }
 
         document.getElementById('add-btn').addEventListener('click', async () => {
             const txt = newItemInput.value; if(!txt) return;
-            const cat = categorySelect.value; const rec = recurrenceSelect.value; const who = assignWho.value; 
-            let dVal = dateInput.value;
-            const tVal = timeInput.value; 
+            const cat = categorySelect.value; const who = assignWho.value; 
+            let dVal = dateInput.value; const tVal = timeInput.value; 
+            
+            // LOGICA RICORRENZA AVANZATA
+            let loops = 1;
+            const rUnit = recUnit.value;
+            const rInt = parseInt(recInterval.value) || 1;
+            const rCount = parseInt(recCount.value) || 1;
 
-            let loops = 1; if(currentSection === 'calendar' && rec !== 'none') loops = (rec==='weekly'?4 : (rec==='monthly'?6:5));
+            if(currentSection === 'calendar' && rUnit !== 'none') loops = rCount;
             
             for(let i=0; i<loops; i++) {
                 const item = { text: txt, timestamp: serverTimestamp(), done: false, category: cat, assigned: who };
                 
                 if(currentSection === 'calendar') {
                     if(!dVal) return alert("Inserisci Data");
-                    item.time = tVal; 
-                    if(i>0) { const d = new Date(dVal); if(rec==='weekly') d.setDate(d.getDate()+(7*i)); if(rec==='monthly') d.setMonth(d.getMonth()+i); if(rec==='yearly') d.setFullYear(d.getFullYear()+i); item.date = d.toISOString().split('T')[0]; } else item.date = dVal;
-                }
-                
-                if(currentSection === 'todos') {
+                    item.time = tVal;
+                    
+                    if (i > 0) {
+                        const d = new Date(dVal);
+                        if(rUnit === 'day') d.setDate(d.getDate() + (i * rInt));
+                        if(rUnit === 'week') d.setDate(d.getDate() + (i * rInt * 7));
+                        if(rUnit === 'month') d.setMonth(d.getMonth() + (i * rInt));
+                        if(rUnit === 'year') d.setFullYear(d.getFullYear() + (i * rInt));
+                        item.date = d.toISOString().split('T')[0];
+                    } else {
+                        item.date = dVal;
+                    }
+                } else if(currentSection === 'todos') {
                     if(dVal) item.date = dVal; 
+                } else if(currentSection === 'contacts') {
+                    item.detail = contactInput.value || "";
                 }
 
-                if(currentSection === 'contacts') item.detail = contactInput.value || "";
                 await addDoc(collection(db, `${currentFamily}_${currentSection}`), item);
-                if(currentSection !== 'calendar') break;
+                if(currentSection !== 'calendar') break; // Solo calendario ha loop
             }
-            newItemInput.value=""; contactInput.value=""; recurrenceSelect.value="none"; timeInput.value=""; dateInput.value="";
+            newItemInput.value=""; contactInput.value=""; recUnit.value="none"; window.toggleRecurrenceInputs();
         });
 
         document.getElementById('save-note-btn').addEventListener('click', async () => {
@@ -603,19 +566,15 @@ const firebaseConfig = {
         window.exportGoogle = (t,d) => { const x=d.replace(/-/g,''); window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(t)}&dates=${x}/${x}`,'_blank');};
 
     </script>
-        <script>
+    
+    <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('SW registrato!', reg.scope))
-                    .catch(err => console.log('SW fallito:', err));
+                    .then(reg => console.log('SW ok:', reg.scope))
+                    .catch(err => console.log('SW fail:', err));
             });
         }
     </script>
-
 </body>
 </html>
-
-</body>
-</html>
-
