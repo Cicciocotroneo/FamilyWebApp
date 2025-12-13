@@ -25,6 +25,23 @@
         }
         .header-controls { display: flex; align-items: center; gap: 15px; }
         
+        /* --- CALENDARIO GRID (NUOVO) --- */
+        #calendar-view-container {
+            background: white; margin: 15px; border-radius: 16px; padding: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+        .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-weight: bold; font-size: 1.1rem; }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; }
+        .cal-day-name { font-size: 0.8rem; color: #888; margin-bottom: 5px; }
+        .cal-day { 
+            aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            border-radius: 50%; font-size: 0.95rem; cursor: pointer; position: relative;
+        }
+        .cal-day.selected { background-color: #4285f4; color: white; font-weight: bold; }
+        .cal-day.today { border: 2px solid #4285f4; }
+        .cal-day.empty { pointer-events: none; }
+        .cal-dot { width: 5px; height: 5px; background: #fbc02d; border-radius: 50%; margin-top: 2px; }
+        
         /* --- BARRA INSERIMENTO --- */
         .add-bar {
             background: white; padding: 15px; margin: 15px; border-radius: 16px;
@@ -139,6 +156,8 @@
                 <span id="family-display" style="font-size:0.75rem; color:#888; font-weight: 500;">Caricamento...</span>
             </div>
             <div class="header-controls">
+                <i id="calendar-toggle-btn" class="material-icons hidden" onclick="window.toggleCalendarView()" style="color:#4285f4; cursor:pointer; font-size:28px;">calendar_month</i>
+                
                 <select id="filter-select" onchange="window.applyFilter()">
                     <option value="all">Tutti</option>
                 </select>
@@ -148,6 +167,16 @@
         </header>
 
         <main>
+            <div id="calendar-view-container" class="hidden">
+                <div class="cal-header">
+                    <i class="material-icons" style="cursor:pointer;" onclick="window.changeMonth(-1)">chevron_left</i>
+                    <span id="cal-month-name">Mese Anno</span>
+                    <i class="material-icons" style="cursor:pointer;" onclick="window.changeMonth(1)">chevron_right</i>
+                </div>
+                <div class="cal-grid" id="cal-grid-days">
+                    </div>
+            </div>
+
             <div id="add-bar-container" class="add-bar">
                 
                 <input type="date" id="date-input" class="hidden">
@@ -242,8 +271,9 @@
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, updatePassword, reauthenticateWithCredential, EmailAuthProvider, sendPasswordResetEmail } 
         from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        // --- CONFIGURAZIONE FIREBASE (INSERISCI I TUOI DATI QUI) ---
+        // --- CONFIGURAZIONE FIREBASE (METTI I TUOI DATI VERI QUI) ---
         const firebaseConfig = {
+            const firebaseConfig = {
   apiKey: "AIzaSyCV51Ge3znsE6TPnQrJeEiNasz5YXtFWXk",
   authDomain: "drgfamilyhub.firebaseapp.com",
   projectId: "drgfamilyhub",
@@ -258,11 +288,16 @@
         const auth = getAuth(app);
         const SUPER_ADMIN_EMAIL = "antonioderosa@gmail.com";
 
-        let currentSection = 'calendar'; // AVVIO SU AGENDA
+        let currentSection = 'calendar';
         let currentFamily = null;
         let unsubscribe = null; 
         let allDataCache = []; 
         let familySettings = { members: ["Mamma", "Papà"], categories: [{name:"Casa", color:"#4285f4"}] };
+        
+        // VARIABILI PER CALENDARIO
+        let isCalendarMode = false;
+        let viewDate = new Date();
+        let selectedDate = null;
 
         const authContainer = document.getElementById('auth-container');
         const appContainer = document.getElementById('app-container');
@@ -271,8 +306,10 @@
         const addBarContainer = document.getElementById('add-bar-container');
         const noteEditorContainer = document.getElementById('note-editor-container');
         const loginStatus = document.getElementById('login-status');
+        const calendarViewContainer = document.getElementById('calendar-view-container');
+        const calendarToggleBtn = document.getElementById('calendar-toggle-btn');
         
-        // Input fields
+        // Inputs
         const categorySelect = document.getElementById('category-select');
         const assignWho = document.getElementById('assign-who');
         const filterSelect = document.getElementById('filter-select');
@@ -320,7 +357,7 @@
                         appContainer.classList.remove('hidden');
                         document.getElementById('family-display').innerText = `Famiglia: ${currentFamily}`;
                         await loadSettings();
-                        window.nav(currentSection); // CARICA SUBITO L'AGENDA E LA UI
+                        window.nav(currentSection); 
                     } else { 
                         if (user.email === SUPER_ADMIN_EMAIL) { currentFamily = "ADMIN"; authContainer.classList.add('hidden'); appContainer.classList.remove('hidden'); window.nav('settings'); } 
                         else { alert("Utente non abilitato."); signOut(auth); }
@@ -331,14 +368,12 @@
 
         window.logout = () => signOut(auth);
         
-        // VISIBILITÀ CAMPI RICORRENZA
         window.toggleRecurrenceInputs = () => {
             const isRecurrent = recUnit.value !== 'none';
             const hiddenParts = document.querySelectorAll('.rec-hidden-parts');
             hiddenParts.forEach(el => isRecurrent ? el.classList.remove('hidden') : el.classList.add('hidden'));
         };
 
-        // ADMIN E SETTINGS
         window.adminAssociate = async () => {
             const email = document.getElementById('admin-user-email').value.trim();
             const code = document.getElementById('admin-family-code').value.trim().toUpperCase();
@@ -371,11 +406,13 @@
             familySettings.members.forEach(mem => assignWho.innerHTML += `<option value="${mem}">${mem}</option>`);
         }
 
+        // --- NAVIGAZIONE PRINCIPALE ---
         window.nav = (section) => {
             if (section === 'settings') {
                 currentSection = 'settings';
                 listContainer.classList.add('hidden'); addBarContainer.classList.add('hidden'); noteEditorContainer.classList.add('hidden');
                 settingsView.classList.remove('hidden'); document.getElementById('page-title').innerText = "Impostazioni";
+                calendarViewContainer.classList.add('hidden'); calendarToggleBtn.classList.add('hidden');
                 return;
             }
 
@@ -385,12 +422,13 @@
             if(event && event.currentTarget) event.currentTarget.classList.add('active'); 
             else if(section === 'calendar') document.querySelector('.nav-item').classList.add('active');
 
-            // RESET UI
+            // Reset visibilità
             dateInput.classList.add('hidden'); timeInput.classList.add('hidden'); recurrenceWrapper.classList.add('hidden');
             categorySelect.classList.add('hidden'); assignWho.classList.add('hidden'); contactInput.classList.add('hidden'); 
             newItemInput.placeholder = "Aggiungi...";
             const title = document.getElementById('page-title');
-            
+            calendarToggleBtn.classList.add('hidden'); calendarViewContainer.classList.add('hidden');
+
             if (section === 'notes') {
                 addBarContainer.classList.add('hidden'); noteEditorContainer.classList.remove('hidden'); title.innerText = "Note";
                 noteTitleInput.value = ""; noteContentInput.value = ""; editingNoteId.value = "";
@@ -400,11 +438,14 @@
                 
                 if(section === 'calendar') {
                     title.innerText = "Agenda"; 
+                    calendarToggleBtn.classList.remove('hidden'); // Mostra il toggle calendario
                     dateInput.classList.remove('hidden'); timeInput.classList.remove('hidden'); 
                     recurrenceWrapper.classList.remove('hidden'); 
                     categorySelect.classList.remove('hidden'); categorySelect.style.display = 'block'; 
                     assignWho.classList.remove('hidden'); assignWho.style.display = 'block'; 
                     newItemInput.placeholder = "Evento...";
+                    
+                    if(isCalendarMode) calendarViewContainer.classList.remove('hidden'); // Se era attivo, rimostralo
                 } 
                 else if (section === 'todos') {
                     title.innerText = "Compiti"; 
@@ -420,6 +461,75 @@
             loadData(section);
         };
 
+        // --- LOGICA CALENDARIO ---
+        window.toggleCalendarView = () => {
+            isCalendarMode = !isCalendarMode;
+            if(isCalendarMode) {
+                calendarViewContainer.classList.remove('hidden');
+                document.getElementById('calendar-toggle-btn').innerText = "view_list"; // Icona cambia in Lista
+                renderCalendarGrid();
+            } else {
+                calendarViewContainer.classList.add('hidden');
+                document.getElementById('calendar-toggle-btn').innerText = "calendar_month"; // Icona cambia in Calendario
+                selectedDate = null; // Resetta filtro
+                renderList(); // Mostra tutto
+            }
+        };
+
+        window.changeMonth = (delta) => {
+            viewDate.setMonth(viewDate.getMonth() + delta);
+            renderCalendarGrid();
+        };
+
+        function renderCalendarGrid() {
+            const grid = document.getElementById('cal-grid-days');
+            const monthName = document.getElementById('cal-month-name');
+            grid.innerHTML = "";
+            
+            // Header Giorni
+            const days = ["L", "M", "M", "G", "V", "S", "D"];
+            days.forEach(d => grid.innerHTML += `<div class="cal-day-name">${d}</div>`);
+
+            const year = viewDate.getFullYear();
+            const month = viewDate.getMonth();
+            monthName.innerText = viewDate.toLocaleString('it-IT', { month: 'long', year: 'numeric' }).toUpperCase();
+
+            // Calcoli date
+            const firstDay = new Date(year, month, 1).getDay(); // 0=Dom, 1=Lun
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            
+            // Adatta per Lunedì come primo giorno (0->6, 1->0)
+            const startOffset = firstDay === 0 ? 6 : firstDay - 1;
+
+            // Caselle vuote inizio
+            for(let i=0; i<startOffset; i++) grid.innerHTML += `<div class="cal-day empty"></div>`;
+
+            // Giorni
+            const todayStr = new Date().toISOString().split('T')[0];
+            
+            for(let i=1; i<=daysInMonth; i++) {
+                const dStr = `${year}-${String(month+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
+                
+                // Controlla se ci sono eventi
+                const hasEvent = allDataCache.some(ev => ev.date === dStr);
+                const dotHtml = hasEvent ? `<div class="cal-dot"></div>` : "";
+                
+                const isToday = dStr === todayStr ? 'today' : '';
+                const isSelected = selectedDate === dStr ? 'selected' : '';
+
+                const div = document.createElement('div');
+                div.className = `cal-day ${isToday} ${isSelected}`;
+                div.innerHTML = `<span>${i}</span>${dotHtml}`;
+                div.onclick = () => {
+                    selectedDate = dStr;
+                    renderCalendarGrid(); // Aggiorna selezione grafica
+                    renderList(); // Filtra lista sotto
+                };
+                grid.appendChild(div);
+            }
+        }
+
+        // --- SETTINGS ---
         function renderSettingsView() {
             const memList = document.getElementById('members-list'); memList.innerHTML = "";
             familySettings.members.forEach((mem, i) => memList.innerHTML += `<div class="settings-row"><span>${mem}</span><i class="material-icons" style="color:red; cursor:pointer;" onclick="window.removeMember(${i})">delete</i></div>`);
@@ -443,6 +553,7 @@
             
             unsubscribe = onSnapshot(q, (snap) => {
                 allDataCache = []; snap.forEach(d => allDataCache.push({id:d.id, ...d.data()}));
+                if(isCalendarMode) renderCalendarGrid(); // Aggiorna pallini
                 renderList();
             });
         }
@@ -452,7 +563,13 @@
         function renderList() {
             listContainer.innerHTML = "";
             const filter = filterSelect.value;
-            const filtered = allDataCache.filter(i => filter === 'all' || i.category === filter);
+            
+            // FILTRO COMBO: Categoria + Data (se selezionata in calendario)
+            let filtered = allDataCache.filter(i => {
+                const catMatch = filter === 'all' || i.category === filter;
+                const dateMatch = !selectedDate || i.date === selectedDate || currentSection !== 'calendar';
+                return catMatch && dateMatch;
+            });
             
             if(filtered.length === 0) listContainer.innerHTML = "<div style='text-align:center;color:#ccc;margin-top:40px'>Nessun elemento.</div>";
             let scrolled = false; const today = new Date().toISOString().split('T')[0];
@@ -467,7 +584,7 @@
                 }
 
                 div.className = 'card';
-                if (currentSection === 'calendar' && !scrolled && data.date >= today) {
+                if (currentSection === 'calendar' && !scrolled && data.date >= today && !selectedDate) {
                     div.id = "scroll-target"; scrolled = true;
                     if(data.date === today) div.classList.add('today-card');
                 }
@@ -505,7 +622,7 @@
                 listContainer.appendChild(div);
             });
 
-            if(currentSection === 'calendar') {
+            if(currentSection === 'calendar' && !selectedDate) {
                 setTimeout(() => { const el = document.getElementById('scroll-target'); if(el) el.scrollIntoView({behavior: "smooth", block: "center"}); }, 300);
             }
         }
@@ -515,7 +632,7 @@
             const cat = categorySelect.value; const who = assignWho.value; 
             let dVal = dateInput.value; const tVal = timeInput.value; 
             
-            // LOGICA RICORRENZA AVANZATA
+            // LOGICA RICORRENZA
             let loops = 1;
             const rUnit = recUnit.value;
             const rInt = parseInt(recInterval.value) || 1;
@@ -547,7 +664,7 @@
                 }
 
                 await addDoc(collection(db, `${currentFamily}_${currentSection}`), item);
-                if(currentSection !== 'calendar') break; // Solo calendario ha loop
+                if(currentSection !== 'calendar') break; 
             }
             newItemInput.value=""; contactInput.value=""; recUnit.value="none"; window.toggleRecurrenceInputs();
         });
