@@ -25,7 +25,16 @@
         }
         .header-controls { display: flex; align-items: center; gap: 15px; }
         
-        /* --- CALENDARIO GRID (NUOVO) --- */
+        /* --- FILTRO (NUOVA POSIZIONE) --- */
+        .filter-row {
+            padding: 0 15px; display: flex; justify-content: flex-end; align-items: center; margin-bottom: 10px;
+        }
+        .filter-row select {
+            width: auto !important; height: 35px !important; font-size: 0.85rem;
+            border: none; background-color: transparent; color: #666; font-weight: 600; padding-right: 25px;
+        }
+
+        /* --- CALENDARIO GRID --- */
         #calendar-view-container {
             background: white; margin: 15px; border-radius: 16px; padding: 15px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.05);
@@ -66,18 +75,15 @@
         .rec-input-small { flex: 1; min-width: 60px; text-align: center; }
         .rec-label { font-size: 0.8rem; color: #666; white-space: nowrap; }
 
-        /* Icona per le select */
         .add-bar select {
             background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
             background-repeat: no-repeat; background-position: right 12px top 50%; background-size: 10px auto;
         }
-
         #assign-who { background-color: #fff8e1; border-color: #ffecb3; color: #ff6f00; font-weight: 600; }
         
         .input-text-group { grid-column: 1 / -1; display: flex; gap: 10px; align-items: stretch; }
         #new-item-input { flex-grow: 1; border: 2px solid #4285f4; background-image: none; }
         #contact-detail-input { grid-column: 1 / -1; }
-
         #add-btn { 
             width: 50px !important; padding: 0; background: #4285f4; color: white; border: none; 
             display: flex; align-items: center; justify-content: center; cursor: pointer; 
@@ -134,7 +140,6 @@
         #auth-container { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; background: white; }
         #auth-container input { width: 100%; height: 50px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 10px; padding: 0 15px; font-size: 16px; }
         #login-btn { width: 100%; height: 50px; background: #4285f4; color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; }
-        #filter-select { border: none; background: #f0f2f5; padding: 8px 12px; border-radius: 8px; font-weight: 600; color: #333; font-size: 0.9rem; }
     </style>
 </head>
 <body>
@@ -157,10 +162,6 @@
             </div>
             <div class="header-controls">
                 <i id="calendar-toggle-btn" class="material-icons hidden" onclick="window.toggleCalendarView()" style="color:#4285f4; cursor:pointer; font-size:28px;">calendar_month</i>
-                
-                <select id="filter-select" onchange="window.applyFilter()">
-                    <option value="all">Tutti</option>
-                </select>
                 <i class="material-icons" onclick="window.nav('settings')" style="color:#555; cursor:pointer;">settings</i>
                 <i class="material-icons" onclick="window.logout()" style="color:#333; cursor:pointer;">logout</i>
             </div>
@@ -173,12 +174,10 @@
                     <span id="cal-month-name">Mese Anno</span>
                     <i class="material-icons" style="cursor:pointer;" onclick="window.changeMonth(1)">chevron_right</i>
                 </div>
-                <div class="cal-grid" id="cal-grid-days">
-                    </div>
+                <div class="cal-grid" id="cal-grid-days"></div>
             </div>
 
             <div id="add-bar-container" class="add-bar">
-                
                 <input type="date" id="date-input" class="hidden">
                 <input type="time" id="time-input" class="hidden" style="width:100%;">
                 
@@ -190,7 +189,6 @@
                         <option value="month">Mesi</option>
                         <option value="year">Anni</option>
                     </select>
-                    
                     <span class="rec-hidden-parts hidden rec-label">Ogni</span>
                     <input type="number" id="rec-interval" class="rec-hidden-parts hidden rec-input-small" value="1" min="1">
                     <span class="rec-hidden-parts hidden rec-label">Per</span>
@@ -214,6 +212,12 @@
                 <textarea id="note-content-input" placeholder="Scrivi qui il contenuto..."></textarea>
                 <button id="save-note-btn">SALVA NOTA</button>
                 <input type="hidden" id="editing-note-id">
+            </div>
+
+            <div class="filter-row">
+                <select id="filter-select" onchange="window.applyFilter()">
+                    <option value="all">Mostra: Tutti</option>
+                </select>
             </div>
 
             <div id="list-container"></div>
@@ -271,15 +275,15 @@
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, updatePassword, reauthenticateWithCredential, EmailAuthProvider, sendPasswordResetEmail } 
         from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        // --- CONFIGURAZIONE FIREBASE (METTI I TUOI DATI VERI QUI) ---
+        // --- I TUOI DATI FIREBASE INSERITI ---
         const firebaseConfig = {
-  apiKey: "AIzaSyCV51Ge3znsE6TPnQrJeEiNasz5YXtFWXk",
-  authDomain: "drgfamilyhub.firebaseapp.com",
-  projectId: "drgfamilyhub",
-  storageBucket: "drgfamilyhub.firebasestorage.app",
-  messagingSenderId: "709925755710",
-  appId: "1:709925755710:web:6ebb2967fbc107447f6a6f"
-};
+            apiKey: "AIzaSyCV51Ge3znsE6TPnQrJeEiNasz5YXtFWXk",
+            authDomain: "drgfamilyhub.firebaseapp.com",
+            projectId: "drgfamilyhub",
+            storageBucket: "drgfamilyhub.firebasestorage.app",
+            messagingSenderId: "709925755710",
+            appId: "1:709925755710:web:6ebb2967fbc107447f6a6f"
+        };
         // --------------------------------
 
         const app = initializeApp(firebaseConfig);
@@ -293,7 +297,6 @@
         let allDataCache = []; 
         let familySettings = { members: ["Mamma", "Papà"], categories: [{name:"Casa", color:"#4285f4"}] };
         
-        // VARIABILI PER CALENDARIO
         let isCalendarMode = false;
         let viewDate = new Date();
         let selectedDate = null;
@@ -308,7 +311,6 @@
         const calendarViewContainer = document.getElementById('calendar-view-container');
         const calendarToggleBtn = document.getElementById('calendar-toggle-btn');
         
-        // Inputs
         const categorySelect = document.getElementById('category-select');
         const assignWho = document.getElementById('assign-who');
         const filterSelect = document.getElementById('filter-select');
@@ -317,13 +319,11 @@
         const contactInput = document.getElementById('contact-detail-input');
         const newItemInput = document.getElementById('new-item-input');
         
-        // Recurrence Inputs
         const recurrenceWrapper = document.getElementById('recurrence-wrapper');
         const recUnit = document.getElementById('rec-unit');
         const recInterval = document.getElementById('rec-interval');
         const recCount = document.getElementById('rec-count');
 
-        // Notes
         const noteTitleInput = document.getElementById('note-title-input');
         const noteContentInput = document.getElementById('note-content-input');
         const editingNoteId = document.getElementById('editing-note-id');
@@ -399,24 +399,26 @@
         function renderDropdowns() {
             categorySelect.innerHTML = "";
             familySettings.categories.forEach(cat => categorySelect.innerHTML += `<option value="${cat.name}">${cat.name}</option>`);
-            filterSelect.innerHTML = `<option value="all">Tutti</option>`;
-            familySettings.categories.forEach(cat => filterSelect.innerHTML += `<option value="${cat.name}">${cat.name}</option>`);
+            filterSelect.innerHTML = `<option value="all">Mostra: Tutti</option>`;
+            familySettings.categories.forEach(cat => filterSelect.innerHTML += `<option value="${cat.name}">Mostra: ${cat.name}</option>`);
             assignWho.innerHTML = `<option value="">Per: Tutti</option>`;
             familySettings.members.forEach(mem => assignWho.innerHTML += `<option value="${mem}">${mem}</option>`);
         }
 
-        // --- NAVIGAZIONE PRINCIPALE ---
         window.nav = (section) => {
             if (section === 'settings') {
                 currentSection = 'settings';
                 listContainer.classList.add('hidden'); addBarContainer.classList.add('hidden'); noteEditorContainer.classList.add('hidden');
                 settingsView.classList.remove('hidden'); document.getElementById('page-title').innerText = "Impostazioni";
                 calendarViewContainer.classList.add('hidden'); calendarToggleBtn.classList.add('hidden');
+                document.querySelector('.filter-row').classList.add('hidden'); // Nascondi filtro in settings
                 return;
             }
 
             currentSection = section;
             listContainer.classList.remove('hidden'); settingsView.classList.add('hidden');
+            document.querySelector('.filter-row').classList.remove('hidden'); // Mostra filtro
+            
             document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
             if(event && event.currentTarget) event.currentTarget.classList.add('active'); 
             else if(section === 'calendar') document.querySelector('.nav-item').classList.add('active');
@@ -437,14 +439,13 @@
                 
                 if(section === 'calendar') {
                     title.innerText = "Agenda"; 
-                    calendarToggleBtn.classList.remove('hidden'); // Mostra il toggle calendario
+                    calendarToggleBtn.classList.remove('hidden'); 
                     dateInput.classList.remove('hidden'); timeInput.classList.remove('hidden'); 
                     recurrenceWrapper.classList.remove('hidden'); 
                     categorySelect.classList.remove('hidden'); categorySelect.style.display = 'block'; 
                     assignWho.classList.remove('hidden'); assignWho.style.display = 'block'; 
                     newItemInput.placeholder = "Evento...";
-                    
-                    if(isCalendarMode) calendarViewContainer.classList.remove('hidden'); // Se era attivo, rimostralo
+                    if(isCalendarMode) calendarViewContainer.classList.remove('hidden'); 
                 } 
                 else if (section === 'todos') {
                     title.innerText = "Compiti"; 
@@ -460,18 +461,17 @@
             loadData(section);
         };
 
-        // --- LOGICA CALENDARIO ---
         window.toggleCalendarView = () => {
             isCalendarMode = !isCalendarMode;
             if(isCalendarMode) {
                 calendarViewContainer.classList.remove('hidden');
-                document.getElementById('calendar-toggle-btn').innerText = "view_list"; // Icona cambia in Lista
+                document.getElementById('calendar-toggle-btn').innerText = "view_list"; 
                 renderCalendarGrid();
             } else {
                 calendarViewContainer.classList.add('hidden');
-                document.getElementById('calendar-toggle-btn').innerText = "calendar_month"; // Icona cambia in Calendario
-                selectedDate = null; // Resetta filtro
-                renderList(); // Mostra tutto
+                document.getElementById('calendar-toggle-btn').innerText = "calendar_month"; 
+                selectedDate = null; 
+                renderList(); 
             }
         };
 
@@ -484,51 +484,30 @@
             const grid = document.getElementById('cal-grid-days');
             const monthName = document.getElementById('cal-month-name');
             grid.innerHTML = "";
-            
-            // Header Giorni
             const days = ["L", "M", "M", "G", "V", "S", "D"];
             days.forEach(d => grid.innerHTML += `<div class="cal-day-name">${d}</div>`);
-
-            const year = viewDate.getFullYear();
-            const month = viewDate.getMonth();
+            const year = viewDate.getFullYear(); const month = viewDate.getMonth();
             monthName.innerText = viewDate.toLocaleString('it-IT', { month: 'long', year: 'numeric' }).toUpperCase();
-
-            // Calcoli date
-            const firstDay = new Date(year, month, 1).getDay(); // 0=Dom, 1=Lun
+            const firstDay = new Date(year, month, 1).getDay();
             const daysInMonth = new Date(year, month + 1, 0).getDate();
-            
-            // Adatta per Lunedì come primo giorno (0->6, 1->0)
             const startOffset = firstDay === 0 ? 6 : firstDay - 1;
-
-            // Caselle vuote inizio
             for(let i=0; i<startOffset; i++) grid.innerHTML += `<div class="cal-day empty"></div>`;
-
-            // Giorni
             const todayStr = new Date().toISOString().split('T')[0];
             
             for(let i=1; i<=daysInMonth; i++) {
                 const dStr = `${year}-${String(month+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
-                
-                // Controlla se ci sono eventi
                 const hasEvent = allDataCache.some(ev => ev.date === dStr);
                 const dotHtml = hasEvent ? `<div class="cal-dot"></div>` : "";
-                
                 const isToday = dStr === todayStr ? 'today' : '';
                 const isSelected = selectedDate === dStr ? 'selected' : '';
-
                 const div = document.createElement('div');
                 div.className = `cal-day ${isToday} ${isSelected}`;
                 div.innerHTML = `<span>${i}</span>${dotHtml}`;
-                div.onclick = () => {
-                    selectedDate = dStr;
-                    renderCalendarGrid(); // Aggiorna selezione grafica
-                    renderList(); // Filtra lista sotto
-                };
+                div.onclick = () => { selectedDate = dStr; renderCalendarGrid(); renderList(); };
                 grid.appendChild(div);
             }
         }
 
-        // --- SETTINGS ---
         function renderSettingsView() {
             const memList = document.getElementById('members-list'); memList.innerHTML = "";
             familySettings.members.forEach((mem, i) => memList.innerHTML += `<div class="settings-row"><span>${mem}</span><i class="material-icons" style="color:red; cursor:pointer;" onclick="window.removeMember(${i})">delete</i></div>`);
@@ -552,7 +531,7 @@
             
             unsubscribe = onSnapshot(q, (snap) => {
                 allDataCache = []; snap.forEach(d => allDataCache.push({id:d.id, ...d.data()}));
-                if(isCalendarMode) renderCalendarGrid(); // Aggiorna pallini
+                if(isCalendarMode) renderCalendarGrid();
                 renderList();
             });
         }
@@ -562,8 +541,6 @@
         function renderList() {
             listContainer.innerHTML = "";
             const filter = filterSelect.value;
-            
-            // FILTRO COMBO: Categoria + Data (se selezionata in calendario)
             let filtered = allDataCache.filter(i => {
                 const catMatch = filter === 'all' || i.category === filter;
                 const dateMatch = !selectedDate || i.date === selectedDate || currentSection !== 'calendar';
@@ -575,19 +552,16 @@
 
             filtered.forEach(data => {
                 const div = document.createElement('div'); 
-                
                 if (currentSection === 'notes') {
                     div.className = 'card note-card';
                     div.innerHTML = `<div class="note-title">${data.title||"Senza titolo"}</div><div class="note-body">${data.text}</div><div class="note-footer"><i class="material-icons" style="color:#fbc02d; cursor:pointer;" onclick="window.editNote('${data.id}')">edit</i><i class="material-icons" style="color:#ff5252; cursor:pointer;" onclick="window.del('${data.id}')">delete</i></div>`;
                     listContainer.appendChild(div); return;
                 }
-
                 div.className = 'card';
                 if (currentSection === 'calendar' && !scrolled && data.date >= today && !selectedDate) {
                     div.id = "scroll-target"; scrolled = true;
                     if(data.date === today) div.classList.add('today-card');
                 }
-
                 const catObj = familySettings.categories.find(c => c.name === data.category);
                 const color = catObj ? catObj.color : '#ccc';
                 const assigned = data.assigned ? `<span class="assigned-badge">${data.assigned}</span>` : "";
@@ -616,11 +590,9 @@
                     html = `<i class="material-icons" style="color:${checkColor}; margin-right:15px; cursor:pointer;" onclick="window.toggle('${data.id}',${!data.done})">${data.done ? 'check_circle' : 'radio_button_unchecked'}</i>
                             <div style="flex-grow:1; ${strike}"><span class="cat-dot" style="background:${color}"></span>${data.text} ${assigned} ${dateHtml}</div>`;
                 }
-
                 div.innerHTML = `${html} <div style="display:flex; align-items:center;">${actions}<i class="material-icons" style="color:#ff5252; margin-left:15px; cursor:pointer;" onclick="window.del('${data.id}')">delete</i></div>`;
                 listContainer.appendChild(div);
             });
-
             if(currentSection === 'calendar' && !selectedDate) {
                 setTimeout(() => { const el = document.getElementById('scroll-target'); if(el) el.scrollIntoView({behavior: "smooth", block: "center"}); }, 300);
             }
@@ -631,21 +603,17 @@
             const cat = categorySelect.value; const who = assignWho.value; 
             let dVal = dateInput.value; const tVal = timeInput.value; 
             
-            // LOGICA RICORRENZA
             let loops = 1;
             const rUnit = recUnit.value;
             const rInt = parseInt(recInterval.value) || 1;
             const rCount = parseInt(recCount.value) || 1;
-
             if(currentSection === 'calendar' && rUnit !== 'none') loops = rCount;
             
             for(let i=0; i<loops; i++) {
                 const item = { text: txt, timestamp: serverTimestamp(), done: false, category: cat, assigned: who };
-                
                 if(currentSection === 'calendar') {
                     if(!dVal) return alert("Inserisci Data");
                     item.time = tVal;
-                    
                     if (i > 0) {
                         const d = new Date(dVal);
                         if(rUnit === 'day') d.setDate(d.getDate() + (i * rInt));
@@ -653,15 +621,12 @@
                         if(rUnit === 'month') d.setMonth(d.getMonth() + (i * rInt));
                         if(rUnit === 'year') d.setFullYear(d.getFullYear() + (i * rInt));
                         item.date = d.toISOString().split('T')[0];
-                    } else {
-                        item.date = dVal;
-                    }
+                    } else { item.date = dVal; }
                 } else if(currentSection === 'todos') {
                     if(dVal) item.date = dVal; 
                 } else if(currentSection === 'contacts') {
                     item.detail = contactInput.value || "";
                 }
-
                 await addDoc(collection(db, `${currentFamily}_${currentSection}`), item);
                 if(currentSection !== 'calendar') break; 
             }
