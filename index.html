@@ -11,115 +11,88 @@
     <meta name="apple-mobile-web-app-title" content="Family Hub">
     <link rel="apple-touch-icon" href="icon.png">
     
-    <!-- FONT: Playfair Display (Serif Elegante) & Inter (Pulito per testi) -->
+    <!-- FONT: Playfair Display & Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
-    
-    <!-- ICONE: Material Symbols Outlined (Leggere e minimali, wght=300) -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     
     <style>
         :root {
-            /* TEMA SALVIA / SCANDINAVO MINIMAL */
-            --bg-body: #F7F7F6;      /* Panna/Grigio molto chiaro */
+            /* TEMA SCANDINAVO SALVIA (Default) */
+            --bg-body: #F7F7F6;
             --bg-card: #FFFFFF;
-            --text-main: #2C3531;    /* Grigio/Verde molto scuro */
-            --text-sub: #7D847F;     /* Grigio medio desaturato */
-            --border: #E8EBE9;       /* Bordi leggerissimi */
-            
-            --primary: #859B8B;      /* Verde Salvia Elegante */
+            --text-main: #2C3531;
+            --text-sub: #7D847F;
+            --border: #E8EBE9;
+            --primary: #859B8B;
             --primary-hover: #728777;
-            --accent-bg: #F0F4F1;    /* Sfondo tenue Salvia */
-            
+            --accent-bg: #F0F4F1;
             --nav-bg: #FFFFFF;
-            --shadow: rgba(0,0,0,0.03); /* Ombre impalpabili */
+            --shadow: rgba(0,0,0,0.04);
             --input-bg: #FAFAFA;
-            
-            --alert: #C78283;        /* Rosso tenue / Terracotta */
-            --warning: #D1A77E;      /* Senape tenue */
+            --alert: #C78283;
+            --warning: #D1A77E;
+            --font-main: 'Inter', sans-serif;
+            --font-title: 'Playfair Display', serif;
         }
 
         body.dark-mode {
-            /* TEMA SCURO (Mantiene accenti salvia desaturati) */
-            --bg-body: #1E201E;
-            --bg-card: #282A29;
-            --text-main: #EAEBEA;
-            --text-sub: #9FA4A1;
-            --border: #3A3D3C;
-            
-            --primary: #94A899;
-            --primary-hover: #AEC2B3;
-            --accent-bg: #323835;
-            
-            --nav-bg: #1E201E;
-            --shadow: rgba(0,0,0,0.2);
-            --input-bg: #323533;
-            
-            --alert: #D69798;
-            --warning: #E0BA98;
+            --bg-body: #1E201E; --bg-card: #282A29; --text-main: #EAEBEA; --text-sub: #9FA4A1;
+            --border: #3A3D3C; --primary: #94A899; --primary-hover: #AEC2B3; --accent-bg: #323835;
+            --nav-bg: #1E201E; --shadow: rgba(0,0,0,0.2); --input-bg: #323533; --alert: #D69798; --warning: #E0BA98;
         }
 
-        /* STILI FONT GLOBALI */
-        body { 
-            background-color: var(--bg-body); color: var(--text-main); 
-            font-family: 'Inter', sans-serif; /* Default body text */
-            -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; transition: background 0.3s; 
+        /* TEMA GOOGLE CLASSICO (Sovrascrittura) */
+        body.theme-google {
+            --bg-body: #f4f6f8; --bg-card: #ffffff; --text-main: #202124; --text-sub: #5f6368;
+            --border: #dadce0; --primary: #1a73e8; --primary-hover: #1557b0; --accent-bg: #e8f0fe;
+            --nav-bg: #ffffff; --shadow: rgba(0,0,0,0.08); --input-bg: #ffffff; --alert: #d93025; --warning: #f9ab00;
+            --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --font-title: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
+        body.theme-google.dark-mode {
+            --bg-body: #202124; --bg-card: #292a2d; --text-main: #e8eaed; --text-sub: #9aa0a6;
+            --border: #3c4043; --primary: #8ab4f8; --primary-hover: #aecbfa; --accent-bg: #3c4043;
+            --nav-bg: #292a2d; --input-bg: #202124; --alert: #f28b82; --warning: #fdd663;
+        }
+
+        body { background-color: var(--bg-body); color: var(--text-main); font-family: var(--font-main); -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; transition: background 0.3s; }
         * { box-sizing: border-box; } 
 
-        h1, h2, h3, h4, .dash-section-title, .note-title {
-            font-family: 'Playfair Display', serif;
-            font-weight: 600;
-            letter-spacing: -0.5px;
-        }
+        h1, h2, h3, h4, .dash-section-title, .note-title, .date-day { font-family: var(--font-title); font-weight: 600; letter-spacing: -0.5px; }
 
-        /* REGOLE PER LE ICONE MINIMALI */
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
-        }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24; }
+        body.theme-google .material-symbols-outlined { font-variation-settings: 'FILL' 1, 'wght' 400; } /* Icone più marcate per Google */
 
-        /* HEADER */
-        header { 
-            background: var(--bg-card); padding: 18px 25px; position: sticky; top: 0; z-index: 100; 
-            box-shadow: 0 1px 8px var(--shadow); display: flex; justify-content: space-between; align-items: center; 
-            color: var(--text-main); border-bottom: 1px solid var(--border);
-        }
-        .header-controls { display: flex; align-items: center; gap: 18px; }
-        .header-controls i { color: var(--text-sub); cursor: pointer; transition: color 0.2s; }
+        header { background: var(--bg-card); padding: 18px 20px; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 8px var(--shadow); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+        .header-controls { display: flex; align-items: center; gap: 15px; }
+        .header-controls i { color: var(--text-sub); cursor: pointer; transition: 0.2s; font-size: 26px; }
         .header-controls i:hover { color: var(--primary); }
         
         .filter-row { padding: 0 20px; display: flex; justify-content: space-between; align-items: center; margin: 15px 0 5px 0; }
-        .filter-row select { font-family: 'Inter', sans-serif; width: auto !important; height: 35px !important; font-size: 0.85rem; border: none; background-color: transparent; color: var(--text-sub); font-weight: 500; padding-right: 25px; cursor: pointer; }
+        .filter-row select { font-family: var(--font-main); width: auto !important; height: 35px !important; font-size: 0.85rem; border: none; background-color: transparent; color: var(--text-sub); font-weight: 500; padding-right: 25px; cursor: pointer; }
 
-        /* VISTA CALENDARIO E TOGGLE */
         .agenda-view-toggle { display: flex; background: var(--bg-card); border-radius: 12px; margin: 20px; border: 1px solid var(--border); overflow: hidden; }
-        .agenda-view-toggle button { font-family: 'Inter', sans-serif; flex: 1; padding: 12px; border: none; background: transparent; color: var(--text-sub); font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.9rem; transition: 0.3s; }
+        .agenda-view-toggle button { font-family: var(--font-main); flex: 1; padding: 12px; border: none; background: transparent; color: var(--text-sub); font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.9rem; transition: 0.3s; }
         .agenda-view-toggle button.active { background: var(--primary); color: white; }
 
-        #calendar-view-container { background: var(--bg-card); margin: 20px; border-radius: 16px; padding: 20px; border: 1px solid var(--border); }
-        .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--text-main); }
-        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; text-align: center; }
-        .cal-day-name { font-size: 0.75rem; color: var(--text-sub); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
-        .cal-day { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 50%; font-size: 0.95rem; cursor: pointer; position: relative; color: var(--text-main); transition: 0.2s; }
-        .cal-day:hover:not(.empty) { background-color: var(--accent-bg); }
-        .cal-day.selected { background-color: var(--primary); color: white !important; font-weight: bold; }
-        .cal-day.today { border: 1px solid var(--primary); }
-        .cal-day.empty { pointer-events: none; }
-        .cal-dots-container { display: flex; gap: 3px; margin-top: 4px; justify-content: center; flex-wrap: wrap; max-width: 80%; }
-        .cal-dot { width: 4px; height: 4px; border-radius: 50%; } 
+        /* VISTA SETTIMANALE CALENDARIO */
+        #calendar-view-container { margin: 20px; }
+        .week-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-family: var(--font-title); font-size: 1.1rem; color: var(--text-main); background: var(--bg-card); padding: 10px 15px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 2px 8px var(--shadow); }
+        .week-day-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; overflow: hidden; box-shadow: 0 2px 8px var(--shadow); }
+        .week-day-header { background: var(--accent-bg); padding: 10px 15px; font-weight: 600; color: var(--primary); font-size: 0.9rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between;}
+        .week-day-events { padding: 10px 15px; display: flex; flex-direction: column; gap: 6px; }
+        .mini-event { font-size: 0.85rem; background: var(--bg-body); padding: 6px 10px; border-radius: 6px; border-left: 4px solid var(--border); display: flex; align-items: center; gap: 8px; color: var(--text-main); }
         
-        /* BARRA INSERIMENTO */
-        .add-bar { background: var(--bg-card); padding: 20px; margin: 20px; border-radius: 16px; border: 1px solid var(--border); display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: start; }
-        .add-bar select, .add-bar input, #add-btn, .note-editor input, .note-editor button, .admin-panel input, .admin-panel button { font-family: 'Inter', sans-serif; height: 50px !important; width: 100%; border: 1px solid var(--border); border-radius: 12px; background-color: var(--input-bg); font-size: 15px; padding: 0 16px; color: var(--text-main); margin: 0; appearance: none; -webkit-appearance: none; outline: none; transition: border-color 0.2s; }
+        .add-bar { background: var(--bg-card); padding: 20px; margin: 20px; border-radius: 16px; border: 1px solid var(--border); display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: start; box-shadow: 0 4px 15px var(--shadow); }
+        .add-bar select, .add-bar input, #add-btn, .note-editor input, .note-editor button, .admin-panel input, .admin-panel button { font-family: var(--font-main); height: 50px !important; width: 100%; border: 1px solid var(--border); border-radius: 12px; background-color: var(--input-bg); font-size: 15px; padding: 0 16px; color: var(--text-main); margin: 0; outline: none; transition: 0.2s; }
         .add-bar input:focus, .add-bar select:focus { border-color: var(--primary); }
 
         #recurrence-wrapper { grid-column: 1 / -1; background: var(--accent-bg); border-radius: 12px; padding: 15px 12px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; border: none; }
         .rec-input-small { flex: 1; min-width: 60px; text-align: center; }
         .rec-label { font-size: 0.8rem; color: var(--text-sub); white-space: nowrap; font-weight: 500; }
 
-        .add-bar select { background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23859B8B%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 16px top 50%; background-size: 10px auto; }
-        
         .assign-chips { grid-column: 1 / -1; display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 5px; }
         .chip { padding: 8px 16px; border-radius: 20px; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-sub); font-size: 0.85rem; cursor: pointer; font-weight: 500; transition: 0.2s; user-select: none; }
         .chip.active { background: var(--primary); border-color: var(--primary); color: white; }
@@ -127,49 +100,25 @@
         
         .input-text-group { grid-column: 1 / -1; display: flex; gap: 12px; align-items: stretch; }
         #new-item-input { flex-grow: 1; border: 1px solid var(--border); }
-        #new-item-input:focus { border-color: var(--primary); }
         #contact-detail-input, #location-input { grid-column: 1 / -1; }
         
-        #add-btn { width: 50px !important; padding: 0; background: var(--primary); color: white; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; border-radius: 12px; }
-        #add-btn:hover { background: var(--primary-hover); }
+        #add-btn { width: 50px !important; padding: 0; background: var(--primary); color: white; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 12px; }
         #add-btn.edit-mode { background: var(--warning); color: #fff; }
 
         .note-editor { background: var(--bg-card); padding: 20px; margin: 20px; border-radius: 16px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 15px; }
-        .note-editor textarea { font-family: 'Inter', sans-serif; width: 100%; height: 180px; border: 1px solid var(--border); border-radius: 12px; background-color: var(--input-bg); font-size: 15px; padding: 16px; color: var(--text-main); resize: none; outline: none; }
-        #save-note-btn { background: var(--primary); color: white; font-weight: 500; border: none; cursor: pointer; letter-spacing: 0.5px; }
+        .note-editor textarea { font-family: var(--font-main); width: 100%; height: 180px; border: 1px solid var(--border); border-radius: 12px; background-color: var(--input-bg); font-size: 15px; padding: 16px; color: var(--text-main); resize: none; outline: none; }
+        #save-note-btn { background: var(--primary); color: white; font-weight: 500; border: none; cursor: pointer; }
 
         .hidden { display: none !important; }
 
-        /* LISTE E CARDS CON LAYOUT RESPONSIVE (MASONRY-STYLE GRID) */
-        #list-container { 
-            padding: 0 20px 120px 20px; 
-            /* Grid per schermi larghi */
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-            align-content: start;
-        } 
-        
-        /* Media Query per Tablet/PC */
+        /* LISTE E RESPONSIVE DESKTOP */
+        #list-container { padding: 0 20px 100px 20px; display: grid; grid-template-columns: 1fr; gap: 15px; align-content: start; } 
         @media (min-width: 768px) {
-            #list-container {
-                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-                align-items: start;
-            }
-            .dash-section-title {
-                grid-column: 1 / -1; /* Il titolo occupa tutta la larghezza */
-                margin-top: 30px;
-            }
-            .status-container {
-                grid-column: 1 / -1;
-            }
-            .dash-header-select {
-                grid-column: 1 / -1;
-            }
+            #list-container { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); align-items: start; }
+            .dash-section-title, .dash-header-select { grid-column: 1 / -1; }
         }
 
-        .card { background: var(--bg-card); padding: 18px; border-radius: 16px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
-        .card:hover { border-color: var(--primary); }
+        .card { background: var(--bg-card); padding: 18px; border-radius: 16px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; transition: 0.2s; box-shadow: 0 2px 6px var(--shadow); }
         
         .note-card { flex-direction: column; align-items: flex-start; gap: 12px; }
         .note-title { font-size: 1.15rem; color: var(--text-main); width: 100%; margin: 0; }
@@ -178,60 +127,58 @@
         .chat-card { flex-direction: row; align-items: flex-start; gap: 12px; }
         .chat-author { font-weight: 600; color: var(--primary); font-size: 0.85rem; text-transform: capitalize; }
         .chat-time { font-size: 0.75rem; color: var(--text-sub); margin-left: auto; }
-        .chat-tag { background: var(--accent-bg); color: var(--primary); padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; display: inline-block; margin-top: 10px; font-weight: 600; letter-spacing: 0.5px; }
+        .chat-tag { background: var(--accent-bg); color: var(--primary); padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; display: inline-block; margin-top: 10px; font-weight: 600; }
         
-        .date-badge { background: var(--accent-bg); color: var(--primary); padding: 8px 12px; border-radius: 12px; text-align: center; margin-right: 15px; min-width: 55px; display: flex; flex-direction: column; justify-content: center; }
-        .date-day { font-size: 1.3rem; font-weight: bold; line-height: 1; font-family: 'Playfair Display', serif; }
-        .date-month { font-size: 0.65rem; text-transform: uppercase; margin-top: 4px; font-weight: 600; letter-spacing: 1px; }
+        .date-badge { background: var(--accent-bg); color: var(--primary); padding: 8px; border-radius: 12px; text-align: center; margin-right: 15px; min-width: 60px; display: flex; flex-direction: column; justify-content: center; }
+        .date-day { font-size: 1.3rem; font-weight: bold; line-height: 1; margin-bottom: 2px;}
+        .date-month { font-size: 0.65rem; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; }
+        .date-time { font-size: 0.7rem; color: var(--text-main); background: var(--bg-card); border-radius: 4px; padding: 2px 0; margin-top: 5px; font-weight: 600; border: 1px solid var(--border); }
         .today-card { border-left: 4px solid var(--primary); }
         
-        .time-display { font-size: 0.75rem; background: var(--input-bg); padding: 3px 8px; border-radius: 6px; margin-right: 8px; color: var(--text-main); font-weight: 500; border: 1px solid var(--border); }
         .due-date-display { font-size: 0.75rem; color: var(--alert); font-weight: 500; display: block; margin-top: 4px; }
-        .location-link { display: inline-flex; align-items: center; color: var(--text-sub); text-decoration: none; font-size: 0.8rem; margin-top: 8px; transition: color 0.2s; }
-        .location-link:hover { color: var(--primary); }
+        .location-link { display: inline-flex; align-items: center; color: var(--text-sub); text-decoration: none; font-size: 0.8rem; margin-top: 8px; transition: 0.2s; background: var(--bg-body); padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border); }
+        .location-link:hover { color: var(--primary); border-color: var(--primary); }
         
         .cat-dot { height: 8px; width: 8px; border-radius: 50%; display: inline-block; margin-right: 8px; vertical-align: middle; }
-        .assigned-badge { font-size: 0.7rem; color: var(--text-sub); padding: 2px 0; margin-left: 8px; display: inline-block; vertical-align: middle; font-weight: 500; }
+        .assigned-badge { font-size: 0.7rem; color: var(--text-sub); margin-left: 8px; display: inline-block; vertical-align: middle; font-weight: 500; }
         
-        /* BULK DELETE */
         .bulk-checkbox { display: none; width: 20px; height: 20px; margin-right: 15px; accent-color: var(--alert); flex-shrink:0; cursor:pointer;}
         #list-container.bulk-mode .bulk-checkbox { display: block; }
-        #bulk-delete-btn { position: fixed; bottom: 95px; left: 50%; transform: translateX(-50%); background: var(--alert); color: white; border: none; padding: 14px 28px; border-radius: 30px; font-weight: 600; font-family: 'Inter', sans-serif; z-index: 300; display:flex; align-items:center; gap:8px; cursor: pointer; transition: 0.2s; }
-        #bulk-delete-btn:hover { background: #b06e6f; }
-        .bulk-toggle-btn { display:flex; align-items:center; gap:6px; color:var(--text-sub); font-size:0.85rem; font-family: 'Inter', sans-serif; background:none; border:1px solid var(--border); padding:6px 12px; border-radius:20px; cursor:pointer; font-weight: 500; transition: 0.2s;}
+        #bulk-delete-btn { position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%); background: var(--alert); color: white; border: none; padding: 14px 28px; border-radius: 30px; font-weight: 600; font-family: var(--font-main); z-index: 300; display:flex; align-items:center; gap:8px; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .bulk-toggle-btn { display:flex; align-items:center; gap:6px; color:var(--text-sub); font-size:0.85rem; font-family: var(--font-main); background:none; border:1px solid var(--border); padding:6px 12px; border-radius:20px; cursor:pointer; font-weight: 500;}
         .bulk-toggle-btn.active { background: var(--alert); color: white; border-color: var(--alert); }
 
-        /* NAVIGAZIONE SCORREVOLE (Minimal Icon Style) */
+        /* NAVIGAZIONE FISSA E COMPATTA IN BASSO */
         .bottom-nav { 
             position: fixed; bottom: 0; width: 100%; background: var(--nav-bg); border-top: 1px solid var(--border); 
-            display: flex; justify-content: flex-start; gap: 8px; padding: 12px 20px 25px 20px; z-index: 200; 
-            overflow-x: auto; -webkit-overflow-scrolling: touch; 
+            display: flex; justify-content: space-around; padding: 8px 5px 20px 5px; z-index: 200; 
         }
-        .bottom-nav::-webkit-scrollbar { display: none; }
-        .nav-item { font-family: 'Inter', sans-serif; background: none; border: none; color: var(--text-sub); display: flex; flex-direction: column; align-items: center; font-size: 0.65rem; padding: 6px 12px; min-width: 65px; flex-shrink: 0; cursor: pointer; border-radius: 12px; transition: 0.2s; font-weight: 500; }
+        .nav-item { 
+            font-family: var(--font-main); background: none; border: none; color: var(--text-sub); 
+            display: flex; flex-direction: column; align-items: center; font-size: 0.6rem; 
+            padding: 4px 0; flex: 1; cursor: pointer; border-radius: 8px; font-weight: 500; 
+        }
         .nav-item.active { color: var(--primary); background: var(--accent-bg); }
-        .nav-item i { font-size: 24px; margin-bottom: 4px; }
+        .nav-item i { font-size: 24px; margin-bottom: 2px; }
         
-        /* DASHBOARD */
         .dash-section-title { font-size: 1.1rem; color: var(--text-main); margin: 20px 0 5px 0; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
-        .dash-header-select { background: var(--bg-card); padding: 15px 20px; border-radius: 16px; margin-bottom: 10px; border: 1px solid var(--border); }
-        .dash-header-select select { font-family: 'Inter', sans-serif; width: 100%; border: none; background: transparent; font-size: 1rem; font-weight: 600; color: var(--primary); outline: none; cursor: pointer;}
+        .dash-header-select { background: var(--bg-card); padding: 12px 20px; border-radius: 16px; margin-bottom: 10px; border: 1px solid var(--border); }
+        .dash-header-select select { font-family: var(--font-main); width: 100%; border: none; background: transparent; font-size: 0.95rem; font-weight: 600; color: var(--primary); outline: none; cursor: pointer;}
         
-        /* CHI È A CASA */
-        .status-container { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
-        .status-chip { padding: 10px 18px; border-radius: 25px; font-size: 0.9rem; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 8px; border: 1px solid var(--border); transition: 0.2s; user-select: none; background-color: var(--bg-card); color: var(--text-sub); }
-        .status-chip.is-home { border-color: var(--primary); color: var(--primary); background-color: var(--accent-bg); }
+        /* MODALE PRESENZE */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(3px); }
+        .modal-box { background: var(--bg-card); width: 90%; max-width: 400px; max-height: 90vh; border-radius: 20px; padding: 25px; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .pres-grid-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
         
-        /* IMPOSTAZIONI */
         .settings-view { padding: 20px; padding-bottom: 100px; }
         .settings-section { background: var(--bg-card); border-radius: 16px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); }
         .settings-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); color: var(--text-main); font-size: 0.95rem; }
         .admin-panel { border: 1px solid var(--warning); background: transparent; }
         
         #auth-container { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; background: var(--bg-body); }
-        #auth-container h1 { font-family: 'Playfair Display', serif; color: var(--primary); font-size: 3rem; margin-bottom: 10px; }
-        #auth-container input { width: 100%; max-width: 320px; height: 55px; margin-bottom: 15px; border: 1px solid var(--border); border-radius: 12px; padding: 0 20px; font-size: 16px; font-family: 'Inter', sans-serif; }
-        #login-btn { width: 100%; max-width: 320px; height: 55px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; }
+        #auth-container h1 { font-family: var(--font-title); color: var(--primary); font-size: 3rem; margin-bottom: 10px; }
+        #auth-container input { width: 100%; max-width: 320px; height: 55px; margin-bottom: 15px; border: 1px solid var(--border); border-radius: 12px; padding: 0 20px; font-size: 16px; font-family: var(--font-main); }
+        #login-btn { width: 100%; max-width: 320px; height: 55px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; font-family: var(--font-main); cursor: pointer; }
     </style>
 </head>
 <body>
@@ -253,27 +200,31 @@
                 <span id="family-display" style="font-size:0.75rem; font-weight: 500; color: var(--text-sub);">Caricamento...</span>
             </div>
             <div class="header-controls">
-                <i id="theme-toggle" class="material-symbols-outlined" onclick="window.toggleTheme()">dark_mode</i>
+                <i class="material-symbols-outlined" onclick="window.toggleThemePalette()">palette</i>
+                <i id="theme-toggle" class="material-symbols-outlined" onclick="window.toggleDarkMode()">dark_mode</i>
                 <i class="material-symbols-outlined" onclick="window.nav('settings')">settings</i>
                 <i class="material-symbols-outlined" onclick="window.logout()">logout</i>
             </div>
         </header>
 
         <main>
+            <!-- TOGGLE VISTA AGENDA -->
             <div id="agenda-view-toggle" class="agenda-view-toggle hidden">
                 <button id="btn-view-list" class="active" onclick="window.setAgendaView('list')"><span class="material-symbols-outlined">view_agenda</span> Lista</button>
-                <button id="btn-view-cal" onclick="window.setAgendaView('calendar')"><span class="material-symbols-outlined">calendar_month</span> Mese</button>
+                <button id="btn-view-cal" onclick="window.setAgendaView('calendar')"><span class="material-symbols-outlined">view_week</span> Settimana</button>
             </div>
 
+            <!-- VISTA SETTIMANA -->
             <div id="calendar-view-container" class="hidden">
-                <div class="cal-header">
-                    <i class="material-symbols-outlined" style="cursor:pointer;" onclick="window.changeMonth(-1)">chevron_left</i>
-                    <span id="cal-month-name">Mese Anno</span>
-                    <i class="material-symbols-outlined" style="cursor:pointer;" onclick="window.changeMonth(1)">chevron_right</i>
+                <div class="week-nav">
+                    <i class="material-symbols-outlined" style="cursor:pointer; padding:5px;" onclick="window.changeWeek(-1)">chevron_left</i>
+                    <span id="week-month-name">Settimana</span>
+                    <i class="material-symbols-outlined" style="cursor:pointer; padding:5px;" onclick="window.changeWeek(1)">chevron_right</i>
                 </div>
-                <div class="cal-grid" id="cal-grid-days"></div>
+                <div id="week-grid-days"></div>
             </div>
 
+            <!-- BARRA INPUT -->
             <div id="add-bar-container" class="add-bar hidden">
                 <input type="date" id="date-input" class="hidden">
                 <input type="time" id="time-input" class="hidden" style="width:100%;">
@@ -304,7 +255,6 @@
                 </div>
 
                 <select id="category-select" class="hidden"></select>
-                
                 <div id="assign-who-container" class="hidden assign-chips"></div>
                 
                 <input type="text" id="contact-detail-input" class="hidden" placeholder="Info contatto...">
@@ -317,7 +267,7 @@
             </div>
 
             <div id="note-editor-container" class="note-editor hidden">
-                <input type="text" id="note-title-input" placeholder="Titolo (es. Ricetta Torta, Wi-Fi)" style="font-weight: 600;">
+                <input type="text" id="note-title-input" placeholder="Titolo (es. Ricetta, Wi-Fi)" style="font-weight: 600;">
                 <textarea id="note-content-input" placeholder="Scrivi qui il contenuto..."></textarea>
                 <button id="save-note-btn">Salva Nota</button>
                 <input type="hidden" id="editing-note-id">
@@ -334,7 +284,24 @@
             
             <button id="bulk-delete-btn" class="hidden" onclick="window.executeBulkDelete()"><span class="material-symbols-outlined">delete</span> Elimina (<span id="bulk-count">0</span>)</button>
 
-            <!-- IMPOSTAZIONI (Restyling) -->
+            <!-- MODALE PRESENZE (CHI È A CASA) -->
+            <div id="presence-modal" class="modal-overlay hidden">
+                <div class="modal-box">
+                    <h3 style="margin-top:0; color:var(--primary); font-family:var(--font-title);">Pianifica Presenze</h3>
+                    <p style="font-size:0.85rem; color:var(--text-sub);">Seleziona i turni standard in cui sei in casa.</p>
+                    
+                    <select id="presence-user-select" onchange="window.renderPresenceGrid()" style="width:100%; height:40px; border-radius:8px; border:1px solid var(--border); background:var(--input-bg); color:var(--text-main); font-family:var(--font-main); margin-bottom:15px; padding:0 10px;"></select>
+                    
+                    <div id="presence-grid"></div>
+                    
+                    <div style="display:flex; gap:10px; margin-top:20px;">
+                        <button onclick="window.savePresence()" style="flex:1; background:var(--primary); color:white; border:none; padding:12px; border-radius:10px; font-weight:600; cursor:pointer;">Salva</button>
+                        <button onclick="window.closePresenceModal()" style="flex:1; background:transparent; color:var(--text-sub); border:1px solid var(--border); padding:12px; border-radius:10px; font-weight:600; cursor:pointer;">Chiudi</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- IMPOSTAZIONI -->
             <div id="settings-view" class="hidden settings-view">
                 <div id="super-admin-area" class="settings-section admin-panel hidden">
                     <h4 style="margin:0 0 15px 0; color:var(--warning);">Console Super Admin</h4>
@@ -374,13 +341,13 @@
         </main>
 
         <nav class="bottom-nav">
-            <button class="nav-item active" onclick="window.nav('dashboard')"><span class="material-symbols-outlined">home</span> Home</button>
-            <button class="nav-item" onclick="window.nav('chat')"><span class="material-symbols-outlined">chat_bubble</span> Messaggi</button>
-            <button class="nav-item" onclick="window.nav('todos')"><span class="material-symbols-outlined">task_alt</span> Compiti</button>
-            <button class="nav-item" onclick="window.nav('shopping')"><span class="material-symbols-outlined">shopping_basket</span> Spesa</button>
-            <button class="nav-item" onclick="window.nav('calendar')"><span class="material-symbols-outlined">event_note</span> Agenda</button>
-            <button class="nav-item" onclick="window.nav('contacts')"><span class="material-symbols-outlined">contacts</span> Rubrica</button>
-            <button class="nav-item" onclick="window.nav('notes')"><span class="material-symbols-outlined">description</span> Note</button>
+            <button class="nav-item active" onclick="window.nav('dashboard')"><i class="material-symbols-outlined">home</i> Home</button>
+            <button class="nav-item" onclick="window.nav('chat')"><i class="material-symbols-outlined">chat_bubble</i> Bacheca</button>
+            <button class="nav-item" onclick="window.nav('todos')"><i class="material-symbols-outlined">task_alt</i> Compiti</button>
+            <button class="nav-item" onclick="window.nav('shopping')"><i class="material-symbols-outlined">shopping_basket</i> Spesa</button>
+            <button class="nav-item" onclick="window.nav('calendar')"><i class="material-symbols-outlined">event_note</i> Agenda</button>
+            <button class="nav-item" onclick="window.nav('contacts')"><i class="material-symbols-outlined">contacts</i> Rubrica</button>
+            <button class="nav-item" onclick="window.nav('notes')"><i class="material-symbols-outlined">description</i> Note</button>
         </nav>
     </div>
 
@@ -411,11 +378,11 @@
         let unsubscribes = []; 
         let allDataCache = []; 
         let dashboardData = { calendar: [], chat: [], todos: [], shopping: [] };
-        let familySettings = { members: ["Mamma", "Papà"], categories: [{name:"Generale", color:"#859B8B"}], status: {} };
+        let familySettings = { members: ["Mamma", "Papà"], categories: [{name:"Generale", color:"#859B8B"}], presenze: {} };
         let currentDashboardUser = "";
         
         let isCalendarMode = false;
-        let viewDate = new Date();
+        let weekStartDate = new Date();
         let selectedDate = null;
         let isBulkMode = false;
         let editingItem = null;
@@ -447,17 +414,25 @@
         const noteContentInput = document.getElementById('note-content-input');
         const editingNoteId = document.getElementById('editing-note-id');
 
-        window.toggleTheme = () => {
+        // GESTIONE TEMI
+        window.toggleDarkMode = () => {
             document.body.classList.toggle('dark-mode');
             const isDark = document.body.classList.contains('dark-mode');
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            localStorage.setItem('themeDark', isDark ? 'dark' : 'light');
             document.getElementById('theme-toggle').innerText = isDark ? 'light_mode' : 'dark_mode';
         };
-        if(localStorage.getItem('theme') === 'dark') {
+        if(localStorage.getItem('themeDark') === 'dark') {
             document.body.classList.add('dark-mode');
             document.getElementById('theme-toggle').innerText = 'light_mode';
-        } else {
-            document.getElementById('theme-toggle').innerText = 'dark_mode';
+        }
+
+        window.toggleThemePalette = () => {
+            document.body.classList.toggle('theme-google');
+            const isGoogle = document.body.classList.contains('theme-google');
+            localStorage.setItem('themeStyle', isGoogle ? 'google' : 'scandi');
+        };
+        if(localStorage.getItem('themeStyle') === 'google') {
+            document.body.classList.add('theme-google');
         }
 
         window.toggleBulkMode = () => {
@@ -465,21 +440,13 @@
             listContainer.classList.toggle('bulk-mode', isBulkMode);
             document.getElementById('bulk-delete-btn').classList.toggle('hidden', !isBulkMode);
             document.getElementById('bulk-toggle').classList.toggle('active', isBulkMode);
-            
-            if(!isBulkMode) { 
-                document.querySelectorAll('.bulk-checkbox').forEach(cb => cb.checked = false);
-                window.updateBulkCount();
-            }
+            if(!isBulkMode) { document.querySelectorAll('.bulk-checkbox').forEach(cb => cb.checked = false); window.updateBulkCount(); }
         };
-        window.updateBulkCount = () => {
-            const count = document.querySelectorAll('.bulk-checkbox:checked').length;
-            document.getElementById('bulk-count').innerText = count;
-        };
+        window.updateBulkCount = () => { document.getElementById('bulk-count').innerText = document.querySelectorAll('.bulk-checkbox:checked').length; };
         window.executeBulkDelete = async () => {
             const checks = document.querySelectorAll('.bulk-checkbox:checked');
             if(checks.length === 0) return;
             if(!confirm(`Sei sicuro di voler eliminare ${checks.length} elementi?`)) return;
-            
             for(let c of checks) { await deleteDoc(doc(db, `${currentFamily}_${c.dataset.section}`, c.value)); }
             window.toggleBulkMode(); 
         };
@@ -499,11 +466,9 @@
                     const userDoc = await getDoc(doc(db, "registro_utenti", user.email));
                     if (userDoc.exists()) {
                         currentFamily = userDoc.data().famiglia;
-                        authContainer.classList.add('hidden');
-                        appContainer.classList.remove('hidden');
+                        authContainer.classList.add('hidden'); appContainer.classList.remove('hidden');
                         document.getElementById('family-display').innerText = `Famiglia: ${currentFamily}`;
-                        await loadSettings();
-                        window.nav('dashboard'); 
+                        await loadSettings(); window.nav('dashboard'); 
                     } else { 
                         if (user.email === SUPER_ADMIN_EMAIL) { currentFamily = "ADMIN"; authContainer.classList.add('hidden'); appContainer.classList.remove('hidden'); window.nav('settings'); } 
                         else { alert("Utente non abilitato."); signOut(auth); }
@@ -533,7 +498,7 @@
             onSnapshot(doc(db, "settings", currentFamily), (docSnap) => {
                 if (docSnap.exists()) {
                     familySettings = { ...familySettings, ...docSnap.data() };
-                    if(!familySettings.status) familySettings.status = {};
+                    if(!familySettings.presenze) familySettings.presenze = {};
                 }
                 if (!currentDashboardUser && familySettings.members.length > 0) currentDashboardUser = familySettings.members[0];
                 renderDropdowns(); renderSettingsView();
@@ -549,12 +514,56 @@
             catch (e) { alert("Errore di sicurezza: esci, rientra e riprova."); }
         };
 
-        window.toggleStatus = async (mem) => {
-            const current = familySettings.status[mem] || 'out';
-            const nextStatus = current === 'home' ? 'out' : 'home';
-            const newStatusObj = { ...familySettings.status };
-            newStatusObj[mem] = nextStatus;
-            await setDoc(doc(db, "settings", currentFamily), { status: newStatusObj }, { merge: true });
+        // --- GESTIONE PRESENZE (CHI È A CASA) ---
+        window.openPresenceModal = () => {
+            const select = document.getElementById('presence-user-select');
+            select.innerHTML = '';
+            familySettings.members.forEach(m => select.innerHTML += `<option value="${m}">${m}</option>`);
+            if(auth.currentUser && familySettings.members.length > 0) {
+                const myName = familySettings.members.find(m => auth.currentUser.email.startsWith(m.toLowerCase())) || familySettings.members[0];
+                select.value = myName;
+            }
+            window.renderPresenceGrid();
+            document.getElementById('presence-modal').classList.remove('hidden');
+        };
+
+        window.closePresenceModal = () => document.getElementById('presence-modal').classList.add('hidden');
+
+        window.renderPresenceGrid = () => {
+            const user = document.getElementById('presence-user-select').value;
+            const grid = document.getElementById('presence-grid');
+            const daysOfWeek = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
+            const jsDays = [1, 2, 3, 4, 5, 6, 0];
+            let html = '';
+            const userP = familySettings.presenze[user] || {};
+            
+            jsDays.forEach((dNum, idx) => {
+                const amActive = userP[`${dNum}_am`] ? 'active' : '';
+                const pmActive = userP[`${dNum}_pm`] ? 'active' : '';
+                html += `
+                <div class="pres-grid-row">
+                    <div style="font-weight:600; width:80px; color:var(--text-main);">${daysOfWeek[idx]}</div>
+                    <div style="display:flex; gap:8px;">
+                        <div class="chip ${amActive}" onclick="this.classList.toggle('active')" data-day="${dNum}" data-slot="am">Mattina</div>
+                        <div class="chip ${pmActive}" onclick="this.classList.toggle('active')" data-day="${dNum}" data-slot="pm">Pomeriggio</div>
+                    </div>
+                </div>`;
+            });
+            grid.innerHTML = html;
+        };
+
+        window.savePresence = async () => {
+            const user = document.getElementById('presence-user-select').value;
+            const userP = {};
+            document.querySelectorAll('#presence-grid .chip').forEach(c => {
+                if (c.classList.contains('active')) {
+                    userP[`${c.dataset.day}_${c.dataset.slot}`] = true;
+                }
+            });
+            const newPresenze = { ...familySettings.presenze };
+            newPresenze[user] = userP;
+            await setDoc(doc(db, "settings", currentFamily), { presenze: newPresenze }, { merge: true });
+            window.closePresenceModal();
         };
 
         function renderDropdowns() {
@@ -612,13 +621,26 @@
                 isCalendarMode = true;
                 calendarViewContainer.classList.remove('hidden');
                 btnCal.classList.add('active'); btnList.classList.remove('active');
-                renderCalendarGrid();
+                
+                // Initialize week to current date
+                weekStartDate = new Date();
+                const d = weekStartDate.getDay();
+                const diff = weekStartDate.getDate() - d + (d === 0 ? -6 : 1);
+                weekStartDate.setDate(diff);
+                weekStartDate.setHours(0,0,0,0);
+                
+                renderWeekCalendarGrid();
             } else {
                 isCalendarMode = false; selectedDate = null;
                 calendarViewContainer.classList.add('hidden');
                 btnList.classList.add('active'); btnCal.classList.remove('active');
                 renderList();
             }
+        };
+
+        window.changeWeek = (delta) => {
+            weekStartDate.setDate(weekStartDate.getDate() + (delta * 7));
+            renderWeekCalendarGrid();
         };
 
         window.nav = (section) => {
@@ -681,7 +703,7 @@
                     newItemInput.placeholder = "Cosa c'è da fare?";
                 }
                 else if (section === 'chat') {
-                    title.innerText = "Messaggi"; newItemInput.placeholder = "Scrivi un messaggio...";
+                    title.innerText = "Bacheca"; newItemInput.placeholder = "Scrivi un messaggio...";
                 }
                 else if (section === 'contacts') {
                     title.innerText = "Rubrica"; contactInput.classList.remove('hidden'); newItemInput.placeholder = "Nome contatto...";
@@ -700,16 +722,14 @@
             return itemField === user; 
         }
 
-        // --- DASHBOARD (RIORGANIZZATA) ---
+        // --- DASHBOARD ---
         function loadDashboardData() {
-            listContainer.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-sub);">Organizzazione in corso...</div>';
+            listContainer.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-sub);">Elaborazione...</div>';
             clearSubscribes();
             const cols = ['calendar', 'chat', 'todos', 'shopping'];
-            
             cols.forEach(col => {
                 const unsub = onSnapshot(query(collection(db, `${currentFamily}_${col}`)), (snap) => {
-                    dashboardData[col] = [];
-                    snap.forEach(d => dashboardData[col].push({id: d.id, ...d.data()}));
+                    dashboardData[col] = []; snap.forEach(d => dashboardData[col].push({id: d.id, ...d.data()}));
                     if(currentSection === 'dashboard') renderDashboard();
                 });
                 unsubscribes.push(unsub);
@@ -719,17 +739,26 @@
         function renderDashboard() {
             if(currentSection !== 'dashboard') return;
             
-            // STATUS
-            let statusHtml = `<div class="dash-section-title"><span class="material-symbols-outlined" style="color:var(--primary)">home_pin</span> Presenze</div><div class="status-container">`;
+            const todayDayNum = new Date().getDay(); // 0 = Sun, 1 = Mon...
+            let amHome = []; let pmHome = [];
+            
             familySettings.members.forEach(m => {
-                const isHome = familySettings.status[m] === 'home';
-                const cls = isHome ? 'is-home' : 'is-out';
-                statusHtml += `<div class="status-chip ${cls}" onclick="window.toggleStatus('${m}')">${m}</div>`;
+                const p = familySettings.presenze[m] || {};
+                if(p[`${todayDayNum}_am`]) amHome.push(m);
+                if(p[`${todayDayNum}_pm`]) pmHome.push(m);
             });
-            statusHtml += `</div>`;
 
-            let userOpts = `<option value="">Vista Generale: Tutti</option>`;
-            familySettings.members.forEach(m => userOpts += `<option value="${m}" ${m===currentDashboardUser?'selected':''}>Focus su: ${m}</option>`);
+            let statusHtml = `
+                <div class="dash-section-title"><span class="material-symbols-outlined" style="color:var(--primary)">home_pin</span> Chi c'è a casa oggi?</div>
+                <div class="card" style="flex-direction:column; align-items:flex-start; gap:12px; margin-bottom:20px;">
+                    <div style="font-size:0.95rem; color:var(--text-main);"><span class="material-symbols-outlined" style="font-size:18px; vertical-align:text-bottom; color:var(--warning)">light_mode</span> <b>Mattina:</b> <span style="color:var(--text-sub)">${amHome.length > 0 ? amHome.join(', ') : 'Nessuno'}</span></div>
+                    <div style="font-size:0.95rem; color:var(--text-main);"><span class="material-symbols-outlined" style="font-size:18px; vertical-align:text-bottom; color:var(--primary)">dark_mode</span> <b>Pomeriggio:</b> <span style="color:var(--text-sub)">${pmHome.length > 0 ? pmHome.join(', ') : 'Nessuno'}</span></div>
+                    <button onclick="window.openPresenceModal()" style="margin-top:10px; width:100%; padding:10px; border-radius:12px; border:1px solid var(--border); background:var(--bg-body); color:var(--text-main); font-weight:600; cursor:pointer; font-family:var(--font-main);">Pianifica Turni della Settimana</button>
+                </div>
+            `;
+
+            let userOpts = `<option value="">Vista Generale: Tutta la famiglia</option>`;
+            familySettings.members.forEach(m => userOpts += `<option value="${m}" ${m===currentDashboardUser?'selected':''}>Filtra per: ${m}</option>`);
 
             let html = statusHtml + `<div class="dash-header-select"><select onchange="window.changeDashUser(this.value)">${userOpts}</select></div>`;
 
@@ -737,11 +766,11 @@
             const next7 = new Date(); next7.setDate(next7.getDate() + 7);
             const limitDate = next7.toISOString().split('T')[0];
 
-            // 1. MESSAGGI (BACHECA)
+            // 1. BACHECA
             if(currentDashboardUser) {
                 const chatForMe = dashboardData.chat.filter(c => isAssignedToUser(c.tagged, currentDashboardUser)).sort((a,b)=> b.timestamp - a.timestamp);
                 if(chatForMe.length > 0) {
-                    html += `<div class="dash-section-title"><span class="material-symbols-outlined" style="color:var(--warning)">notifications_active</span> Nuovi Messaggi</div>`;
+                    html += `<div class="dash-section-title"><span class="material-symbols-outlined" style="color:var(--warning)">forum</span> Bacheca (${chatForMe.length})</div>`;
                     chatForMe.forEach(c => html += renderHTMLCard(c, 'chat'));
                 }
             }
@@ -749,14 +778,14 @@
             // 2. COMPITI
             const tasks = dashboardData.todos.filter(t => !t.done && (!t.date || t.date <= limitDate) && isAssignedToUser(t.assigned, currentDashboardUser)).sort((a,b)=> (a.date||'9999') > (b.date||'9999') ? 1 : -1);
             if(tasks.length > 0) {
-                html += `<div class="dash-section-title"><span class="material-symbols-outlined" style="color:var(--primary)">task_alt</span> Compiti (Entro 7gg)</div>`;
+                html += `<div class="dash-section-title"><span class="material-symbols-outlined" style="color:var(--primary)">task_alt</span> Compiti Entro 7 Giorni</div>`;
                 tasks.slice(0, 5).forEach(c => html += renderHTMLCard(c, 'todos'));
             }
 
             // 3. SPESA
             const shop = dashboardData.shopping.filter(s => !s.done && isAssignedToUser(s.assigned, currentDashboardUser));
             if(shop.length > 0) {
-                html += `<div class="dash-section-title"><span class="material-symbols-outlined" style="color:var(--primary)">shopping_basket</span> Lista della Spesa</div>`;
+                html += `<div class="dash-section-title"><span class="material-symbols-outlined" style="color:var(--primary)">shopping_basket</span> Lista Spesa</div>`;
                 shop.slice(0, 5).forEach(c => html += renderHTMLCard(c, 'shopping'));
             }
 
@@ -764,23 +793,24 @@
             const impegni = dashboardData.calendar.filter(c => !c.done);
             const scaduti = impegni.filter(c => c.date && c.date < today);
             if(scaduti.length > 0) {
-                html += `<div class="dash-section-title"><span class="material-symbols-outlined" style="color:var(--alert)">error</span> Appuntamenti Scaduti</div>`;
+                html += `<div class="dash-section-title"><span class="material-symbols-outlined" style="color:var(--alert)">error</span> Scaduti (Non Completati)</div>`;
                 scaduti.forEach(c => html += renderHTMLCard(c, 'calendar'));
             }
 
             const futuri = impegni.filter(c => c.date >= today && c.date <= limitDate).sort((a,b)=> (a.date||'9999') > (b.date||'9999') ? 1 : -1);
             if(futuri.length > 0) {
-                html += `<div class="dash-section-title"><span class="material-symbols-outlined" style="color:var(--primary)">event_upcoming</span> Agenda (Prossimi 7gg)</div>`;
+                html += `<div class="dash-section-title"><span class="material-symbols-outlined" style="color:var(--primary)">event_upcoming</span> Agenda Prossimi 7 Giorni</div>`;
                 futuri.forEach(c => html += renderHTMLCard(c, 'calendar'));
             }
 
             if(html.indexOf('dash-section-title') === html.lastIndexOf('dash-section-title')) { 
-                // Se c'è solo il titolo "Presenze"
-                html += `<div style="text-align:center; padding:50px 20px; color:var(--text-sub); font-style:italic;">Nessuna attività pendente per i prossimi giorni.</div>`;
+                html += `<div style="text-align:center; padding:50px 20px; color:var(--text-sub); font-style:italic;">Nessuna attività programmata a breve.</div>`;
             }
 
             listContainer.innerHTML = html;
         }
+
+        window.changeDashUser = (val) => { currentDashboardUser = val; renderDashboard(); };
 
         function clearSubscribes() { unsubscribes.forEach(u => u()); unsubscribes = []; }
 
@@ -793,7 +823,7 @@
             
             const unsub = onSnapshot(q, (snap) => {
                 allDataCache = []; snap.forEach(d => allDataCache.push({id:d.id, ...d.data()}));
-                if(isCalendarMode && section === 'calendar') renderCalendarGrid();
+                if(isCalendarMode && section === 'calendar') renderWeekCalendarGrid();
                 renderList();
             });
             unsubscribes.push(unsub);
@@ -862,14 +892,16 @@
 
             if (sectionType === 'calendar') {
                 const d = data.date ? new Date(data.date) : new Date();
-                const timeDisplay = data.time ? `<span class="time-display">${data.time}</span>` : "";
                 const dStr = data.date || new Date().toISOString().split('T')[0];
                 actions = `<span class="material-symbols-outlined" style="color:var(--text-sub); margin-left:10px; cursor:pointer;" onclick="window.exportGoogle('${data.text}','${dStr}')">calendar_add_on</span>`;
                 const locHtml = data.location ? `<br><a href="https://maps.google.com/?q=${encodeURIComponent(data.location)}" target="_blank" class="location-link"><span class="material-symbols-outlined" style="font-size:16px; margin-right:4px;">location_on</span> ${data.location}</a>` : '';
 
+                // TIME SPOSTATO SOTTO IL GIORNO NEL BADGE
+                const timeHtml = data.time ? `<div class="date-time">${data.time}</div>` : "";
+
                 content = `<span class="material-symbols-outlined" style="color:${checkColor}; margin-right:15px; cursor:pointer; font-size:26px;" onclick="window.toggle('${data.id}',${!data.done},'${sectionType}')">${checkIcon}</span>
-                           <div class="date-badge" style="${data.done?'opacity:0.5;':''}"><span class="date-day">${d.getDate()}</span><span class="date-month">${d.toLocaleString('it-IT',{month:'short'})}</span></div>
-                           <div style="flex-grow:1; ${strike}"><div style="font-weight:600; font-size:1.05rem; margin-bottom:6px;">${timeDisplay}${data.text}</div>
+                           <div class="date-badge" style="${data.done?'opacity:0.5;':''}"><span class="date-day">${d.getDate()}</span><span class="date-month">${d.toLocaleString('it-IT',{month:'short'})}</span>${timeHtml}</div>
+                           <div style="flex-grow:1; ${strike}"><div style="font-weight:600; font-size:1.05rem; margin-bottom:6px;">${data.text}</div>
                            <div style="font-size:0.8rem; color:var(--text-sub);"><span class="cat-dot" style="background:${color}"></span>${data.category||'Generale'} ${assignedTags}</div>${locHtml}</div>`;
             } 
             else if (sectionType === 'contacts') {
@@ -888,27 +920,44 @@
             return `<div class="card ${todayCls}">${checkboxHtml}${content} <div style="display:flex; align-items:center;">${actions}${editAction}${deleteAction}</div></div>`;
         }
 
-        function renderCalendarGrid() {
-            const grid = document.getElementById('cal-grid-days'); const monthName = document.getElementById('cal-month-name'); grid.innerHTML = "";
-            const days = ["L", "M", "M", "G", "V", "S", "D"]; days.forEach(d => grid.innerHTML += `<div class="cal-day-name">${d}</div>`);
-            const year = viewDate.getFullYear(); const month = viewDate.getMonth();
-            monthName.innerText = viewDate.toLocaleString('it-IT', { month: 'long', year: 'numeric' }).toUpperCase();
-            const firstDay = new Date(year, month, 1).getDay(); const daysInMonth = new Date(year, month + 1, 0).getDate();
-            const startOffset = firstDay === 0 ? 6 : firstDay - 1;
-            for(let i=0; i<startOffset; i++) grid.innerHTML += `<div class="cal-day empty"></div>`;
-            const todayStr = new Date().toISOString().split('T')[0];
+        // --- CALENDARIO: VISTA SETTIMANA ---
+        function renderWeekCalendarGrid() {
+            const grid = document.getElementById('week-grid-days'); 
+            const monthName = document.getElementById('week-month-name'); 
+            grid.innerHTML = "";
             
-            for(let i=1; i<=daysInMonth; i++) {
-                const dStr = `${year}-${String(month+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
-                const dayEvents = allDataCache.filter(ev => ev.date === dStr && !ev.done); // Mostra pallini solo per impegni NON completati
-                const uniqueCategories = [...new Set(dayEvents.map(e => e.category))];
-                let dotsHtml = `<div class="cal-dots-container">`;
-                uniqueCategories.forEach(catName => { const catObj = familySettings.categories.find(c => c.name === catName); const color = catObj ? catObj.color : '#ccc'; dotsHtml += `<div class="cal-dot" style="background:${color}"></div>`; });
-                dotsHtml += `</div>`;
-                const isToday = dStr === todayStr ? 'today' : ''; const isSelected = selectedDate === dStr ? 'selected' : '';
-                const div = document.createElement('div'); div.className = `cal-day ${isToday} ${isSelected}`; div.innerHTML = `<span>${i}</span>${dotsHtml}`;
-                div.onclick = () => { selectedDate = dStr; renderCalendarGrid(); renderList(); };
-                grid.appendChild(div);
+            const daysNames = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"];
+            
+            // Set Titolo Header al mese del Lunedì
+            monthName.innerText = "Settimana: " + weekStartDate.toLocaleString('it-IT', { day:'numeric', month: 'long', year: 'numeric' });
+            
+            for(let i=0; i<7; i++) {
+                let currentDay = new Date(weekStartDate);
+                currentDay.setDate(currentDay.getDate() + i);
+                const dStr = currentDay.toISOString().split('T')[0];
+                
+                const isToday = dStr === new Date().toISOString().split('T')[0];
+                const bgStyle = isToday ? 'border-left: 4px solid var(--primary); background:var(--bg-body);' : '';
+                
+                // Cerca eventi
+                const dayEvents = allDataCache.filter(ev => ev.date === dStr && !ev.done);
+                let eventsHtml = '';
+                if(dayEvents.length > 0) {
+                    dayEvents.forEach(ev => {
+                        const catObj = familySettings.categories.find(c => c.name === ev.category);
+                        const color = catObj ? catObj.color : 'var(--primary)';
+                        eventsHtml += `<div class="mini-event" style="border-left-color:${color};"><span>${ev.text}</span> <span style="font-weight:bold; color:var(--text-main);">${ev.time||''}</span></div>`;
+                    });
+                } else {
+                    eventsHtml = `<div style="color:var(--text-sub); font-size:0.8rem; font-style:italic; padding-left:5px;">Nessun impegno</div>`;
+                }
+
+                grid.innerHTML += `
+                    <div class="week-day-card" style="${bgStyle}">
+                        <div class="week-day-header">${daysNames[i]} ${currentDay.getDate()}</div>
+                        <div class="week-day-events">${eventsHtml}</div>
+                    </div>
+                `;
             }
         }
 
