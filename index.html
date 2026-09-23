@@ -72,8 +72,12 @@
         .rec-label { font-size: 0.8rem; color: var(--text-sub); white-space: nowrap; }
 
         .add-bar select { background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23888%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 12px top 50%; background-size: 10px auto; }
-        #assign-who { background-color: #fff8e1; border-color: #ffecb3; color: #ff6f00; font-weight: 600; }
-        body.dark-mode #assign-who { background-color: #4a3b00; border-color: #665200; color: #ffb74d; }
+        
+        /* CHIPS PER TAG MULTIPLI */
+        .assign-chips { grid-column: 1 / -1; display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 5px; }
+        .chip { padding: 6px 14px; border-radius: 20px; background: var(--bg-body); border: 1px solid var(--border); color: var(--text-sub); font-size: 0.85rem; cursor: pointer; font-weight: 500; transition: 0.2s; }
+        .chip.active { background: #fff8e1; border-color: #ffb300; color: #f57c00; font-weight: bold; }
+        body.dark-mode .chip.active { background: #4a3b00; border-color: #665200; color: #ffb74d; }
         
         .input-text-group { grid-column: 1 / -1; display: flex; gap: 10px; align-items: stretch; }
         #new-item-input { flex-grow: 1; border: 2px solid var(--primary); background-image: none; }
@@ -100,7 +104,7 @@
         .chat-card { flex-direction: row; align-items: flex-start; gap: 10px; padding: 12px; }
         .chat-author { font-weight: bold; color: var(--primary); font-size: 0.85rem; text-transform: capitalize; }
         .chat-time { font-size: 0.75rem; color: var(--text-sub); margin-left: auto; }
-        .chat-tag { background: #fff3e0; color: #e65100; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; display: inline-block; margin-top: 8px; font-weight: bold; border: 1px solid #ffe0b2; }
+        .chat-tag { background: #fff3e0; color: #e65100; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; display: inline-block; margin-top: 8px; font-weight: bold; border: 1px solid #ffe0b2; margin-right: 4px; }
         body.dark-mode .chat-tag { background: #4a2800; border-color: #7a4100; color: #ffb74d; }
 
         .date-badge { background: var(--accent-bg); color: var(--primary); padding: 6px 10px; border-radius: 10px; text-align: center; margin-right: 15px; min-width: 50px; display: flex; flex-direction: column; justify-content: center; font-weight: bold; }
@@ -112,7 +116,7 @@
         .location-link { display: inline-flex; align-items: center; color: var(--primary); text-decoration: none; font-size: 0.8rem; margin-top: 6px; background: var(--accent-bg); padding: 4px 8px; border-radius: 6px; }
         
         .cat-dot { height: 12px; width: 12px; border-radius: 50%; display: inline-block; margin-right: 8px; vertical-align: middle; border: 1px solid rgba(0,0,0,0.1); }
-        .assigned-badge { font-size: 0.75rem; background: var(--bg-body); color: var(--text-sub); padding: 3px 8px; border-radius: 6px; margin-left: 8px; display: inline-block; vertical-align: middle; border: 1px solid var(--border); }
+        .assigned-badge { font-size: 0.75rem; background: var(--bg-body); color: var(--text-sub); padding: 3px 8px; border-radius: 6px; margin-left: 5px; display: inline-block; vertical-align: middle; border: 1px solid var(--border); font-weight:bold; }
         
         /* BULK DELETE STYLES */
         .bulk-checkbox { display: none; width: 22px; height: 22px; margin-right: 15px; accent-color: #d32f2f; flex-shrink:0;}
@@ -202,7 +206,10 @@
                 </div>
 
                 <select id="category-select" class="hidden"></select>
-                <select id="assign-who" class="hidden"></select>
+                
+                <!-- CHIPS PER SELEZIONE MULTIPLA -->
+                <div id="assign-who-container" class="hidden assign-chips"></div>
+                
                 <input type="text" id="contact-detail-input" class="hidden" placeholder="Numero o Email">
                 <input type="text" id="location-input" class="hidden" placeholder="📍 Luogo (es. Palestra, Via Roma 1)">
 
@@ -329,7 +336,6 @@
         const calendarToggleBtn = document.getElementById('calendar-toggle-btn');
         
         const categorySelect = document.getElementById('category-select');
-        const assignWho = document.getElementById('assign-who');
         const filterSelect = document.getElementById('filter-select');
         const dateInput = document.getElementById('date-input');
         const timeInput = document.getElementById('time-input'); 
@@ -363,7 +369,7 @@
             document.getElementById('bulk-delete-btn').classList.toggle('hidden', !isBulkMode);
             document.getElementById('bulk-toggle').classList.toggle('active', isBulkMode);
             
-            if(!isBulkMode) { // Deseleziona tutti in uscita
+            if(!isBulkMode) { 
                 document.querySelectorAll('.bulk-checkbox').forEach(cb => cb.checked = false);
                 window.updateBulkCount();
             }
@@ -448,12 +454,21 @@
             familySettings.categories.forEach(cat => categorySelect.innerHTML += `<option value="${cat.name}">${cat.name}</option>`);
             filterSelect.innerHTML = `<option value="all">Mostra: Tutti</option>`;
             familySettings.categories.forEach(cat => filterSelect.innerHTML += `<option value="${cat.name}">Mostra: ${cat.name}</option>`);
-            assignWho.innerHTML = `<option value="">Tag/Per: Nessuno</option>`;
-            familySettings.members.forEach(mem => assignWho.innerHTML += `<option value="${mem}">${mem}</option>`);
+            
+            // Popola i chips per i Tag Multipli
+            const assignContainer = document.getElementById('assign-who-container');
+            assignContainer.innerHTML = '';
+            familySettings.members.forEach(mem => {
+                const chip = document.createElement('div');
+                chip.className = 'chip';
+                chip.innerText = mem;
+                chip.onclick = () => chip.classList.toggle('active');
+                assignContainer.appendChild(chip);
+            });
         }
 
         window.nav = (section) => {
-            if(isBulkMode) window.toggleBulkMode(); // Disattiva bulk mode se cambio tab
+            if(isBulkMode) window.toggleBulkMode(); 
             currentSection = section;
             listContainer.innerHTML = '';
             
@@ -479,7 +494,8 @@
             if(section === 'chat' || section === 'contacts' || section === 'notes') document.querySelector('.filter-row').classList.add('hidden');
             
             dateInput.classList.add('hidden'); timeInput.classList.add('hidden'); recurrenceWrapper.classList.add('hidden');
-            categorySelect.classList.add('hidden'); assignWho.classList.add('hidden'); contactInput.classList.add('hidden'); locationInput.classList.add('hidden');
+            categorySelect.classList.add('hidden'); contactInput.classList.add('hidden'); locationInput.classList.add('hidden');
+            document.getElementById('assign-who-container').classList.add('hidden');
             newItemInput.placeholder = "Aggiungi...";
             const title = document.getElementById('page-title');
 
@@ -490,22 +506,27 @@
             } else {
                 addBarContainer.classList.remove('hidden'); 
                 
+                if(section === 'calendar' || section === 'todos' || section === 'chat') {
+                    // Mostra i Chips
+                    document.getElementById('assign-who-container').classList.remove('hidden');
+                    document.querySelectorAll('#assign-who-container .chip').forEach(c => c.classList.remove('active'));
+                }
+
                 if(section === 'calendar') {
                     title.innerText = "Agenda"; calendarToggleBtn.classList.remove('hidden'); 
                     dateInput.classList.remove('hidden'); timeInput.classList.remove('hidden'); recurrenceWrapper.classList.remove('hidden'); 
                     categorySelect.classList.remove('hidden'); categorySelect.style.display = 'block'; 
-                    assignWho.classList.remove('hidden'); assignWho.style.display = 'block'; 
-                    locationInput.classList.remove('hidden'); // Mostra campo luogo
+                    locationInput.classList.remove('hidden'); 
                     newItemInput.placeholder = "Evento...";
                     if(isCalendarMode) calendarViewContainer.classList.remove('hidden'); 
                 } 
                 else if (section === 'todos') {
                     title.innerText = "Compiti"; dateInput.classList.remove('hidden'); 
                     categorySelect.classList.remove('hidden'); categorySelect.style.display = 'block'; 
-                    assignWho.classList.remove('hidden'); assignWho.style.display = 'block'; newItemInput.placeholder = "Compito...";
+                    newItemInput.placeholder = "Compito...";
                 }
                 else if (section === 'chat') {
-                    title.innerText = "Bacheca"; assignWho.classList.remove('hidden'); assignWho.style.display = 'block'; newItemInput.placeholder = "Scrivi un messaggio...";
+                    title.innerText = "Bacheca"; newItemInput.placeholder = "Scrivi un messaggio...";
                 }
                 else if (section === 'contacts') {
                     title.innerText = "Rubrica"; contactInput.classList.remove('hidden'); newItemInput.placeholder = "Nome...";
@@ -515,6 +536,13 @@
         };
 
         window.changeDashUser = (val) => { currentDashboardUser = val; renderDashboard(); };
+
+        function isAssignedToUser(itemField, user) {
+            if(!user) return true; // View all
+            if(!itemField || itemField.length === 0) return true; // General 
+            if(Array.isArray(itemField)) return itemField.includes(user);
+            return itemField === user; // String fallback
+        }
 
         function loadDashboardData() {
             listContainer.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-sub);">Caricamento Home...</div>';
@@ -539,15 +567,20 @@
             let html = `<div style="background:var(--bg-card); padding:10px 15px; border-radius:12px; margin-bottom:15px; box-shadow:0 1px 3px var(--shadow);"><select onchange="window.changeDashUser(this.value)" style="width:100%; border:none; background:transparent; font-size:1rem; font-weight:bold; color:var(--primary); outline:none;">${userOpts}</select></div>`;
 
             const today = new Date().toISOString().split('T')[0];
+            const next7 = new Date(); 
+            next7.setDate(next7.getDate() + 7);
+            const limitDate = next7.toISOString().split('T')[0];
 
+            // 1. Bacheca (Taggati)
             if(currentDashboardUser) {
-                const chatForMe = dashboardData.chat.filter(c => c.tagged === currentDashboardUser).sort((a,b)=> b.timestamp - a.timestamp);
+                const chatForMe = dashboardData.chat.filter(c => isAssignedToUser(c.tagged, currentDashboardUser)).sort((a,b)=> b.timestamp - a.timestamp);
                 if(chatForMe.length > 0) {
                     html += `<div class="dash-section-title"><i class="material-icons" style="color:#e65100">notifications_active</i> Avvisi in Bacheca</div>`;
                     chatForMe.forEach(c => html += renderHTMLCard(c, 'chat'));
                 }
             }
 
+            // 2. Agenda Scaduti
             const impegni = dashboardData.calendar.filter(c => !c.done);
             const scaduti = impegni.filter(c => c.date && c.date < today);
             if(scaduti.length > 0) {
@@ -555,25 +588,28 @@
                 scaduti.forEach(c => html += renderHTMLCard(c, 'calendar'));
             }
 
-            const futuri = impegni.filter(c => !c.date || c.date >= today).sort((a,b)=> (a.date||'9999') > (b.date||'9999') ? 1 : -1);
+            // 3. Agenda Futuri (LIMITATI AI PROSSIMI 7 GIORNI)
+            const futuri = impegni.filter(c => c.date >= today && c.date <= limitDate).sort((a,b)=> (a.date||'9999') > (b.date||'9999') ? 1 : -1);
             if(futuri.length > 0) {
-                html += `<div class="dash-section-title"><i class="material-icons" style="color:var(--primary)">event_upcoming</i> Prossimi Eventi</div>`;
-                futuri.slice(0, 5).forEach(c => html += renderHTMLCard(c, 'calendar'));
+                html += `<div class="dash-section-title"><i class="material-icons" style="color:var(--primary)">event_upcoming</i> Prossimi 7 Giorni</div>`;
+                futuri.forEach(c => html += renderHTMLCard(c, 'calendar'));
             }
 
-            const tasks = dashboardData.todos.filter(t => !t.done && (currentDashboardUser === "" || t.assigned === currentDashboardUser || !t.assigned)).sort((a,b)=> (a.date||'9999') > (b.date||'9999') ? 1 : -1);
+            // 4. Compiti (LIMITATI AI PROSSIMI 7 GIORNI)
+            const tasks = dashboardData.todos.filter(t => !t.done && (!t.date || t.date <= limitDate) && isAssignedToUser(t.assigned, currentDashboardUser)).sort((a,b)=> (a.date||'9999') > (b.date||'9999') ? 1 : -1);
             if(tasks.length > 0) {
-                html += `<div class="dash-section-title"><i class="material-icons" style="color:#fbc02d">check_circle</i> Compiti</div>`;
+                html += `<div class="dash-section-title"><i class="material-icons" style="color:#fbc02d">check_circle</i> Compiti (Entro 7 gg)</div>`;
                 tasks.slice(0, 5).forEach(c => html += renderHTMLCard(c, 'todos'));
             }
 
-            const shop = dashboardData.shopping.filter(s => !s.done && (currentDashboardUser === "" || s.assigned === currentDashboardUser || !s.assigned));
+            // 5. Spesa
+            const shop = dashboardData.shopping.filter(s => !s.done && isAssignedToUser(s.assigned, currentDashboardUser));
             if(shop.length > 0) {
                 html += `<div class="dash-section-title"><i class="material-icons" style="color:#4caf50">shopping_cart</i> Spesa</div>`;
                 shop.slice(0, 5).forEach(c => html += renderHTMLCard(c, 'shopping'));
             }
 
-            if(html.indexOf('dash-section-title') === -1) html += `<div style="text-align:center; padding:40px 20px; color:var(--text-sub);">Tutto tranquillo! Non ci sono impegni in sospeso.</div>`;
+            if(html.indexOf('dash-section-title') === -1) html += `<div style="text-align:center; padding:40px 20px; color:var(--text-sub);">Tutto tranquillo! Non ci sono impegni in sospeso per i prossimi 7 giorni.</div>`;
 
             listContainer.innerHTML = html;
         }
@@ -628,21 +664,33 @@
 
         function renderHTMLCard(data, sectionType, isToday = false) {
             const seriesIdSafe = data.seriesId ? `'${data.seriesId}'` : 'null';
-            // CHECKBOX per BULK
             const checkboxHtml = `<input type="checkbox" class="bulk-checkbox" value="${data.id}" data-section="${sectionType}" onclick="window.updateBulkCount()">`;
             
+            // GENERAZIONE TAG MULTIPLI
+            let assignedTags = "";
+            if (Array.isArray(data.assigned) && data.assigned.length > 0) {
+                assignedTags = data.assigned.map(m => `<span class="assigned-badge">@${m}</span>`).join(" ");
+            } else if (typeof data.assigned === 'string' && data.assigned) {
+                assignedTags = `<span class="assigned-badge">@${data.assigned}</span>`; // Backward compatibility
+            }
+
+            let chatTags = "";
+            if (Array.isArray(data.tagged) && data.tagged.length > 0) {
+                chatTags = data.tagged.map(m => `<div class="chat-tag">🔔 @${m}</div>`).join(" ");
+            } else if (typeof data.tagged === 'string' && data.tagged) {
+                chatTags = `<div class="chat-tag">🔔 @${data.tagged}</div>`; // Backward compatibility
+            }
+
             if (sectionType === 'notes') {
                 return `<div class="card note-card" style="flex-direction:row;">${checkboxHtml}<div style="width:100%"><div class="note-title">${data.title||"Senza titolo"}</div><div class="note-body">${data.text}</div><div class="note-footer"><i class="material-icons" style="color:#fbc02d; cursor:pointer;" onclick="window.editNote('${data.id}')">edit</i><i class="material-icons" style="color:#ff5252; cursor:pointer;" onclick="window.del('${data.id}','${sectionType}', ${seriesIdSafe})">delete</i></div></div></div>`;
             }
             if (sectionType === 'chat') {
                 const timeStr = data.timestamp ? data.timestamp.toDate().toLocaleString('it-IT', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'}) : '';
-                const tagHtml = data.tagged ? `<div class="chat-tag">🔔 @${data.tagged}</div>` : '';
-                return `<div class="card chat-card">${checkboxHtml}<div style="width:100%;"><div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span class="chat-author">${data.author}</span> <span class="chat-time">${timeStr}</span></div><div style="font-size:1rem; white-space:pre-wrap;">${data.text}</div>${tagHtml}</div><i class="material-icons" style="color:#ff5252; cursor:pointer; align-self:center; margin-left:10px;" onclick="window.del('${data.id}','${sectionType}', ${seriesIdSafe})">delete</i></div>`;
+                return `<div class="card chat-card">${checkboxHtml}<div style="width:100%;"><div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span class="chat-author">${data.author}</span> <span class="chat-time">${timeStr}</span></div><div style="font-size:1rem; white-space:pre-wrap;">${data.text}</div><div>${chatTags}</div></div><i class="material-icons" style="color:#ff5252; cursor:pointer; align-self:center; margin-left:10px;" onclick="window.del('${data.id}','${sectionType}', ${seriesIdSafe})">delete</i></div>`;
             }
 
             const catObj = familySettings.categories.find(c => c.name === data.category);
             const color = catObj ? catObj.color : '#ccc';
-            const assigned = data.assigned ? `<span class="assigned-badge">${data.assigned}</span>` : "";
             
             let content = "", actions = "";
             const strike = data.done ? 'text-decoration:line-through; color:var(--text-sub);' : '';
@@ -654,13 +702,12 @@
                 const dStr = data.date || new Date().toISOString().split('T')[0];
                 actions = `<i class="material-icons" style="color:var(--border); margin-left:10px; cursor:pointer;" onclick="window.exportGoogle('${data.text}','${dStr}')">event</i>`;
                 
-                // Mappa
                 const locHtml = data.location ? `<br><a href="https://maps.google.com/?q=${encodeURIComponent(data.location)}" target="_blank" class="location-link"><i class="material-icons" style="font-size:14px; margin-right:4px;">place</i> ${data.location}</a>` : '';
 
                 content = `<i class="material-icons" style="color:${checkColor}; margin-right:15px; cursor:pointer;" onclick="window.toggle('${data.id}',${!data.done},'${sectionType}')">${data.done ? 'check_circle' : 'radio_button_unchecked'}</i>
                            <div class="date-badge" style="${data.done?'opacity:0.5;':''}"><span class="date-day">${d.getDate()}</span><span class="date-month">${d.toLocaleString('it-IT',{month:'short'})}</span></div>
                            <div style="flex-grow:1; ${strike}"><div style="font-weight:600; font-size:1.1rem; margin-bottom:4px;">${timeDisplay}${data.text}</div>
-                           <div style="font-size:0.8rem; color:var(--text-sub);"><span class="cat-dot" style="background:${color}"></span>${data.category||'Generale'} ${assigned}</div>${locHtml}</div>`;
+                           <div style="font-size:0.8rem; color:var(--text-sub);"><span class="cat-dot" style="background:${color}"></span>${data.category||'Generale'} ${assignedTags}</div>${locHtml}</div>`;
             } 
             else if (sectionType === 'contacts') {
                 content = `<div style="flex-grow:1"><div style="font-weight:600; font-size:1.1rem;">${data.text}</div><a href="tel:${data.detail}" style="color:var(--primary); text-decoration:none; display:flex; align-items:center; margin-top:5px;"><i class="material-icons" style="font-size:16px; margin-right:5px;">call</i>${data.detail}</a></div>`;
@@ -671,7 +718,7 @@
                     const dd = new Date(data.date); dateHtml = `<span class="due-date-display">Scadenza: ${dd.getDate()}/${dd.getMonth()+1}</span>`;
                 }
                 content = `<i class="material-icons" style="color:${checkColor}; margin-right:15px; cursor:pointer;" onclick="window.toggle('${data.id}',${!data.done},'${sectionType}')">${data.done ? 'check_circle' : 'radio_button_unchecked'}</i>
-                           <div style="flex-grow:1; ${strike}"><span class="cat-dot" style="background:${color}"></span>${data.text} ${assigned} ${dateHtml}</div>`;
+                           <div style="flex-grow:1; ${strike}"><span class="cat-dot" style="background:${color}"></span>${data.text} ${assignedTags} ${dateHtml}</div>`;
             }
 
             const todayCls = isToday ? 'today-card' : '';
@@ -722,14 +769,17 @@
 
         document.getElementById('add-btn').addEventListener('click', async () => {
             const txt = newItemInput.value; if(!txt) return;
-            const cat = categorySelect.value; const who = assignWho.value; 
+            const cat = categorySelect.value; 
             let dVal = dateInput.value; const tVal = timeInput.value; 
             const locVal = locationInput.value;
+            
+            // RACCOGLI TUTTI I CHIPS ATTIVI
+            const who = Array.from(document.querySelectorAll('#assign-who-container .chip.active')).map(c => c.innerText);
             
             if(currentSection === 'chat') {
                 const authorName = auth.currentUser.email.split('@')[0];
                 await addDoc(collection(db, `${currentFamily}_chat`), { text: txt, timestamp: serverTimestamp(), author: authorName, tagged: who });
-                newItemInput.value=""; assignWho.value=""; return;
+                newItemInput.value=""; document.querySelectorAll('#assign-who-container .chip').forEach(c => c.classList.remove('active')); return;
             }
 
             let loops = 1;
@@ -763,7 +813,9 @@
                 await addDoc(collection(db, `${currentFamily}_${currentSection}`), item);
                 if(currentSection !== 'calendar') break; 
             }
-            newItemInput.value=""; contactInput.value=""; locationInput.value=""; recUnit.value="none"; window.toggleRecurrenceInputs();
+            newItemInput.value=""; contactInput.value=""; locationInput.value=""; recUnit.value="none"; 
+            window.toggleRecurrenceInputs();
+            document.querySelectorAll('#assign-who-container .chip').forEach(c => c.classList.remove('active'));
         });
 
         document.getElementById('save-note-btn').addEventListener('click', async () => {
@@ -774,7 +826,6 @@
             noteTitleInput.value = ""; noteContentInput.value = "";
         });
 
-        // ELIMINA (Gestione Serie)
         window.del = async (id, section, seriesId) => {
             if(seriesId && seriesId !== 'null') {
                 const ans = prompt("Questo evento fa parte di una serie ripetitiva.\n\nDigita 1 per eliminare SOLO QUESTO.\nDigita 2 per eliminare TUTTA LA SERIE.\n(Lascia vuoto per annullare)");
