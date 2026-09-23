@@ -50,7 +50,7 @@
         .header-controls { display: flex; align-items: center; gap: 15px; }
         .header-controls i { color: var(--text-sub); cursor: pointer; }
         
-        .filter-row { padding: 0 15px; display: flex; justify-content: flex-end; align-items: center; margin-bottom: 10px; }
+        .filter-row { padding: 0 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .filter-row select { width: auto !important; height: 35px !important; font-size: 0.85rem; border: none; background-color: transparent; color: var(--text-sub); font-weight: 600; padding-right: 25px; }
 
         #calendar-view-container { background: var(--bg-card); margin: 15px; border-radius: 16px; padding: 15px; box-shadow: 0 4px 20px var(--shadow); }
@@ -77,7 +77,8 @@
         
         .input-text-group { grid-column: 1 / -1; display: flex; gap: 10px; align-items: stretch; }
         #new-item-input { flex-grow: 1; border: 2px solid var(--primary); background-image: none; }
-        #contact-detail-input { grid-column: 1 / -1; }
+        #contact-detail-input, #location-input { grid-column: 1 / -1; }
+        
         #add-btn { width: 50px !important; padding: 0; background: var(--primary); color: white; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(66, 133, 244, 0.3); }
         #add-btn:active { transform: scale(0.95); }
 
@@ -108,17 +109,25 @@
         .today-card { border-left: 5px solid var(--primary); background: var(--bg-body); }
         .time-display { font-size: 0.85rem; background: var(--bg-body); padding: 2px 6px; border-radius: 4px; margin-right: 5px; color: var(--text-main); font-weight: bold; border: 1px solid var(--border); }
         .due-date-display { font-size: 0.75rem; color: #e57373; font-weight: bold; display: block; margin-top: 2px; }
+        .location-link { display: inline-flex; align-items: center; color: var(--primary); text-decoration: none; font-size: 0.8rem; margin-top: 6px; background: var(--accent-bg); padding: 4px 8px; border-radius: 6px; }
         
         .cat-dot { height: 12px; width: 12px; border-radius: 50%; display: inline-block; margin-right: 8px; vertical-align: middle; border: 1px solid rgba(0,0,0,0.1); }
         .assigned-badge { font-size: 0.75rem; background: var(--bg-body); color: var(--text-sub); padding: 3px 8px; border-radius: 6px; margin-left: 8px; display: inline-block; vertical-align: middle; border: 1px solid var(--border); }
         
+        /* BULK DELETE STYLES */
+        .bulk-checkbox { display: none; width: 22px; height: 22px; margin-right: 15px; accent-color: #d32f2f; flex-shrink:0;}
+        #list-container.bulk-mode .bulk-checkbox { display: block; }
+        #bulk-delete-btn { position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%); background: #d32f2f; color: white; border: none; padding: 12px 24px; border-radius: 30px; font-weight: bold; box-shadow: 0 4px 15px rgba(211,47,47,0.4); z-index: 300; display:flex; align-items:center; gap:8px;}
+        .bulk-toggle-btn { display:flex; align-items:center; gap:5px; color:var(--text-sub); font-size:0.85rem; background:none; border:1px solid var(--border); padding:6px 10px; border-radius:8px; cursor:pointer;}
+        .bulk-toggle-btn.active { background: #ffebee; color: #d32f2f; border-color: #ffcdd2; }
+
         /* NAVIGAZIONE SCORREVOLE */
         .bottom-nav { 
             position: fixed; bottom: 0; width: 100%; background: var(--nav-bg); border-top: 1px solid var(--border); 
             display: flex; justify-content: flex-start; gap: 5px; padding: 10px 15px 20px 15px; z-index: 200; 
             box-shadow: 0 -2px 10px var(--shadow); overflow-x: auto; -webkit-overflow-scrolling: touch; 
         }
-        .bottom-nav::-webkit-scrollbar { display: none; } /* Nasconde scrollbar */
+        .bottom-nav::-webkit-scrollbar { display: none; }
         .nav-item { background: none; border: none; color: #999; display: flex; flex-direction: column; align-items: center; font-size: 0.65rem; padding: 0 8px; min-width: 65px; flex-shrink: 0; }
         .nav-item.active { color: var(--primary); }
         .nav-item i { font-size: 24px; margin-bottom: 2px; }
@@ -163,7 +172,6 @@
         </header>
 
         <main>
-            <!-- VISTA CALENDARIO MENSILE -->
             <div id="calendar-view-container" class="hidden">
                 <div class="cal-header">
                     <i class="material-icons" style="cursor:pointer;" onclick="window.changeMonth(-1)">chevron_left</i>
@@ -196,6 +204,7 @@
                 <select id="category-select" class="hidden"></select>
                 <select id="assign-who" class="hidden"></select>
                 <input type="text" id="contact-detail-input" class="hidden" placeholder="Numero o Email">
+                <input type="text" id="location-input" class="hidden" placeholder="📍 Luogo (es. Palestra, Via Roma 1)">
 
                 <div class="input-text-group">
                     <input type="text" id="new-item-input" placeholder="Evento...">
@@ -211,15 +220,21 @@
                 <input type="hidden" id="editing-note-id">
             </div>
 
+            <!-- FILTER & BULK ACTIONS ROW -->
             <div class="filter-row hidden">
+                <button id="bulk-toggle" class="bulk-toggle-btn" onclick="window.toggleBulkMode()"><i class="material-icons" style="font-size:18px;">checklist</i> Seleziona</button>
                 <select id="filter-select" onchange="window.applyFilter()">
                     <option value="all">Mostra: Tutti</option>
                 </select>
             </div>
 
-            <!-- CONTENITORE LISTE E DASHBOARD -->
+            <!-- CONTENITORE LISTE -->
             <div id="list-container"></div>
+            
+            <!-- TASTO FLOTTANTE ELIMINA IN BLOCCO -->
+            <button id="bulk-delete-btn" class="hidden" onclick="window.executeBulkDelete()"><i class="material-icons">delete</i> Elimina (<span id="bulk-count">0</span>)</button>
 
+            <!-- IMPOSTAZIONI -->
             <div id="settings-view" class="hidden settings-view">
                 <div id="super-admin-area" class="settings-section admin-panel hidden">
                     <h4 style="margin:0 0 10px 0; color:#e65100;">👑 Console Super Admin</h4>
@@ -271,7 +286,7 @@
     <!-- JS LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy, serverTimestamp, getDoc, setDoc } 
+        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy, serverTimestamp, getDoc, setDoc, getDocs, where } 
         from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, updatePassword, reauthenticateWithCredential, EmailAuthProvider, sendPasswordResetEmail } 
         from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -301,6 +316,7 @@
         let isCalendarMode = false;
         let viewDate = new Date();
         let selectedDate = null;
+        let isBulkMode = false;
 
         const authContainer = document.getElementById('auth-container');
         const appContainer = document.getElementById('app-container');
@@ -318,6 +334,7 @@
         const dateInput = document.getElementById('date-input');
         const timeInput = document.getElementById('time-input'); 
         const contactInput = document.getElementById('contact-detail-input');
+        const locationInput = document.getElementById('location-input');
         const newItemInput = document.getElementById('new-item-input');
         const recUnit = document.getElementById('rec-unit');
         const recInterval = document.getElementById('rec-interval');
@@ -339,6 +356,33 @@
             document.getElementById('theme-toggle').innerText = 'brightness_7';
         }
 
+        // --- BULK MODE LOGIC ---
+        window.toggleBulkMode = () => {
+            isBulkMode = !isBulkMode;
+            listContainer.classList.toggle('bulk-mode', isBulkMode);
+            document.getElementById('bulk-delete-btn').classList.toggle('hidden', !isBulkMode);
+            document.getElementById('bulk-toggle').classList.toggle('active', isBulkMode);
+            
+            if(!isBulkMode) { // Deseleziona tutti in uscita
+                document.querySelectorAll('.bulk-checkbox').forEach(cb => cb.checked = false);
+                window.updateBulkCount();
+            }
+        };
+        window.updateBulkCount = () => {
+            const count = document.querySelectorAll('.bulk-checkbox:checked').length;
+            document.getElementById('bulk-count').innerText = count;
+        };
+        window.executeBulkDelete = async () => {
+            const checks = document.querySelectorAll('.bulk-checkbox:checked');
+            if(checks.length === 0) return;
+            if(!confirm(`Sei sicuro di voler eliminare ${checks.length} elementi?`)) return;
+            
+            for(let c of checks) {
+                await deleteDoc(doc(db, `${currentFamily}_${c.dataset.section}`, c.value));
+            }
+            window.toggleBulkMode(); 
+        };
+
         document.getElementById('login-btn').addEventListener('click', () => {
             const email = document.getElementById('email-input').value;
             const pass = document.getElementById('password-input').value;
@@ -346,15 +390,6 @@
             loginStatus.innerText = "Accesso...";
             signInWithEmailAndPassword(auth, email, pass).catch(e => loginStatus.innerText = "Errore: " + e.message);
         });
-
-        window.resetPassword = async () => {
-            const email = document.getElementById('email-input').value;
-            if(!email) return alert("Inserisci email!");
-            if(confirm(`Inviare reset a ${email}?`)) {
-                try { await sendPasswordResetEmail(auth, email); alert("Email inviata!"); } 
-                catch (error) { alert("Errore: " + error.message); }
-            }
-        };
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -418,10 +453,10 @@
         }
 
         window.nav = (section) => {
+            if(isBulkMode) window.toggleBulkMode(); // Disattiva bulk mode se cambio tab
             currentSection = section;
             listContainer.innerHTML = '';
             
-            // UI Reset
             settingsView.classList.add('hidden');
             addBarContainer.classList.add('hidden');
             noteEditorContainer.classList.add('hidden');
@@ -434,22 +469,17 @@
             else document.querySelector(`.nav-item[onclick="window.nav('${section}')"]`).classList.add('active');
 
             if (section === 'settings') {
-                settingsView.classList.remove('hidden'); document.getElementById('page-title').innerText = "Impostazioni";
-                return;
+                settingsView.classList.remove('hidden'); document.getElementById('page-title').innerText = "Impostazioni"; return;
             }
-
             if (section === 'dashboard') {
-                document.getElementById('page-title').innerText = "Home";
-                loadDashboardData();
-                return;
+                document.getElementById('page-title').innerText = "Home"; loadDashboardData(); return;
             }
 
-            // Other Sections
             document.querySelector('.filter-row').classList.remove('hidden');
             if(section === 'chat' || section === 'contacts' || section === 'notes') document.querySelector('.filter-row').classList.add('hidden');
             
             dateInput.classList.add('hidden'); timeInput.classList.add('hidden'); recurrenceWrapper.classList.add('hidden');
-            categorySelect.classList.add('hidden'); assignWho.classList.add('hidden'); contactInput.classList.add('hidden'); 
+            categorySelect.classList.add('hidden'); assignWho.classList.add('hidden'); contactInput.classList.add('hidden'); locationInput.classList.add('hidden');
             newItemInput.placeholder = "Aggiungi...";
             const title = document.getElementById('page-title');
 
@@ -464,7 +494,9 @@
                     title.innerText = "Agenda"; calendarToggleBtn.classList.remove('hidden'); 
                     dateInput.classList.remove('hidden'); timeInput.classList.remove('hidden'); recurrenceWrapper.classList.remove('hidden'); 
                     categorySelect.classList.remove('hidden'); categorySelect.style.display = 'block'; 
-                    assignWho.classList.remove('hidden'); assignWho.style.display = 'block'; newItemInput.placeholder = "Evento...";
+                    assignWho.classList.remove('hidden'); assignWho.style.display = 'block'; 
+                    locationInput.classList.remove('hidden'); // Mostra campo luogo
+                    newItemInput.placeholder = "Evento...";
                     if(isCalendarMode) calendarViewContainer.classList.remove('hidden'); 
                 } 
                 else if (section === 'todos') {
@@ -482,7 +514,6 @@
             loadData(section);
         };
 
-        // --- GESTIONE DASHBOARD ---
         window.changeDashUser = (val) => { currentDashboardUser = val; renderDashboard(); };
 
         function loadDashboardData() {
@@ -502,21 +533,13 @@
 
         function renderDashboard() {
             if(currentSection !== 'dashboard') return;
-            
             let userOpts = `<option value="">Vista: Tutta la Famiglia</option>`;
             familySettings.members.forEach(m => userOpts += `<option value="${m}" ${m===currentDashboardUser?'selected':''}>Vista: ${m}</option>`);
 
-            let html = `
-                <div style="background:var(--bg-card); padding:10px 15px; border-radius:12px; margin-bottom:15px; box-shadow:0 1px 3px var(--shadow);">
-                    <select onchange="window.changeDashUser(this.value)" style="width:100%; border:none; background:transparent; font-size:1rem; font-weight:bold; color:var(--primary); outline:none;">
-                        ${userOpts}
-                    </select>
-                </div>
-            `;
+            let html = `<div style="background:var(--bg-card); padding:10px 15px; border-radius:12px; margin-bottom:15px; box-shadow:0 1px 3px var(--shadow);"><select onchange="window.changeDashUser(this.value)" style="width:100%; border:none; background:transparent; font-size:1rem; font-weight:bold; color:var(--primary); outline:none;">${userOpts}</select></div>`;
 
             const today = new Date().toISOString().split('T')[0];
 
-            // 1. Bacheca (Taggati a me)
             if(currentDashboardUser) {
                 const chatForMe = dashboardData.chat.filter(c => c.tagged === currentDashboardUser).sort((a,b)=> b.timestamp - a.timestamp);
                 if(chatForMe.length > 0) {
@@ -525,7 +548,6 @@
                 }
             }
 
-            // 2. Agenda Scaduti (Non Fatti)
             const impegni = dashboardData.calendar.filter(c => !c.done);
             const scaduti = impegni.filter(c => c.date && c.date < today);
             if(scaduti.length > 0) {
@@ -533,35 +555,29 @@
                 scaduti.forEach(c => html += renderHTMLCard(c, 'calendar'));
             }
 
-            // 3. Agenda Futuri (Non Fatti)
             const futuri = impegni.filter(c => !c.date || c.date >= today).sort((a,b)=> (a.date||'9999') > (b.date||'9999') ? 1 : -1);
             if(futuri.length > 0) {
                 html += `<div class="dash-section-title"><i class="material-icons" style="color:var(--primary)">event_upcoming</i> Prossimi Eventi</div>`;
                 futuri.slice(0, 5).forEach(c => html += renderHTMLCard(c, 'calendar'));
             }
 
-            // 4. Compiti
             const tasks = dashboardData.todos.filter(t => !t.done && (currentDashboardUser === "" || t.assigned === currentDashboardUser || !t.assigned)).sort((a,b)=> (a.date||'9999') > (b.date||'9999') ? 1 : -1);
             if(tasks.length > 0) {
                 html += `<div class="dash-section-title"><i class="material-icons" style="color:#fbc02d">check_circle</i> Compiti</div>`;
                 tasks.slice(0, 5).forEach(c => html += renderHTMLCard(c, 'todos'));
             }
 
-            // 5. Spesa
             const shop = dashboardData.shopping.filter(s => !s.done && (currentDashboardUser === "" || s.assigned === currentDashboardUser || !s.assigned));
             if(shop.length > 0) {
                 html += `<div class="dash-section-title"><i class="material-icons" style="color:#4caf50">shopping_cart</i> Spesa</div>`;
                 shop.slice(0, 5).forEach(c => html += renderHTMLCard(c, 'shopping'));
             }
 
-            if(html.indexOf('dash-section-title') === -1) {
-                html += `<div style="text-align:center; padding:40px 20px; color:var(--text-sub);">Tutto tranquillo! Non ci sono impegni in sospeso.</div>`;
-            }
+            if(html.indexOf('dash-section-title') === -1) html += `<div style="text-align:center; padding:40px 20px; color:var(--text-sub);">Tutto tranquillo! Non ci sono impegni in sospeso.</div>`;
 
             listContainer.innerHTML = html;
         }
 
-        // --- GESTIONE LISTE NORMALI ---
         function clearSubscribes() { unsubscribes.forEach(u => u()); unsubscribes = []; }
 
         function loadData(section) {
@@ -610,17 +626,18 @@
             }
         }
 
-        // Funzione universale per generare il blocco HTML di una card
         function renderHTMLCard(data, sectionType, isToday = false) {
-            let html = "";
+            const seriesIdSafe = data.seriesId ? `'${data.seriesId}'` : 'null';
+            // CHECKBOX per BULK
+            const checkboxHtml = `<input type="checkbox" class="bulk-checkbox" value="${data.id}" data-section="${sectionType}" onclick="window.updateBulkCount()">`;
             
             if (sectionType === 'notes') {
-                return `<div class="card note-card"><div class="note-title">${data.title||"Senza titolo"}</div><div class="note-body">${data.text}</div><div class="note-footer"><i class="material-icons" style="color:#fbc02d; cursor:pointer;" onclick="window.editNote('${data.id}')">edit</i><i class="material-icons" style="color:#ff5252; cursor:pointer;" onclick="window.del('${data.id}','${sectionType}')">delete</i></div></div>`;
+                return `<div class="card note-card" style="flex-direction:row;">${checkboxHtml}<div style="width:100%"><div class="note-title">${data.title||"Senza titolo"}</div><div class="note-body">${data.text}</div><div class="note-footer"><i class="material-icons" style="color:#fbc02d; cursor:pointer;" onclick="window.editNote('${data.id}')">edit</i><i class="material-icons" style="color:#ff5252; cursor:pointer;" onclick="window.del('${data.id}','${sectionType}', ${seriesIdSafe})">delete</i></div></div></div>`;
             }
             if (sectionType === 'chat') {
                 const timeStr = data.timestamp ? data.timestamp.toDate().toLocaleString('it-IT', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'}) : '';
                 const tagHtml = data.tagged ? `<div class="chat-tag">🔔 @${data.tagged}</div>` : '';
-                return `<div class="card chat-card"><div style="width:100%;"><div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span class="chat-author">${data.author}</span> <span class="chat-time">${timeStr}</span></div><div style="font-size:1rem; white-space:pre-wrap;">${data.text}</div>${tagHtml}</div><i class="material-icons" style="color:#ff5252; cursor:pointer; align-self:center; margin-left:10px;" onclick="window.del('${data.id}','${sectionType}')">delete</i></div>`;
+                return `<div class="card chat-card">${checkboxHtml}<div style="width:100%;"><div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span class="chat-author">${data.author}</span> <span class="chat-time">${timeStr}</span></div><div style="font-size:1rem; white-space:pre-wrap;">${data.text}</div>${tagHtml}</div><i class="material-icons" style="color:#ff5252; cursor:pointer; align-self:center; margin-left:10px;" onclick="window.del('${data.id}','${sectionType}', ${seriesIdSafe})">delete</i></div>`;
             }
 
             const catObj = familySettings.categories.find(c => c.name === data.category);
@@ -637,10 +654,13 @@
                 const dStr = data.date || new Date().toISOString().split('T')[0];
                 actions = `<i class="material-icons" style="color:var(--border); margin-left:10px; cursor:pointer;" onclick="window.exportGoogle('${data.text}','${dStr}')">event</i>`;
                 
+                // Mappa
+                const locHtml = data.location ? `<br><a href="https://maps.google.com/?q=${encodeURIComponent(data.location)}" target="_blank" class="location-link"><i class="material-icons" style="font-size:14px; margin-right:4px;">place</i> ${data.location}</a>` : '';
+
                 content = `<i class="material-icons" style="color:${checkColor}; margin-right:15px; cursor:pointer;" onclick="window.toggle('${data.id}',${!data.done},'${sectionType}')">${data.done ? 'check_circle' : 'radio_button_unchecked'}</i>
                            <div class="date-badge" style="${data.done?'opacity:0.5;':''}"><span class="date-day">${d.getDate()}</span><span class="date-month">${d.toLocaleString('it-IT',{month:'short'})}</span></div>
                            <div style="flex-grow:1; ${strike}"><div style="font-weight:600; font-size:1.1rem; margin-bottom:4px;">${timeDisplay}${data.text}</div>
-                           <div style="font-size:0.8rem; color:var(--text-sub);"><span class="cat-dot" style="background:${color}"></span>${data.category||'Generale'} ${assigned}</div></div>`;
+                           <div style="font-size:0.8rem; color:var(--text-sub);"><span class="cat-dot" style="background:${color}"></span>${data.category||'Generale'} ${assigned}</div>${locHtml}</div>`;
             } 
             else if (sectionType === 'contacts') {
                 content = `<div style="flex-grow:1"><div style="font-weight:600; font-size:1.1rem;">${data.text}</div><a href="tel:${data.detail}" style="color:var(--primary); text-decoration:none; display:flex; align-items:center; margin-top:5px;"><i class="material-icons" style="font-size:16px; margin-right:5px;">call</i>${data.detail}</a></div>`;
@@ -655,10 +675,9 @@
             }
 
             const todayCls = isToday ? 'today-card' : '';
-            return `<div class="card ${todayCls}">${content} <div style="display:flex; align-items:center;">${actions}<i class="material-icons" style="color:#ff5252; margin-left:15px; cursor:pointer;" onclick="window.del('${data.id}','${sectionType}')">delete</i></div></div>`;
+            return `<div class="card ${todayCls}">${checkboxHtml}${content} <div style="display:flex; align-items:center;">${actions}<i class="material-icons" style="color:#ff5252; margin-left:15px; cursor:pointer;" onclick="window.del('${data.id}','${sectionType}', ${seriesIdSafe})">delete</i></div></div>`;
         }
 
-        // --- CALENDARIO GRID ---
         window.toggleCalendarView = () => {
             isCalendarMode = !isCalendarMode;
             if(isCalendarMode) { calendarViewContainer.classList.remove('hidden'); document.getElementById('calendar-toggle-btn').innerText = "view_list"; renderCalendarGrid(); } 
@@ -705,6 +724,7 @@
             const txt = newItemInput.value; if(!txt) return;
             const cat = categorySelect.value; const who = assignWho.value; 
             let dVal = dateInput.value; const tVal = timeInput.value; 
+            const locVal = locationInput.value;
             
             if(currentSection === 'chat') {
                 const authorName = auth.currentUser.email.split('@')[0];
@@ -718,11 +738,17 @@
             const rCount = parseInt(recCount.value) || 1;
             if(currentSection === 'calendar' && rUnit !== 'none') loops = rCount;
             
+            const seriesId = (loops > 1) ? Date.now().toString(36) + Math.random().toString(36).substr(2, 5) : null;
+            
             for(let i=0; i<loops; i++) {
                 const item = { text: txt, timestamp: serverTimestamp(), done: false, category: cat, assigned: who };
+                if (seriesId) item.seriesId = seriesId;
+
                 if(currentSection === 'calendar') {
                     if(!dVal) return alert("Inserisci Data");
                     item.time = tVal;
+                    if(locVal) item.location = locVal;
+
                     if (i > 0) {
                         const d = new Date(dVal);
                         if(rUnit === 'day') d.setDate(d.getDate() + (i * rInt));
@@ -737,7 +763,7 @@
                 await addDoc(collection(db, `${currentFamily}_${currentSection}`), item);
                 if(currentSection !== 'calendar') break; 
             }
-            newItemInput.value=""; contactInput.value=""; recUnit.value="none"; window.toggleRecurrenceInputs();
+            newItemInput.value=""; contactInput.value=""; locationInput.value=""; recUnit.value="none"; window.toggleRecurrenceInputs();
         });
 
         document.getElementById('save-note-btn').addEventListener('click', async () => {
@@ -748,7 +774,22 @@
             noteTitleInput.value = ""; noteContentInput.value = "";
         });
 
-        window.del = async (id, section) => { if(confirm("Eliminare?")) await deleteDoc(doc(db, `${currentFamily}_${section}` , id)); };
+        // ELIMINA (Gestione Serie)
+        window.del = async (id, section, seriesId) => {
+            if(seriesId && seriesId !== 'null') {
+                const ans = prompt("Questo evento fa parte di una serie ripetitiva.\n\nDigita 1 per eliminare SOLO QUESTO.\nDigita 2 per eliminare TUTTA LA SERIE.\n(Lascia vuoto per annullare)");
+                if (ans === '1') {
+                    await deleteDoc(doc(db, `${currentFamily}_${section}` , id));
+                } else if (ans === '2') {
+                    const q = query(collection(db, `${currentFamily}_${section}`), where("seriesId", "==", seriesId));
+                    const snap = await getDocs(q);
+                    snap.forEach(d => deleteDoc(d.ref));
+                }
+            } else {
+                if(confirm("Eliminare definitivamente?")) await deleteDoc(doc(db, `${currentFamily}_${section}` , id));
+            }
+        };
+
         window.toggle = async (id, st, section) => { await updateDoc(doc(db, `${currentFamily}_${section}`, id), {done:st}); };
         window.editNote = (id) => { const note = allDataCache.find(n => n.id === id); if (note) { noteTitleInput.value = note.title || ""; noteContentInput.value = note.text || ""; editingNoteId.value = id; document.getElementById('save-note-btn').innerText = "AGGIORNA NOTA"; window.scrollTo({ top: 0, behavior: 'smooth' });}};
         window.exportGoogle = (t,d) => { const x=d.replace(/-/g,''); window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(t)}&dates=${x}/${x}`,'_blank');};
