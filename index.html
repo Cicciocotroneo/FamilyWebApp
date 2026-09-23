@@ -192,7 +192,6 @@
         <input type="email" id="email-input" placeholder="Email">
         <input type="password" id="password-input" placeholder="Password">
         <button id="login-btn">Entra</button>
-        <p onclick="window.resetPassword()" style="color:var(--primary); cursor:pointer; margin-top:20px; font-size: 0.9rem;">Password dimenticata?</p>
         <p id="login-status" style="margin-top: 20px; color: var(--alert); font-size: 0.9rem;"></p>
     </div>
 
@@ -203,7 +202,7 @@
                 <span id="family-display" style="font-size:0.75rem; font-weight: 500; color: var(--text-sub);">Caricamento...</span>
             </div>
             <div class="header-controls">
-                <i class="material-symbols-outlined" onclick="window.toggleThemePalette()" title="Cambia Stile">palette</i>
+                <i class="material-symbols-outlined" onclick="window.toggleThemePalette()">palette</i>
                 <i id="theme-toggle" class="material-symbols-outlined" onclick="window.toggleDarkMode()">dark_mode</i>
                 <i class="material-symbols-outlined" onclick="window.nav('settings')">settings</i>
                 <i class="material-symbols-outlined" onclick="window.logout()">logout</i>
@@ -217,7 +216,7 @@
                 <button id="btn-view-cal" onclick="window.setAgendaView('calendar')"><span class="material-symbols-outlined">view_week</span> Settimana</button>
             </div>
 
-            <!-- VISTA SETTIMANA CALENDARIO -->
+            <!-- VISTA SETTIMANA -->
             <div id="calendar-view-container" class="hidden">
                 <div class="week-nav">
                     <i class="material-symbols-outlined" style="cursor:pointer; padding:5px;" onclick="window.changeWeek(-1)">chevron_left</i>
@@ -306,14 +305,6 @@
 
             <!-- IMPOSTAZIONI -->
             <div id="settings-view" class="hidden settings-view">
-                <div class="settings-section admin-panel hidden" id="super-admin-area">
-                    <h4 style="margin:0 0 15px 0; color:var(--warning);">Console Super Admin</h4>
-                    <input type="email" id="admin-user-email" placeholder="Email Utente" style="margin-bottom:10px; width:100%; height:45px; border:1px solid var(--border); border-radius:12px; padding:0 15px;">
-                    <input type="text" id="admin-family-code" placeholder="Codice Famiglia (es. ROSSI)" style="margin-bottom:10px; text-transform:uppercase; width:100%; height:45px; border:1px solid var(--border); border-radius:12px; padding:0 15px;">
-                    <button onclick="window.adminAssociate()" style="background:var(--warning); color:white; border:none; width:100%; height:45px; border-radius:12px; font-weight:bold; cursor:pointer;">Associa Ora</button>
-                    <p id="admin-status" style="font-size:0.8rem; margin-top:10px;"></p>
-                </div>
-                
                 <div class="settings-section">
                     <h4 style="margin:0 0 15px 0; color:var(--text-main);">Sicurezza Account</h4>
                     <div style="display:flex; gap:10px;">
@@ -343,6 +334,7 @@
             </div>
         </main>
 
+        <!-- NAVIGAZIONE FISSA E COMPLETA -->
         <nav class="bottom-nav">
             <button class="nav-item active" onclick="window.nav('dashboard')"><span class="material-symbols-outlined">home</span> Home</button>
             <button class="nav-item" onclick="window.nav('chat')"><span class="material-symbols-outlined">forum</span> Bacheca</button>
@@ -374,7 +366,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
-        const SUPER_ADMIN_EMAIL = "antonioderosa@gmail.com";
 
         let currentSection = 'dashboard';
         let currentFamily = null;
@@ -382,8 +373,6 @@
         let allDataCache = []; 
         let dashboardData = { calendar: [], chat: [], todos: [], shopping: [] };
         let familySettings = { members: ["Mamma", "Papà"], categories: [{name:"Generale", color:"#859B8B"}], presenze: {} };
-        
-        // DEFAULT A "TUTTI" IN MODO CHE LA DASHBOARD CONTI SEMPRE TUTTO
         let currentDashboardUser = "";
         
         let isCalendarMode = false;
@@ -393,7 +382,7 @@
         let editingItem = null;
         let editingItemSection = null;
 
-        // TEMI E DARK MODE
+        // TEMI
         window.toggleDarkMode = () => {
             document.body.classList.toggle('dark-mode');
             const isDark = document.body.classList.contains('dark-mode');
@@ -403,6 +392,8 @@
         if(localStorage.getItem('themeDark') === 'dark') {
             document.body.classList.add('dark-mode');
             document.getElementById('theme-toggle').innerText = 'light_mode';
+        } else {
+            document.getElementById('theme-toggle').innerText = 'dark_mode';
         }
 
         window.toggleThemePalette = () => {
@@ -416,7 +407,7 @@
 
         window.toggleBulkMode = () => {
             isBulkMode = !isBulkMode;
-            document.getElementById('list-container').classList.toggle('bulk-mode', isBulkMode);
+            listContainer.classList.toggle('bulk-mode', isBulkMode);
             document.getElementById('bulk-delete-btn').classList.toggle('hidden', !isBulkMode);
             document.getElementById('bulk-toggle').classList.toggle('active', isBulkMode);
             if(!isBulkMode) { document.querySelectorAll('.bulk-checkbox').forEach(cb => cb.checked = false); window.updateBulkCount(); }
@@ -440,7 +431,6 @@
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                if (user.email === SUPER_ADMIN_EMAIL) document.getElementById('super-admin-area').classList.remove('hidden');
                 try {
                     const userDoc = await getDoc(doc(db, "registro_utenti", user.email));
                     if (userDoc.exists()) {
@@ -449,10 +439,7 @@
                         document.getElementById('app-container').classList.remove('hidden');
                         document.getElementById('family-display').innerText = `Famiglia: ${currentFamily}`;
                         await loadSettings(); window.nav('dashboard'); 
-                    } else { 
-                        if (user.email === SUPER_ADMIN_EMAIL) { currentFamily = "ADMIN"; document.getElementById('auth-container').classList.add('hidden'); document.getElementById('app-container').classList.remove('hidden'); window.nav('settings'); } 
-                        else { alert("Utente non abilitato."); signOut(auth); }
-                    }
+                    } else { alert("Utente non abilitato."); signOut(auth); }
                 } catch (error) { document.getElementById('login-status').innerText = "Errore connessione."; }
             } else { document.getElementById('auth-container').classList.remove('hidden'); document.getElementById('app-container').classList.add('hidden'); }
         });
@@ -466,23 +453,13 @@
             else document.getElementById('week-days-selector').classList.add('hidden');
         };
 
-        window.adminAssociate = async () => {
-            const email = document.getElementById('admin-user-email').value.trim();
-            const code = document.getElementById('admin-family-code').value.trim().toUpperCase();
-            if(!email || !code) return;
-            await setDoc(doc(db, "registro_utenti", email), { famiglia: code });
-            document.getElementById('admin-status').innerText = `✅ Assegnato: ${email}`;
-        };
-
         async function loadSettings() {
             onSnapshot(doc(db, "settings", currentFamily), (docSnap) => {
                 if (docSnap.exists()) {
                     familySettings = { ...familySettings, ...docSnap.data() };
                     if(!familySettings.presenze) familySettings.presenze = {};
                 }
-                // Si assicura che in avvio la vista sia "Tutti" e non bloccata su Mamma
-                if (currentDashboardUser === null) currentDashboardUser = "";
-                
+                if (!currentDashboardUser && familySettings.members.length > 0) currentDashboardUser = familySettings.members[0];
                 renderDropdowns(); renderSettingsView();
                 if(currentSection === 'dashboard') renderDashboard();
             });
@@ -607,7 +584,7 @@
                 
                 weekStartDate = new Date();
                 const d = weekStartDate.getDay();
-                const diff = weekStartDate.getDate() - d + (d === 0 ? -6 : 1);
+                const diff = weekStartDate.getDate() - d + (d === 0 ? -6 : 1); // Trova il lunedì
                 weekStartDate.setDate(diff);
                 weekStartDate.setHours(0,0,0,0);
                 renderWeekCalendarGrid();
@@ -699,8 +676,8 @@
         };
 
         function isAssignedToUser(itemField, user) {
-            if(!user) return true; // Se l'utente è vuoto ("Tutti") mostra tutto.
-            if(!itemField || itemField.length === 0) return true; // Se il tag è vuoto ("Generale") mostra tutto.
+            if(!user) return true; 
+            if(!itemField || itemField.length === 0) return true; 
             if(Array.isArray(itemField)) return itemField.includes(user);
             return itemField === user; 
         }
@@ -754,11 +731,8 @@
             const pendingShop = dashboardData.shopping.filter(s => !s.done && isAssignedToUser(s.assigned, currentDashboardUser));
             const allPendingReqs = [...pendingTodos, ...pendingShop].sort((a,b)=> (a.date||'9999') > (b.date||'9999') ? 1 : -1);
 
-            // CORREZIONE EVENTI: Mostra scadenze passate + eventi prossimi 7 giorni (tutto se .done è falso)
-            const upcEvents = dashboardData.calendar.filter(c => !c.done && c.date <= limitDate && isAssignedToUser(c.assigned, currentDashboardUser)).sort((a,b)=> (a.date||'9999') > (b.date||'9999') ? 1 : -1);
-            
-            // CORREZIONE DATE BACHECA: Protezione contro timestamp null durante la creazione locale
-            const chats = dashboardData.chat.filter(c => isAssignedToUser(c.tagged, currentDashboardUser)).sort((a,b)=> (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+            const upcEvents = dashboardData.calendar.filter(c => !c.done && c.date >= today && c.date <= limitDate && isAssignedToUser(c.assigned, currentDashboardUser)).sort((a,b)=> (a.date||'9999') > (b.date||'9999') ? 1 : -1);
+            const chats = dashboardData.chat.filter(c => isAssignedToUser(c.tagged, currentDashboardUser)).sort((a,b)=> b.timestamp - a.timestamp);
 
             let html = `
                 <!-- PRESENZE -->
@@ -774,7 +748,7 @@
                         <div style="font-size:0.9rem; color:var(--text-main); margin-bottom:6px;"><span class="material-symbols-outlined" style="font-size:16px; vertical-align:text-bottom; color:var(--warning)">light_mode</span> Mattina: <span style="color:var(--text-sub)">${afterAm.length > 0 ? afterAm.join(', ') : 'Nessuno'}</span></div>
                         <div style="font-size:0.9rem; color:var(--text-main);"><span class="material-symbols-outlined" style="font-size:16px; vertical-align:text-bottom; color:var(--primary)">dark_mode</span> Pomeriggio: <span style="color:var(--text-sub)">${afterPm.length > 0 ? afterPm.join(', ') : 'Nessuno'}</span></div>
                     </div>
-                    <button onclick="window.openPresenceModal()" style="margin-top:10px; width:100%; padding:10px; border-radius:12px; border:1px solid var(--border); background:var(--bg-body); color:var(--text-main); font-weight:600; cursor:pointer; font-family:var(--font-main);">Modifica Turni Settimanali</button>
+                    <button onclick="window.openPresenceModal()" style="margin-top:10px; width:100%; padding:10px; border-radius:12px; border:1px solid var(--border); background:var(--bg-body); color:var(--text-main); font-weight:600; cursor:pointer; font-family:var(--font-main);">Modifica Turni</button>
                 </div>
 
                 <!-- FILTRO -->
@@ -811,11 +785,11 @@
 
                     <div class="widget-box">
                         <div class="widget-header">
-                            <h3>Agenda Eventi e Scadenze</h3>
+                            <h3>Prossimi impegni e spostamenti</h3>
                             <span class="link-all" onclick="window.nav('calendar')">Vedi tutti <span class="material-symbols-outlined">arrow_forward</span></span>
                         </div>
                         <div class="widget-content">
-                            ${upcEvents.slice(0,4).map(c => renderHTMLCard(c, 'calendar')).join('') || '<div style="color:var(--text-sub); font-size:0.9rem; text-align:center; padding:15px;">Nessun impegno nei prossimi giorni.</div>'}
+                            ${upcEvents.slice(0,4).map(c => renderHTMLCard(c, 'calendar')).join('') || '<div style="color:var(--text-sub); font-size:0.9rem; text-align:center; padding:15px;">Nessun impegno nei prossimi 7 giorni.</div>'}
                         </div>
                     </div>
 
@@ -833,6 +807,10 @@
             `;
             container.innerHTML = html;
         }
+
+        window.changeDashUser = (val) => { currentDashboardUser = val; renderDashboard(); };
+
+        function clearSubscribes() { unsubscribes.forEach(u => u()); unsubscribes = []; }
 
         function loadData(section) {
             document.getElementById('list-container').innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-sub);">Recupero dati...</div>';
@@ -899,8 +877,7 @@
                 return `<div class="card note-card" style="flex-direction:row;">${checkboxHtml}<div style="width:100%"><div class="note-title">${data.title||"Senza titolo"}</div><div class="note-body">${data.text}</div><div class="note-footer">${editAction} ${deleteAction}</div></div></div>`;
             }
             if (sectionType === 'chat') {
-                // Protezione contro errori di data se il timestamp in locale non è ancora elaborato (è null)
-                const timeStr = (data.timestamp && typeof data.timestamp.toDate === 'function') ? data.timestamp.toDate().toLocaleString('it-IT', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'}) : 'Oggi';
+                const timeStr = data.timestamp ? data.timestamp.toDate().toLocaleString('it-IT', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'}) : '';
                 return `<div class="card chat-card">${checkboxHtml}<div style="width:100%;"><div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span class="chat-author">${data.author}</span> <span class="chat-time">${timeStr}</span></div><div style="font-size:1rem; white-space:pre-wrap; margin-bottom:5px;">${data.text}</div><div>${chatTags}</div></div> <div style="display:flex; flex-direction:column; gap:15px; justify-content:center;">${editAction} ${deleteAction}</div></div>`;
             }
 
@@ -918,6 +895,7 @@
                 actions = `<span class="material-symbols-outlined" style="color:var(--text-sub); margin-left:10px; cursor:pointer;" onclick="window.exportGoogle('${data.text}','${dStr}')">calendar_add_on</span>`;
                 const locHtml = data.location ? `<br><a href="https://maps.google.com/?q=${encodeURIComponent(data.location)}" target="_blank" class="location-link"><span class="material-symbols-outlined" style="font-size:16px; margin-right:4px;">location_on</span> ${data.location}</a>` : '';
 
+                // TIME SOTTO IL GIORNO NEL BADGE
                 const timeHtml = data.time ? `<div class="date-time">${data.time}</div>` : "";
 
                 content = `<span class="material-symbols-outlined" style="color:${checkColor}; margin-right:15px; cursor:pointer; font-size:28px;" onclick="window.toggle('${data.id}',${!data.done},'${sectionType}')">${checkIcon}</span>
@@ -928,7 +906,7 @@
             else if (sectionType === 'contacts') {
                 content = `<div style="flex-grow:1"><div style="font-weight:600; font-size:1.1rem;">${data.text}</div><a href="tel:${data.detail}" style="color:var(--primary); text-decoration:none; display:flex; align-items:center; margin-top:8px;"><span class="material-symbols-outlined" style="font-size:18px; margin-right:6px;">call</span> ${data.detail}</a></div>`;
             } 
-            else { 
+            else { // Todos & Shopping
                 let dateHtml = "";
                 if(data.date && sectionType === 'todos') {
                     const dd = new Date(data.date); dateHtml = `<span class="due-date-display">Entro il: ${dd.getDate()}/${dd.getMonth()+1}</span>`;
