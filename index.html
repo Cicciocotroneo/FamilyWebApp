@@ -442,7 +442,6 @@
             const isRecurrent = recUnit.value !== 'none';
             document.querySelectorAll('.rec-hidden-parts').forEach(el => isRecurrent ? el.classList.remove('hidden') : el.classList.add('hidden'));
             
-            // Mostra/Nascondi selezione giorni multipli solo se "Settimane"
             if(recUnit.value === 'week') document.getElementById('week-days-selector').classList.remove('hidden');
             else document.getElementById('week-days-selector').classList.add('hidden');
         };
@@ -499,7 +498,6 @@
             
             editingItemSection = section;
             
-            // Popola i campi base
             newItemInput.value = editingItem.text || "";
             if (section === 'calendar' || section === 'todos') {
                 dateInput.value = editingItem.date || "";
@@ -511,7 +509,6 @@
             }
             if (section === 'contacts') contactInput.value = editingItem.detail || "";
             
-            // Popola i Chips di assegnazione
             document.querySelectorAll('#assign-who-container .chip').forEach(c => c.classList.remove('active'));
             let tags = section === 'chat' ? editingItem.tagged : editingItem.assigned;
             if (tags) {
@@ -521,11 +518,9 @@
                 });
             }
             
-            // Modifica l'interfaccia in "Modalità Salvataggio"
             document.querySelector('#add-btn i').innerText = 'save';
             document.querySelector('#add-btn').classList.add('edit-mode');
             
-            // Nasconde l'opzione ricorrenza (non si può cambiare la regola di ricorrenza di un evento già esistente, si modifica solo il contenuto)
             recurrenceWrapper.classList.add('hidden'); 
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
@@ -533,7 +528,6 @@
         window.nav = (section) => {
             if(isBulkMode) window.toggleBulkMode(); 
             
-            // Reset Edit Mode se si cambia sezione
             editingItem = null;
             editingItemSection = null;
             document.querySelector('#add-btn i').innerText = 'add';
@@ -564,8 +558,10 @@
             if(section === 'chat' || section === 'contacts' || section === 'notes') document.querySelector('.filter-row').classList.add('hidden');
             
             dateInput.classList.add('hidden'); timeInput.classList.add('hidden'); 
-            recurrenceWrapper.classList.remove('hidden'); // Rimostra sempre la barra ricorrenza per nuovi eventi
-            window.toggleRecurrenceInputs(); // Sistema lo stato della barra ricorrenza
+            
+            recurrenceWrapper.classList.add('hidden'); // NASCONDE DI DEFAULT
+            recUnit.value = 'none';
+            window.toggleRecurrenceInputs(); 
             
             categorySelect.classList.add('hidden'); contactInput.classList.add('hidden'); locationInput.classList.add('hidden');
             document.getElementById('assign-who-container').classList.add('hidden');
@@ -587,6 +583,7 @@
                 if(section === 'calendar') {
                     title.innerText = "Agenda"; calendarToggleBtn.classList.remove('hidden'); 
                     dateInput.classList.remove('hidden'); timeInput.classList.remove('hidden'); 
+                    recurrenceWrapper.classList.remove('hidden'); // MOSTRA SOLO IN AGENDA
                     categorySelect.classList.remove('hidden'); categorySelect.style.display = 'block'; 
                     locationInput.classList.remove('hidden'); 
                     newItemInput.placeholder = "Evento...";
@@ -731,7 +728,6 @@
             const seriesIdSafe = data.seriesId ? `'${data.seriesId}'` : 'null';
             const checkboxHtml = `<input type="checkbox" class="bulk-checkbox" value="${data.id}" data-section="${sectionType}" onclick="window.updateBulkCount()">`;
             
-            // GENERAZIONE TAG MULTIPLI
             let assignedTags = "";
             if (Array.isArray(data.assigned) && data.assigned.length > 0) {
                 assignedTags = data.assigned.map(m => `<span class="assigned-badge">@${m}</span>`).join(" ");
@@ -842,7 +838,6 @@
             const locVal = locationInput.value;
             const who = Array.from(document.querySelectorAll('#assign-who-container .chip.active')).map(c => c.innerText);
             
-            // --- GESTIONE SALVATAGGIO MODIFICA (EDIT MODE) ---
             if (editingItem) {
                 if(editingItemSection === 'chat') {
                     await updateDoc(doc(db, `${currentFamily}_chat`, editingItem.id), { text: txt, tagged: who });
@@ -871,18 +866,19 @@
                     }
                 }
                 
-                // Reset Edit Mode
                 editingItem = null; editingItemSection = null;
                 document.querySelector('#add-btn i').innerText = 'add';
                 document.querySelector('#add-btn').classList.remove('edit-mode');
                 newItemInput.value=""; contactInput.value=""; locationInput.value=""; 
                 document.querySelectorAll('#assign-who-container .chip').forEach(c => c.classList.remove('active'));
-                recurrenceWrapper.classList.remove('hidden');
-                window.toggleRecurrenceInputs();
+                
+                if (currentSection === 'calendar') {
+                    recurrenceWrapper.classList.remove('hidden');
+                    window.toggleRecurrenceInputs();
+                }
                 return;
             }
 
-            // --- GESTIONE NUOVO INSERIMENTO ---
             if(currentSection === 'chat') {
                 const authorName = auth.currentUser.email.split('@')[0];
                 await addDoc(collection(db, `${currentFamily}_chat`), { text: txt, timestamp: serverTimestamp(), author: authorName, tagged: who });
@@ -899,7 +895,6 @@
             let isMultiple = (loops > 1) || (rUnit === 'week' && selectedDays.length > 0 && rCount > 0);
             const seriesId = isMultiple ? Date.now().toString(36) + Math.random().toString(36).substr(2, 5) : null;
             
-            // LOGICA NUOVA: Settimane con giorni multipli
             if(currentSection === 'calendar' && rUnit === 'week' && selectedDays.length > 0) {
                 if(!dVal) return alert("Inserisci la Data di Inizio");
                 const baseDate = new Date(dVal);
@@ -911,8 +906,6 @@
                         let dayOffset = dayOfWeek - currentDayOfWeek;
                         
                         d.setDate(d.getDate() + dayOffset + (w * rInt * 7));
-                        
-                        // Evita di creare eventi nel passato rispetto alla data di inizio prescelta
                         if (w === 0 && d < baseDate) continue; 
                         
                         const item = { text: txt, timestamp: serverTimestamp(), done: false, category: cat, assigned: who, time: tVal, seriesId: seriesId };
@@ -923,7 +916,6 @@
                     }
                 }
             } else {
-                // Logica standard o giorni/mesi/anni
                 for(let i=0; i<loops; i++) {
                     const item = { text: txt, timestamp: serverTimestamp(), done: false, category: cat, assigned: who };
                     if (seriesId) item.seriesId = seriesId;
@@ -949,8 +941,8 @@
                 }
             }
             
-            newItemInput.value=""; contactInput.value=""; locationInput.value=""; recUnit.value="none"; 
-            window.toggleRecurrenceInputs();
+            newItemInput.value=""; contactInput.value=""; locationInput.value=""; 
+            recUnit.value="none"; window.toggleRecurrenceInputs();
             document.querySelectorAll('#assign-who-container .chip').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.day-chip.active').forEach(c => c.classList.remove('active'));
         });
