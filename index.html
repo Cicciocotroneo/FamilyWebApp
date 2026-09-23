@@ -63,7 +63,7 @@
         h1, h2, h3, h4, .dash-section-title, .note-title, .date-day { font-family: var(--font-title); font-weight: 600; letter-spacing: -0.5px; }
 
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24; }
-        body.theme-google .material-symbols-outlined { font-variation-settings: 'FILL' 1, 'wght' 400; } /* Icone più marcate per Google */
+        body.theme-google .material-symbols-outlined { font-variation-settings: 'FILL' 1, 'wght' 400; } 
 
         header { background: var(--bg-card); padding: 18px 20px; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 8px var(--shadow); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
         .header-controls { display: flex; align-items: center; gap: 15px; }
@@ -86,13 +86,15 @@
         .mini-event { font-size: 0.85rem; background: var(--bg-body); padding: 6px 10px; border-radius: 6px; border-left: 4px solid var(--border); display: flex; align-items: center; gap: 8px; color: var(--text-main); }
         
         .add-bar { background: var(--bg-card); padding: 20px; margin: 20px; border-radius: 16px; border: 1px solid var(--border); display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: start; box-shadow: 0 4px 15px var(--shadow); }
-        .add-bar select, .add-bar input, #add-btn, .note-editor input, .note-editor button, .admin-panel input, .admin-panel button { font-family: var(--font-main); height: 50px !important; width: 100%; border: 1px solid var(--border); border-radius: 12px; background-color: var(--input-bg); font-size: 15px; padding: 0 16px; color: var(--text-main); margin: 0; outline: none; transition: 0.2s; }
+        .add-bar select, .add-bar input, #add-btn, .note-editor input, .note-editor button, .admin-panel input, .admin-panel button { font-family: var(--font-main); height: 50px !important; width: 100%; border: 1px solid var(--border); border-radius: 12px; background-color: var(--input-bg); font-size: 15px; padding: 0 16px; color: var(--text-main); margin: 0; appearance: none; -webkit-appearance: none; outline: none; transition: border-color 0.2s; }
         .add-bar input:focus, .add-bar select:focus { border-color: var(--primary); }
 
         #recurrence-wrapper { grid-column: 1 / -1; background: var(--accent-bg); border-radius: 12px; padding: 15px 12px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; border: none; }
         .rec-input-small { flex: 1; min-width: 60px; text-align: center; }
         .rec-label { font-size: 0.8rem; color: var(--text-sub); white-space: nowrap; font-weight: 500; }
 
+        .add-bar select { background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23859B8B%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 16px top 50%; background-size: 10px auto; }
+        
         .assign-chips { grid-column: 1 / -1; display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 5px; }
         .chip { padding: 8px 16px; border-radius: 20px; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-sub); font-size: 0.85rem; cursor: pointer; font-weight: 500; transition: 0.2s; user-select: none; }
         .chip.active { background: var(--primary); border-color: var(--primary); color: white; }
@@ -100,9 +102,11 @@
         
         .input-text-group { grid-column: 1 / -1; display: flex; gap: 12px; align-items: stretch; }
         #new-item-input { flex-grow: 1; border: 1px solid var(--border); }
+        #new-item-input:focus { border-color: var(--primary); }
         #contact-detail-input, #location-input { grid-column: 1 / -1; }
         
-        #add-btn { width: 50px !important; padding: 0; background: var(--primary); color: white; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 12px; }
+        #add-btn { width: 50px !important; padding: 0; background: var(--primary); color: white; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; border-radius: 12px; }
+        #add-btn:hover { background: var(--primary-hover); }
         #add-btn.edit-mode { background: var(--warning); color: #fff; }
 
         .note-editor { background: var(--bg-card); padding: 20px; margin: 20px; border-radius: 16px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 15px; }
@@ -142,10 +146,12 @@
         .cat-dot { height: 8px; width: 8px; border-radius: 50%; display: inline-block; margin-right: 8px; vertical-align: middle; }
         .assigned-badge { font-size: 0.7rem; color: var(--text-sub); margin-left: 8px; display: inline-block; vertical-align: middle; font-weight: 500; }
         
+        /* BULK DELETE */
         .bulk-checkbox { display: none; width: 20px; height: 20px; margin-right: 15px; accent-color: var(--alert); flex-shrink:0; cursor:pointer;}
         #list-container.bulk-mode .bulk-checkbox { display: block; }
-        #bulk-delete-btn { position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%); background: var(--alert); color: white; border: none; padding: 14px 28px; border-radius: 30px; font-weight: 600; font-family: var(--font-main); z-index: 300; display:flex; align-items:center; gap:8px; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .bulk-toggle-btn { display:flex; align-items:center; gap:6px; color:var(--text-sub); font-size:0.85rem; font-family: var(--font-main); background:none; border:1px solid var(--border); padding:6px 12px; border-radius:20px; cursor:pointer; font-weight: 500;}
+        #bulk-delete-btn { position: fixed; bottom: 95px; left: 50%; transform: translateX(-50%); background: var(--alert); color: white; border: none; padding: 14px 28px; border-radius: 30px; font-weight: 600; font-family: var(--font-main); z-index: 300; display:flex; align-items:center; gap:8px; cursor: pointer; transition: 0.2s; }
+        #bulk-delete-btn:hover { background: #b06e6f; }
+        .bulk-toggle-btn { display:flex; align-items:center; gap:6px; color:var(--text-sub); font-size:0.85rem; font-family: var(--font-main); background:none; border:1px solid var(--border); padding:6px 12px; border-radius:20px; cursor:pointer; font-weight: 500; transition: 0.2s;}
         .bulk-toggle-btn.active { background: var(--alert); color: white; border-color: var(--alert); }
 
         /* NAVIGAZIONE FISSA E COMPATTA IN BASSO */
@@ -161,6 +167,7 @@
         .nav-item.active { color: var(--primary); background: var(--accent-bg); }
         .nav-item i { font-size: 24px; margin-bottom: 2px; }
         
+        /* DASHBOARD */
         .dash-section-title { font-size: 1.1rem; color: var(--text-main); margin: 20px 0 5px 0; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
         .dash-header-select { background: var(--bg-card); padding: 12px 20px; border-radius: 16px; margin-bottom: 10px; border: 1px solid var(--border); }
         .dash-header-select select { font-family: var(--font-main); width: 100%; border: none; background: transparent; font-size: 0.95rem; font-weight: 600; color: var(--primary); outline: none; cursor: pointer;}
@@ -170,6 +177,7 @@
         .modal-box { background: var(--bg-card); width: 90%; max-width: 400px; max-height: 90vh; border-radius: 20px; padding: 25px; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
         .pres-grid-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
         
+        /* IMPOSTAZIONI */
         .settings-view { padding: 20px; padding-bottom: 100px; }
         .settings-section { background: var(--bg-card); border-radius: 16px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); }
         .settings-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); color: var(--text-main); font-size: 0.95rem; }
@@ -284,7 +292,7 @@
             
             <button id="bulk-delete-btn" class="hidden" onclick="window.executeBulkDelete()"><span class="material-symbols-outlined">delete</span> Elimina (<span id="bulk-count">0</span>)</button>
 
-            <!-- MODALE PRESENZE (CHI È A CASA) -->
+            <!-- MODALE PRESENZE -->
             <div id="presence-modal" class="modal-overlay hidden">
                 <div class="modal-box">
                     <h3 style="margin-top:0; color:var(--primary); font-family:var(--font-title);">Pianifica Presenze</h3>
@@ -414,7 +422,7 @@
         const noteContentInput = document.getElementById('note-content-input');
         const editingNoteId = document.getElementById('editing-note-id');
 
-        // GESTIONE TEMI
+        // GESTIONE TEMI E DARK MODE
         window.toggleDarkMode = () => {
             document.body.classList.toggle('dark-mode');
             const isDark = document.body.classList.contains('dark-mode');
@@ -424,6 +432,8 @@
         if(localStorage.getItem('themeDark') === 'dark') {
             document.body.classList.add('dark-mode');
             document.getElementById('theme-toggle').innerText = 'light_mode';
+        } else {
+            document.getElementById('theme-toggle').innerText = 'dark_mode';
         }
 
         window.toggleThemePalette = () => {
@@ -514,7 +524,7 @@
             catch (e) { alert("Errore di sicurezza: esci, rientra e riprova."); }
         };
 
-        // --- GESTIONE PRESENZE (CHI È A CASA) ---
+        // --- PRESENZE MODALE ---
         window.openPresenceModal = () => {
             const select = document.getElementById('presence-user-select');
             select.innerHTML = '';
@@ -542,7 +552,7 @@
                 const pmActive = userP[`${dNum}_pm`] ? 'active' : '';
                 html += `
                 <div class="pres-grid-row">
-                    <div style="font-weight:600; width:80px; color:var(--text-main);">${daysOfWeek[idx]}</div>
+                    <div style="font-weight:600; width:80px; color:var(--text-main); font-family:var(--font-main);">${daysOfWeek[idx]}</div>
                     <div style="display:flex; gap:8px;">
                         <div class="chip ${amActive}" onclick="this.classList.toggle('active')" data-day="${dNum}" data-slot="am">Mattina</div>
                         <div class="chip ${pmActive}" onclick="this.classList.toggle('active')" data-day="${dNum}" data-slot="pm">Pomeriggio</div>
@@ -556,9 +566,7 @@
             const user = document.getElementById('presence-user-select').value;
             const userP = {};
             document.querySelectorAll('#presence-grid .chip').forEach(c => {
-                if (c.classList.contains('active')) {
-                    userP[`${c.dataset.day}_${c.dataset.slot}`] = true;
-                }
+                if (c.classList.contains('active')) { userP[`${c.dataset.day}_${c.dataset.slot}`] = true; }
             });
             const newPresenze = { ...familySettings.presenze };
             newPresenze[user] = userP;
@@ -622,10 +630,9 @@
                 calendarViewContainer.classList.remove('hidden');
                 btnCal.classList.add('active'); btnList.classList.remove('active');
                 
-                // Initialize week to current date
                 weekStartDate = new Date();
                 const d = weekStartDate.getDay();
-                const diff = weekStartDate.getDate() - d + (d === 0 ? -6 : 1);
+                const diff = weekStartDate.getDate() - d + (d === 0 ? -6 : 1); // Trova il lunedì della settimana corrente
                 weekStartDate.setDate(diff);
                 weekStartDate.setHours(0,0,0,0);
                 
@@ -722,7 +729,7 @@
             return itemField === user; 
         }
 
-        // --- DASHBOARD ---
+        // --- DASHBOARD: DOMANI E DOPODOMANI ---
         function loadDashboardData() {
             listContainer.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-sub);">Elaborazione...</div>';
             clearSubscribes();
@@ -739,72 +746,80 @@
         function renderDashboard() {
             if(currentSection !== 'dashboard') return;
             
-            const todayDayNum = new Date().getDay(); // 0 = Sun, 1 = Mon...
-            let amHome = []; let pmHome = [];
+            const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
+            const afterTomorrow = new Date(); afterTomorrow.setDate(afterTomorrow.getDate() + 2);
+            const tomDayNum = tomorrow.getDay();
+            const afterDayNum = afterTomorrow.getDay();
+            
+            const tomName = tomorrow.toLocaleDateString('it-IT', {weekday: 'long'});
+            const afterName = afterTomorrow.toLocaleDateString('it-IT', {weekday: 'long'});
+
+            let tomAm = [], tomPm = [], afterAm = [], afterPm = [];
             
             familySettings.members.forEach(m => {
                 const p = familySettings.presenze[m] || {};
-                if(p[`${todayDayNum}_am`]) amHome.push(m);
-                if(p[`${todayDayNum}_pm`]) pmHome.push(m);
+                if(p[`${tomDayNum}_am`]) tomAm.push(m);
+                if(p[`${tomDayNum}_pm`]) tomPm.push(m);
+                if(p[`${afterDayNum}_am`]) afterAm.push(m);
+                if(p[`${afterDayNum}_pm`]) afterPm.push(m);
             });
 
             let statusHtml = `
-                <div class="dash-section-title"><span class="material-symbols-outlined" style="color:var(--primary)">home_pin</span> Chi c'è a casa oggi?</div>
+                <div class="dash-section-title"><span class="material-symbols-outlined" style="color:var(--primary)">home_pin</span> Presenze Programmate</div>
                 <div class="card" style="flex-direction:column; align-items:flex-start; gap:12px; margin-bottom:20px;">
-                    <div style="font-size:0.95rem; color:var(--text-main);"><span class="material-symbols-outlined" style="font-size:18px; vertical-align:text-bottom; color:var(--warning)">light_mode</span> <b>Mattina:</b> <span style="color:var(--text-sub)">${amHome.length > 0 ? amHome.join(', ') : 'Nessuno'}</span></div>
-                    <div style="font-size:0.95rem; color:var(--text-main);"><span class="material-symbols-outlined" style="font-size:18px; vertical-align:text-bottom; color:var(--primary)">dark_mode</span> <b>Pomeriggio:</b> <span style="color:var(--text-sub)">${pmHome.length > 0 ? pmHome.join(', ') : 'Nessuno'}</span></div>
-                    <button onclick="window.openPresenceModal()" style="margin-top:10px; width:100%; padding:10px; border-radius:12px; border:1px solid var(--border); background:var(--bg-body); color:var(--text-main); font-weight:600; cursor:pointer; font-family:var(--font-main);">Pianifica Turni della Settimana</button>
+                    <div style="width:100%; border-bottom:1px solid var(--border); padding-bottom:12px;">
+                        <div style="font-weight:600; color:var(--text-main); margin-bottom:8px; text-transform:capitalize; font-size:1.05rem;">Domani (${tomName})</div>
+                        <div style="font-size:0.9rem; color:var(--text-main); margin-bottom:6px;"><span class="material-symbols-outlined" style="font-size:16px; vertical-align:text-bottom; color:var(--warning)">light_mode</span> Mattina: <span style="color:var(--text-sub)">${tomAm.length > 0 ? tomAm.join(', ') : 'Nessuno'}</span></div>
+                        <div style="font-size:0.9rem; color:var(--text-main);"><span class="material-symbols-outlined" style="font-size:16px; vertical-align:text-bottom; color:var(--primary)">dark_mode</span> Pomeriggio: <span style="color:var(--text-sub)">${tomPm.length > 0 ? tomPm.join(', ') : 'Nessuno'}</span></div>
+                    </div>
+                    <div style="width:100%; padding-bottom:4px;">
+                        <div style="font-weight:600; color:var(--text-main); margin-bottom:8px; text-transform:capitalize; font-size:1.05rem;">Dopodomani (${afterName})</div>
+                        <div style="font-size:0.9rem; color:var(--text-main); margin-bottom:6px;"><span class="material-symbols-outlined" style="font-size:16px; vertical-align:text-bottom; color:var(--warning)">light_mode</span> Mattina: <span style="color:var(--text-sub)">${afterAm.length > 0 ? afterAm.join(', ') : 'Nessuno'}</span></div>
+                        <div style="font-size:0.9rem; color:var(--text-main);"><span class="material-symbols-outlined" style="font-size:16px; vertical-align:text-bottom; color:var(--primary)">dark_mode</span> Pomeriggio: <span style="color:var(--text-sub)">${afterPm.length > 0 ? afterPm.join(', ') : 'Nessuno'}</span></div>
+                    </div>
+                    <button onclick="window.openPresenceModal()" style="margin-top:10px; width:100%; padding:10px; border-radius:12px; border:1px solid var(--border); background:var(--bg-body); color:var(--text-main); font-weight:600; cursor:pointer; font-family:var(--font-main);">Modifica Turni Settimanali</button>
                 </div>
             `;
 
-            let userOpts = `<option value="">Vista Generale: Tutta la famiglia</option>`;
-            familySettings.members.forEach(m => userOpts += `<option value="${m}" ${m===currentDashboardUser?'selected':''}>Filtra per: ${m}</option>`);
-
+            let userOpts = `<option value="">Vista Generale: Tutti</option>`;
+            familySettings.members.forEach(m => userOpts += `<option value="${m}" ${m===currentDashboardUser?'selected':''}>Focus su: ${m}</option>`);
             let html = statusHtml + `<div class="dash-header-select"><select onchange="window.changeDashUser(this.value)">${userOpts}</select></div>`;
 
             const today = new Date().toISOString().split('T')[0];
             const next7 = new Date(); next7.setDate(next7.getDate() + 7);
             const limitDate = next7.toISOString().split('T')[0];
 
-            // 1. BACHECA
             if(currentDashboardUser) {
                 const chatForMe = dashboardData.chat.filter(c => isAssignedToUser(c.tagged, currentDashboardUser)).sort((a,b)=> b.timestamp - a.timestamp);
                 if(chatForMe.length > 0) {
-                    html += `<div class="dash-section-title"><span class="material-symbols-outlined" style="color:var(--warning)">forum</span> Bacheca (${chatForMe.length})</div>`;
+                    html += `<div class="dash-section-title"><span class="material-symbols-outlined" style="color:var(--warning)">notifications_active</span> Nuovi Messaggi</div>`;
                     chatForMe.forEach(c => html += renderHTMLCard(c, 'chat'));
                 }
             }
 
-            // 2. COMPITI
             const tasks = dashboardData.todos.filter(t => !t.done && (!t.date || t.date <= limitDate) && isAssignedToUser(t.assigned, currentDashboardUser)).sort((a,b)=> (a.date||'9999') > (b.date||'9999') ? 1 : -1);
             if(tasks.length > 0) {
-                html += `<div class="dash-section-title"><span class="material-symbols-outlined" style="color:var(--primary)">task_alt</span> Compiti Entro 7 Giorni</div>`;
+                html += `<div class="dash-section-title"><span class="material-symbols-outlined" style="color:var(--primary)">task_alt</span> Compiti (Entro 7gg)</div>`;
                 tasks.slice(0, 5).forEach(c => html += renderHTMLCard(c, 'todos'));
             }
 
-            // 3. SPESA
             const shop = dashboardData.shopping.filter(s => !s.done && isAssignedToUser(s.assigned, currentDashboardUser));
             if(shop.length > 0) {
-                html += `<div class="dash-section-title"><span class="material-symbols-outlined" style="color:var(--primary)">shopping_basket</span> Lista Spesa</div>`;
+                html += `<div class="dash-section-title"><span class="material-symbols-outlined" style="color:var(--primary)">shopping_basket</span> Lista della Spesa</div>`;
                 shop.slice(0, 5).forEach(c => html += renderHTMLCard(c, 'shopping'));
             }
 
-            // 4. AGENDA (Scaduti + Futuri)
             const impegni = dashboardData.calendar.filter(c => !c.done);
             const scaduti = impegni.filter(c => c.date && c.date < today);
             if(scaduti.length > 0) {
-                html += `<div class="dash-section-title"><span class="material-symbols-outlined" style="color:var(--alert)">error</span> Scaduti (Non Completati)</div>`;
+                html += `<div class="dash-section-title"><span class="material-symbols-outlined" style="color:var(--alert)">error</span> Appuntamenti Scaduti</div>`;
                 scaduti.forEach(c => html += renderHTMLCard(c, 'calendar'));
             }
 
             const futuri = impegni.filter(c => c.date >= today && c.date <= limitDate).sort((a,b)=> (a.date||'9999') > (b.date||'9999') ? 1 : -1);
             if(futuri.length > 0) {
-                html += `<div class="dash-section-title"><span class="material-symbols-outlined" style="color:var(--primary)">event_upcoming</span> Agenda Prossimi 7 Giorni</div>`;
+                html += `<div class="dash-section-title"><span class="material-symbols-outlined" style="color:var(--primary)">event_upcoming</span> Agenda (Prossimi 7gg)</div>`;
                 futuri.forEach(c => html += renderHTMLCard(c, 'calendar'));
-            }
-
-            if(html.indexOf('dash-section-title') === html.lastIndexOf('dash-section-title')) { 
-                html += `<div style="text-align:center; padding:50px 20px; color:var(--text-sub); font-style:italic;">Nessuna attività programmata a breve.</div>`;
             }
 
             listContainer.innerHTML = html;
@@ -896,7 +911,7 @@
                 actions = `<span class="material-symbols-outlined" style="color:var(--text-sub); margin-left:10px; cursor:pointer;" onclick="window.exportGoogle('${data.text}','${dStr}')">calendar_add_on</span>`;
                 const locHtml = data.location ? `<br><a href="https://maps.google.com/?q=${encodeURIComponent(data.location)}" target="_blank" class="location-link"><span class="material-symbols-outlined" style="font-size:16px; margin-right:4px;">location_on</span> ${data.location}</a>` : '';
 
-                // TIME SPOSTATO SOTTO IL GIORNO NEL BADGE
+                // TIME SOTTO IL GIORNO
                 const timeHtml = data.time ? `<div class="date-time">${data.time}</div>` : "";
 
                 content = `<span class="material-symbols-outlined" style="color:${checkColor}; margin-right:15px; cursor:pointer; font-size:26px;" onclick="window.toggle('${data.id}',${!data.done},'${sectionType}')">${checkIcon}</span>
@@ -927,8 +942,6 @@
             grid.innerHTML = "";
             
             const daysNames = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"];
-            
-            // Set Titolo Header al mese del Lunedì
             monthName.innerText = "Settimana: " + weekStartDate.toLocaleString('it-IT', { day:'numeric', month: 'long', year: 'numeric' });
             
             for(let i=0; i<7; i++) {
@@ -939,14 +952,13 @@
                 const isToday = dStr === new Date().toISOString().split('T')[0];
                 const bgStyle = isToday ? 'border-left: 4px solid var(--primary); background:var(--bg-body);' : '';
                 
-                // Cerca eventi
                 const dayEvents = allDataCache.filter(ev => ev.date === dStr && !ev.done);
                 let eventsHtml = '';
                 if(dayEvents.length > 0) {
                     dayEvents.forEach(ev => {
                         const catObj = familySettings.categories.find(c => c.name === ev.category);
                         const color = catObj ? catObj.color : 'var(--primary)';
-                        eventsHtml += `<div class="mini-event" style="border-left-color:${color};"><span>${ev.text}</span> <span style="font-weight:bold; color:var(--text-main);">${ev.time||''}</span></div>`;
+                        eventsHtml += `<div class="mini-event" style="border-left-color:${color};"><span>${ev.text}</span> <span style="font-weight:bold; color:var(--text-main); margin-left:auto;">${ev.time||''}</span></div>`;
                     });
                 } else {
                     eventsHtml = `<div style="color:var(--text-sub); font-size:0.8rem; font-style:italic; padding-left:5px;">Nessun impegno</div>`;
