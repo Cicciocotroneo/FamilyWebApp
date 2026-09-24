@@ -73,12 +73,12 @@
         .filter-row { padding: 0 20px; display: flex; justify-content: space-between; align-items: center; margin: 15px 0 5px 0; }
         .filter-row select { font-family: var(--font-main); width: auto !important; height: 35px !important; font-size: 0.85rem; border: none; background-color: transparent; color: var(--text-sub); font-weight: 500; padding-right: 25px; cursor: pointer; }
 
-        .agenda-view-toggle { display: flex; background: var(--bg-card); border-radius: 12px; margin: 20px auto; max-width: 800px; border: 1px solid var(--border); overflow: hidden; }
+        .agenda-view-toggle { display: flex; background: var(--bg-card); border-radius: 12px; margin: 20px auto; max-width: 1200px; border: 1px solid var(--border); overflow: hidden; }
         .agenda-view-toggle button { font-family: var(--font-main); flex: 1; padding: 12px; border: none; background: transparent; color: var(--text-sub); font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.9rem; transition: 0.3s; }
         .agenda-view-toggle button.active { background: var(--primary); color: white; }
 
         /* VISTA SETTIMANALE CALENDARIO */
-        #calendar-view-container { margin: 20px auto; max-width: 800px; }
+        #calendar-view-container { margin: 20px auto; max-width: 1200px; }
         .week-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-family: var(--font-title); font-size: 1.1rem; color: var(--text-main); background: var(--bg-card); padding: 10px 15px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 2px 8px var(--shadow); }
         .week-day-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; overflow: hidden; box-shadow: 0 2px 8px var(--shadow); }
         .week-day-header { background: var(--accent-bg); padding: 10px 15px; font-weight: 600; color: var(--primary); font-size: 0.9rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between;}
@@ -86,7 +86,7 @@
         .mini-event { font-size: 0.85rem; background: var(--bg-body); padding: 6px 10px; border-radius: 6px; border-left: 4px solid var(--border); display: flex; align-items: center; gap: 8px; color: var(--text-main); }
         
         /* BARRA INSERIMENTO E CHIPS */
-        .add-bar { background: var(--bg-card); padding: 20px; margin: 20px auto; max-width: 800px; border-radius: 16px; border: 1px solid var(--border); display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: start; box-shadow: 0 4px 15px var(--shadow); }
+        .add-bar { background: var(--bg-card); padding: 20px; margin: 20px auto; max-width: 1200px; border-radius: 16px; border: 1px solid var(--border); display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: start; box-shadow: 0 4px 15px var(--shadow); }
         .add-bar select, .add-bar input, #add-btn, .note-editor input, .note-editor button { font-family: var(--font-main); height: 50px !important; width: 100%; border: 1px solid var(--border); border-radius: 12px; background-color: var(--input-bg); font-size: 15px; padding: 0 16px; color: var(--text-main); margin: 0; outline: none; transition: border-color 0.2s; }
         .add-bar input:focus, .add-bar select:focus { border-color: var(--primary); }
 
@@ -106,13 +106,13 @@
         #add-btn { width: 50px !important; padding: 0; background: var(--primary); color: white; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; border-radius: 12px; }
         #add-btn.edit-mode { background: var(--warning); color: #fff; }
 
-        .note-editor { background: var(--bg-card); padding: 20px; margin: 20px auto; max-width: 800px; border-radius: 16px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 15px; }
+        .note-editor { background: var(--bg-card); padding: 20px; margin: 20px auto; max-width: 1200px; border-radius: 16px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 15px; }
         .note-editor textarea { font-family: var(--font-main); width: 100%; height: 180px; border: 1px solid var(--border); border-radius: 12px; background-color: var(--input-bg); font-size: 15px; padding: 16px; color: var(--text-main); resize: none; outline: none; }
         #save-note-btn { background: var(--primary); color: white; font-weight: 500; border: none; cursor: pointer; }
 
         .hidden { display: none !important; }
 
-        #list-container { padding: 0 20px 100px 20px; max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px;} 
+        #list-container { padding: 0 20px 100px 20px; max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 30px;} 
         .card { background: var(--bg-card); padding: 18px; border-radius: 16px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; margin-bottom: 0; transition: 0.2s; box-shadow: 0 2px 6px var(--shadow); }
         
         .note-card { flex-direction: column; align-items: flex-start; gap: 12px; }
@@ -146,18 +146,20 @@
         .kpi-data-title { font-size: 0.7rem; color: var(--text-sub); font-weight: 500; }
         .kpi-data-val { font-size: 1.2rem; font-weight: bold; color: var(--text-main); font-family: var(--font-title); }
 
-        .widget-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 15px; box-shadow: var(--shadow); width: 100%; display: flex; flex-direction: column;}
-        .widget-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 12px; }
-        .widget-header h3 { font-size: 1.05rem; color: var(--text-main); display: flex; align-items: center; gap: 8px;}
-        .widget-header .material-symbols-outlined { color: var(--primary); font-size: 20px;}
-        .link-all { font-size: 0.75rem; color: var(--primary); display: flex; align-items: center; cursor: pointer; font-weight: 600; }
-        .link-all span { font-size: 14px; margin-left: 2px; }
-        .widget-content .card { box-shadow: none; border-color: var(--border); margin-bottom: 8px; padding: 10px 12px; }
+        .widget-grid { display: grid; grid-template-columns: 1fr; gap: 30px; align-items: start; }
+        @media (min-width: 768px) { .widget-grid { grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); } }
         
-        /* Controlli ordinamento */
+        .widget-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; box-shadow: var(--shadow); width: 100%; display: flex; flex-direction: column;}
+        .widget-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 15px; }
+        .widget-header h3 { font-size: 1.15rem; color: var(--text-main); display: flex; align-items: center; gap: 8px;}
+        .widget-header .material-symbols-outlined { color: var(--primary); font-size: 22px;}
+        .link-all { font-size: 0.8rem; color: var(--primary); display: flex; align-items: center; cursor: pointer; font-weight: 600; }
+        .link-all span { font-size: 16px; margin-left: 2px; }
+        .widget-content .card { box-shadow: none; border-color: var(--border); margin-bottom: 10px; padding: 12px 15px; }
+        
         .order-controls { display: flex; flex-direction: column; margin-left: 8px; opacity: 0.5; transition: opacity 0.2s;}
         .widget-box:hover .order-controls { opacity: 1; }
-        .order-controls i { cursor: pointer; font-size: 16px; margin: -2px 0;}
+        .order-controls i { cursor: pointer; font-size: 18px; margin: -3px 0;}
         .order-controls i:hover { color: var(--primary); }
 
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(3px); }
@@ -175,7 +177,7 @@
         .nav-item.active { color: var(--primary); background: var(--accent-bg); }
         .nav-item span { font-size: 24px; margin-bottom: 2px; }
         
-        .settings-view { padding: 20px; padding-bottom: 100px; max-width: 800px; margin: 0 auto; }
+        .settings-view { padding: 20px; padding-bottom: 100px; max-width: 1200px; margin: 0 auto; }
         .settings-section { background: var(--bg-card); border-radius: 16px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); }
         .settings-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); color: var(--text-main); font-size: 0.95rem; }
         
@@ -185,7 +187,6 @@
         #login-btn { width: 100%; max-width: 320px; height: 55px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; font-family: var(--font-main); cursor: pointer; }
         
         @media (max-width: 600px) {
-            .widget-box { padding: 12px; }
             .kpi-card { padding: 10px; }
         }
     </style>
@@ -400,23 +401,15 @@
         let editingItem = null;
         let editingItemSection = null;
         
-        // Palette colori fissa per i pallini utente
         const memberColors = ['#E11D48', '#2563EB', '#10B981', '#F59E0B', '#8B5CF6', '#14B8A6', '#F43F5E'];
         
-        // Ordine di default dei widget
         let widgetOrder = ['sw', 'req', 'cal', 'chat'];
-        
-        // Carica l'ordine salvato, se esiste
         const savedOrder = localStorage.getItem('widgetOrder');
         if (savedOrder) {
-            try {
-                widgetOrder = JSON.parse(savedOrder);
-            } catch (e) {
-                console.error("Errore nel parsing dell'ordine dei widget", e);
-            }
+            try { widgetOrder = JSON.parse(savedOrder); } 
+            catch (e) { console.error("Errore nel parsing dell'ordine dei widget", e); }
         }
 
-        // --- HELPER FUNCTION PER GESTIRE LE DATE LOCALI SENZA ERRORI UTC ---
         const getLocalYMD = (dateObj = new Date()) => {
             const y = dateObj.getFullYear();
             const m = String(dateObj.getMonth() + 1).padStart(2, '0');
@@ -736,8 +729,6 @@
             return itemField === user; 
         }
 
-        // --- DASHBOARD  ---
-        
         window.moveWidget = (index, direction) => {
             const newIndex = index + direction;
             if (newIndex < 0 || newIndex >= widgetOrder.length) return;
@@ -952,7 +943,7 @@
         }
 
         function loadData(section) {
-            document.getElementById('list-container').innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-sub);">Recupero dati... <span class="material-symbols-outlined" style="animation: spin 1s linear infinite; vertical-align:middle; margin-left:5px;">sync</span></div>';
+            document.getElementById('list-container').innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-sub);">Recupero dati...</div>';
             clearSubscribes();
             if (!currentFamily) return;
             const col = `${currentFamily}_${section}`;
