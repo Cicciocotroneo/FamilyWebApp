@@ -73,12 +73,12 @@
         .filter-row { padding: 0 20px; display: flex; justify-content: space-between; align-items: center; margin: 15px 0 5px 0; }
         .filter-row select { font-family: var(--font-main); width: auto !important; height: 35px !important; font-size: 0.85rem; border: none; background-color: transparent; color: var(--text-sub); font-weight: 500; padding-right: 25px; cursor: pointer; }
 
-        .agenda-view-toggle { display: flex; background: var(--bg-card); border-radius: 12px; margin: 20px auto; max-width: 1200px; border: 1px solid var(--border); overflow: hidden; }
+        .agenda-view-toggle { display: flex; background: var(--bg-card); border-radius: 12px; margin: 20px; border: 1px solid var(--border); overflow: hidden; }
         .agenda-view-toggle button { font-family: var(--font-main); flex: 1; padding: 12px; border: none; background: transparent; color: var(--text-sub); font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.9rem; transition: 0.3s; }
         .agenda-view-toggle button.active { background: var(--primary); color: white; }
 
         /* VISTA SETTIMANALE CALENDARIO */
-        #calendar-view-container { margin: 20px auto; max-width: 1200px; }
+        #calendar-view-container { margin: 20px; }
         .week-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-family: var(--font-title); font-size: 1.1rem; color: var(--text-main); background: var(--bg-card); padding: 10px 15px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 2px 8px var(--shadow); }
         .week-day-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; overflow: hidden; box-shadow: 0 2px 8px var(--shadow); }
         .week-day-header { background: var(--accent-bg); padding: 10px 15px; font-weight: 600; color: var(--primary); font-size: 0.9rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between;}
@@ -86,7 +86,7 @@
         .mini-event { font-size: 0.85rem; background: var(--bg-body); padding: 6px 10px; border-radius: 6px; border-left: 4px solid var(--border); display: flex; align-items: center; gap: 8px; color: var(--text-main); }
         
         /* BARRA INSERIMENTO E CHIPS */
-        .add-bar { background: var(--bg-card); padding: 20px; margin: 20px auto; max-width: 1200px; border-radius: 16px; border: 1px solid var(--border); display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: start; box-shadow: 0 4px 15px var(--shadow); }
+        .add-bar { background: var(--bg-card); padding: 20px; margin: 20px; border-radius: 16px; border: 1px solid var(--border); display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: start; box-shadow: 0 4px 15px var(--shadow); }
         .add-bar select, .add-bar input, #add-btn, .note-editor input, .note-editor button { font-family: var(--font-main); height: 50px !important; width: 100%; border: 1px solid var(--border); border-radius: 12px; background-color: var(--input-bg); font-size: 15px; padding: 0 16px; color: var(--text-main); margin: 0; outline: none; transition: border-color 0.2s; }
         .add-bar input:focus, .add-bar select:focus { border-color: var(--primary); }
 
@@ -106,14 +106,14 @@
         #add-btn { width: 50px !important; padding: 0; background: var(--primary); color: white; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; border-radius: 12px; }
         #add-btn.edit-mode { background: var(--warning); color: #fff; }
 
-        .note-editor { background: var(--bg-card); padding: 20px; margin: 20px auto; max-width: 1200px; border-radius: 16px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 15px; }
+        .note-editor { background: var(--bg-card); padding: 20px; margin: 20px; border-radius: 16px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 15px; }
         .note-editor textarea { font-family: var(--font-main); width: 100%; height: 180px; border: 1px solid var(--border); border-radius: 12px; background-color: var(--input-bg); font-size: 15px; padding: 16px; color: var(--text-main); resize: none; outline: none; }
         #save-note-btn { background: var(--primary); color: white; font-weight: 500; border: none; cursor: pointer; }
 
         .hidden { display: none !important; }
 
-        #list-container { padding: 0 20px 100px 20px; max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 30px;} 
-        .card { background: var(--bg-card); padding: 18px; border-radius: 16px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; margin-bottom: 0; transition: 0.2s; box-shadow: 0 2px 6px var(--shadow); }
+        #list-container { padding: 0 20px 100px 20px; } 
+        .card { background: var(--bg-card); padding: 18px; border-radius: 16px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; transition: 0.2s; box-shadow: 0 2px 6px var(--shadow); }
         
         .note-card { flex-direction: column; align-items: flex-start; gap: 12px; }
         .note-title { font-size: 1.15rem; color: var(--text-main); width: 100%; margin: 0; }
@@ -136,32 +136,25 @@
         .cat-dot { height: 8px; width: 8px; border-radius: 50%; display: inline-block; margin-right: 8px; vertical-align: middle; }
         .assigned-badge { font-size: 0.7rem; color: var(--text-sub); margin-left: 8px; display: inline-block; vertical-align: middle; font-weight: 500; border: 1px solid var(--border); padding: 2px 6px; border-radius: 6px; }
 
-        .dash-header-select { background: var(--bg-card); padding: 12px 20px; border-radius: 16px; border: 1px solid var(--border); margin: 0 auto; width: 100%;}
+        .dash-header-select { background: var(--bg-card); padding: 12px 20px; border-radius: 16px; margin-bottom: 20px; border: 1px solid var(--border); }
         .dash-header-select select { font-family: var(--font-main); width: 100%; border: none; background: transparent; font-size: 0.95rem; font-weight: 600; color: var(--primary); outline: none; cursor: pointer;}
         
-        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 12px; margin-bottom: 0; width: 100%;}
-        .kpi-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 12px; display: flex; align-items: center; gap: 12px; box-shadow: var(--shadow); cursor: pointer; transition: 0.2s; }
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 12px; margin-bottom: 25px; }
+        .kpi-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 15px; display: flex; align-items: center; gap: 12px; box-shadow: var(--shadow); cursor: pointer; transition: 0.2s; }
         .kpi-card:hover { border-color: var(--primary); }
-        .kpi-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: var(--accent-bg); color: var(--primary); }
-        .kpi-data-title { font-size: 0.7rem; color: var(--text-sub); font-weight: 500; }
-        .kpi-data-val { font-size: 1.2rem; font-weight: bold; color: var(--text-main); font-family: var(--font-title); }
+        .kpi-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: var(--accent-bg); color: var(--primary); }
+        .kpi-data-title { font-size: 0.75rem; color: var(--text-sub); font-weight: 500; }
+        .kpi-data-val { font-size: 1.4rem; font-weight: bold; color: var(--text-main); font-family: var(--font-title); }
 
-        .widget-grid { display: grid; grid-template-columns: 1fr; gap: 30px; align-items: start; }
-        @media (min-width: 768px) { .widget-grid { grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); } }
+        .widget-grid { display: grid; grid-template-columns: 1fr; gap: 20px; align-content: start; }
+        @media (min-width: 800px) { .widget-grid { grid-template-columns: 1fr 1fr; } .bacheca-widget { grid-column: 1 / -1; } }
         
-        .widget-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; box-shadow: var(--shadow); width: 100%; display: flex; flex-direction: column;}
-        .widget-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 15px; }
-        .widget-header h3 { font-size: 1.15rem; color: var(--text-main); display: flex; align-items: center; gap: 8px; margin: 0;}
-        .widget-header .material-symbols-outlined { color: var(--primary); font-size: 22px;}
+        .widget-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; box-shadow: var(--shadow); }
+        .widget-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 15px; }
+        .widget-header h3 { font-size: 1.15rem; color: var(--text-main); }
         .link-all { font-size: 0.8rem; color: var(--primary); display: flex; align-items: center; cursor: pointer; font-weight: 600; }
-        .link-all .material-symbols-outlined { font-size: 16px; margin-left: 2px; }
+        .link-all span { font-size: 16px; margin-left: 4px; }
         .widget-content .card { box-shadow: none; border-color: var(--border); margin-bottom: 10px; padding: 12px 15px; }
-        
-        /* Controlli ordinamento */
-        .order-controls { display: flex; flex-direction: column; margin-left: 8px; opacity: 0.5; transition: opacity 0.2s;}
-        .widget-box:hover .order-controls { opacity: 1; }
-        .order-controls i { cursor: pointer; font-size: 18px; margin: -3px 0;}
-        .order-controls i:hover { color: var(--primary); }
 
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(3px); }
         .modal-box { background: var(--bg-card); width: 90%; max-width: 400px; max-height: 90vh; border-radius: 20px; padding: 25px; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
@@ -178,56 +171,32 @@
         .nav-item.active { color: var(--primary); background: var(--accent-bg); }
         .nav-item span { font-size: 24px; margin-bottom: 2px; }
         
-        .settings-view { padding: 20px; padding-bottom: 100px; max-width: 1200px; margin: 0 auto; }
+        .settings-view { padding: 20px; padding-bottom: 100px; }
         .settings-section { background: var(--bg-card); border-radius: 16px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); }
         .settings-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); color: var(--text-main); font-size: 0.95rem; }
         
-        #auth-container { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; background: var(--bg-body); overflow-y: auto;}
+        #auth-container { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; background: var(--bg-body); }
         #auth-container h1 { font-family: var(--font-title); color: var(--primary); font-size: 3rem; margin-bottom: 10px; }
         #auth-container input { width: 100%; max-width: 320px; height: 55px; margin-bottom: 15px; border: 1px solid var(--border); border-radius: 12px; padding: 0 20px; font-size: 16px; font-family: var(--font-main); }
         #login-btn { width: 100%; max-width: 320px; height: 55px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; font-family: var(--font-main); cursor: pointer; }
-        
-        @media (max-width: 600px) {
-            .kpi-card { padding: 10px; }
-        }
     </style>
 </head>
 <body>
 
     <div id="auth-container">
         <h1>Family Hub</h1>
-        <p style="color:var(--text-sub); margin-bottom: 30px;">Il centro della tua casa.</p>
+        <p style="color:var(--text-sub); margin-bottom: 40px;">Il centro della tua casa.</p>
         <input type="email" id="email-input" placeholder="Email">
         <input type="password" id="password-input" placeholder="Password">
         <button id="login-btn">Entra</button>
-        
-        <div style="display:flex; justify-content:space-between; width:100%; max-width:320px; margin-top:20px;">
-            <p onclick="window.resetPassword()" style="color:var(--primary); cursor:pointer; margin:0; font-size: 0.9rem; font-weight:500;">Password dimenticata?</p>
-            <p onclick="document.getElementById('auth-guide').classList.toggle('hidden')" style="color:var(--text-sub); cursor:pointer; margin:0; font-size: 0.9rem; display:flex; align-items:center; gap:4px; font-weight:500;">
-                <span class="material-symbols-outlined" style="font-size:18px;">help</span> Guida
-            </p>
-        </div>
-        
-        <p id="login-status" style="margin-top: 15px; color: var(--alert); font-size: 0.9rem;"></p>
-
-        <!-- GUIDA ADMIN -->
-        <div id="auth-guide" class="hidden" style="margin-top:20px; background:var(--bg-card); padding:20px; border-radius:12px; border:1px solid var(--border); text-align:left; max-width:320px; font-size:0.85rem; width:100%; box-shadow:var(--shadow);">
-            <h4 style="margin-top:0; color:var(--primary); font-family:var(--font-title); font-size:1.1rem; margin-bottom:10px;">Creare il tuo Family Hub</h4>
-            <ol style="padding-left:18px; margin:0 0 15px 0; color:var(--text-sub); line-height:1.5;">
-                <li style="margin-bottom:6px;">Vai su Firebase Console e crea un progetto vuoto.</li>
-                <li style="margin-bottom:6px;">Abilita <b>Authentication</b> (Email/Password) e <b>Firestore Database</b>.</li>
-                <li style="margin-bottom:6px;">Aggiungi un'app Web al progetto e copia le chiavi del <code>firebaseConfig</code>.</li>
-                <li style="margin-bottom:6px;">Sostituisci le chiavi nel codice <code>index.html</code>. Metti la tua email come <code>SUPER_ADMIN_EMAIL</code>.</li>
-                <li>Registrati qui, vai in Impostazioni e abilita i tuoi familiari tramite la Console Super Admin.</li>
-            </ol>
-            <button onclick="document.getElementById('auth-guide').classList.add('hidden')" style="width:100%; padding:8px; border-radius:8px; border:1px solid var(--border); background:var(--bg-body); cursor:pointer; font-weight:bold; color:var(--text-main); font-family:var(--font-main);">Chiudi Guida</button>
-        </div>
+        <p onclick="window.resetPassword()" style="color:var(--primary); cursor:pointer; margin-top:20px; font-size: 0.9rem;">Password dimenticata?</p>
+        <p id="login-status" style="margin-top: 20px; color: var(--alert); font-size: 0.9rem;"></p>
     </div>
 
     <div id="app-container" class="hidden">
         <header>
             <div>
-                <h2 id="page-title" style="margin:0; font-size: 1.8rem; font-weight: 700; color: var(--primary);">Home</h2>
+                <h2 id="page-title" style="margin:0; font-size: 1.4rem;">Home</h2>
                 <span id="family-display" style="font-size:0.75rem; font-weight: 500; color: var(--text-sub);">Caricamento...</span>
             </div>
             <div class="header-controls">
@@ -239,13 +208,11 @@
         </header>
 
         <main>
-            <!-- TOGGLE VISTA AGENDA -->
             <div id="agenda-view-toggle" class="agenda-view-toggle hidden">
                 <button id="btn-view-list" class="active" onclick="window.setAgendaView('list')"><span class="material-symbols-outlined">view_agenda</span> Lista</button>
                 <button id="btn-view-cal" onclick="window.setAgendaView('calendar')"><span class="material-symbols-outlined">view_week</span> Settimana</button>
             </div>
 
-            <!-- VISTA SETTIMANA CALENDARIO -->
             <div id="calendar-view-container" class="hidden">
                 <div class="week-nav">
                     <i class="material-symbols-outlined" style="cursor:pointer; padding:5px;" onclick="window.changeWeek(-1)">chevron_left</i>
@@ -255,7 +222,6 @@
                 <div id="week-grid-days"></div>
             </div>
 
-            <!-- BARRA INPUT -->
             <div id="add-bar-container" class="add-bar hidden">
                 <input type="date" id="date-input" class="hidden">
                 <input type="time" id="time-input" class="hidden" style="width:100%;">
@@ -402,7 +368,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
-        
         const SUPER_ADMIN_EMAIL = "antonioderosa@gmail.com";
 
         let currentSection = 'dashboard';
@@ -413,8 +378,8 @@
         let familySettings = { members: ["Mamma", "Papà"], categories: [{name:"Generale", color:"#859B8B"}], presenze: {} };
         
         let currentDashboardUser = "";
-        let currentAuthorName = "";
-        let myMemberName = "";
+        let currentAuthorName = ""; // Nome dell'utente loggato basato sull'email
+        let myMemberName = "";      // Nome mappato dalla lista famiglia
         
         let isCalendarMode = false;
         let weekStartDate = new Date();
@@ -424,20 +389,6 @@
         let editingItemSection = null;
         
         const memberColors = ['#E11D48', '#2563EB', '#10B981', '#F59E0B', '#8B5CF6', '#14B8A6', '#F43F5E'];
-        
-        let widgetOrder = ['sw', 'req', 'cal', 'chat'];
-        const savedOrder = localStorage.getItem('widgetOrder');
-        if (savedOrder) {
-            try { widgetOrder = JSON.parse(savedOrder); } 
-            catch (e) {}
-        }
-
-        const getLocalYMD = (dateObj = new Date()) => {
-            const y = dateObj.getFullYear();
-            const m = String(dateObj.getMonth() + 1).padStart(2, '0');
-            const d = String(dateObj.getDate()).padStart(2, '0');
-            return `${y}-${m}-${d}`;
-        };
 
         window.toggleDarkMode = () => {
             document.body.classList.toggle('dark-mode');
@@ -480,7 +431,7 @@
             const pass = document.getElementById('password-input').value;
             if(!email || !pass) return;
             document.getElementById('login-status').innerText = "Accesso in corso...";
-            signInWithEmailAndPassword(auth, email, pass).catch(e => document.getElementById('login-status').innerText = "Errore credenziali o utente non trovato");
+            signInWithEmailAndPassword(auth, email, pass).catch(e => document.getElementById('login-status').innerText = "Errore credenziali");
         });
 
         onAuthStateChanged(auth, async (user) => {
@@ -493,19 +444,12 @@
                         document.getElementById('auth-container').classList.add('hidden'); 
                         document.getElementById('app-container').classList.remove('hidden');
                         document.getElementById('family-display').innerText = `Famiglia: ${currentFamily}`;
-                        await loadSettings(); 
-                        window.nav('dashboard'); 
+                        await loadSettings(); window.nav('dashboard'); 
                     } else { 
-                        if (user.email === SUPER_ADMIN_EMAIL) { 
-                            currentFamily = "ADMIN"; 
-                            document.getElementById('auth-container').classList.add('hidden'); 
-                            document.getElementById('app-container').classList.remove('hidden'); 
-                            window.nav('settings'); 
-                        } else { 
-                            alert("Utente in attesa di abilitazione. Contatta l'amministratore."); signOut(auth); 
-                        }
+                        if (user.email === SUPER_ADMIN_EMAIL) { currentFamily = "ADMIN"; document.getElementById('auth-container').classList.add('hidden'); document.getElementById('app-container').classList.remove('hidden'); window.nav('settings'); } 
+                        else { alert("Utente non abilitato."); signOut(auth); }
                     }
-                } catch (error) { document.getElementById('login-status').innerText = "Errore connessione database."; }
+                } catch (error) { document.getElementById('login-status').innerText = "Errore connessione."; }
             } else { document.getElementById('auth-container').classList.remove('hidden'); document.getElementById('app-container').classList.add('hidden'); }
         });
 
@@ -523,7 +467,7 @@
             const code = document.getElementById('admin-family-code').value.trim().toUpperCase();
             if(!email || !code) return;
             await setDoc(doc(db, "registro_utenti", email), { famiglia: code });
-            document.getElementById('admin-status').innerText = `✅ Assegnato con successo: ${email}`;
+            document.getElementById('admin-status').innerText = `✅ Assegnato: ${email}`;
         };
 
         async function loadSettings() {
@@ -532,22 +476,15 @@
                     familySettings = { ...familySettings, ...docSnap.data() };
                     if(!familySettings.presenze) familySettings.presenze = {};
                 }
-                
                 if (auth.currentUser) {
                     currentAuthorName = auth.currentUser.email.split('@')[0];
-                    myMemberName = currentAuthorName;
-                    if (familySettings.members && Array.isArray(familySettings.members)) {
-                        const found = familySettings.members.find(m => m && auth.currentUser.email.toLowerCase().includes(m.toLowerCase()));
-                        if(found) myMemberName = found;
-                    }
+                    myMemberName = familySettings.members.find(m => auth.currentUser.email.toLowerCase().startsWith(m.toLowerCase())) || currentAuthorName;
                 }
-
-                renderDropdowns(); 
-                renderSettingsView();
+                
+                renderDropdowns(); renderSettingsView();
                 if(currentSection === 'dashboard') renderDashboard();
             });
         }
-        
         async function saveSettings() { await setDoc(doc(db, "settings", currentFamily), familySettings, {merge: true}); }
 
         window.changeUserPassword = async () => {
@@ -560,8 +497,8 @@
         window.openPresenceModal = () => {
             const select = document.getElementById('presence-user-select');
             select.innerHTML = '';
-            (familySettings.members || []).forEach(m => select.innerHTML += `<option value="${m}">${m}</option>`);
-            if(auth.currentUser && (familySettings.members || []).length > 0) {
+            familySettings.members.forEach(m => select.innerHTML += `<option value="${m}">${m}</option>`);
+            if(auth.currentUser && familySettings.members.length > 0) {
                 select.value = myMemberName;
             }
             window.renderPresenceGrid();
@@ -609,14 +546,14 @@
             const catSel = document.getElementById('category-select');
             const filSel = document.getElementById('filter-select');
             catSel.innerHTML = ""; filSel.innerHTML = `<option value="all">Filtra: Tutti</option>`;
-            (familySettings.categories || []).forEach(cat => {
+            familySettings.categories.forEach(cat => {
                 catSel.innerHTML += `<option value="${cat.name}">${cat.name}</option>`;
                 filSel.innerHTML += `<option value="${cat.name}">Filtro: ${cat.name}</option>`;
             });
             
             const assignContainer = document.getElementById('assign-who-container');
             assignContainer.innerHTML = '';
-            (familySettings.members || []).forEach(mem => {
+            familySettings.members.forEach(mem => {
                 const chip = document.createElement('div');
                 chip.className = 'chip'; chip.innerText = mem;
                 chip.onclick = () => chip.classList.toggle('active');
@@ -701,11 +638,8 @@
             document.querySelector('.filter-row').classList.add('hidden');
             
             document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
-            if(event && event.currentTarget && event.currentTarget.classList) event.currentTarget.classList.add('active'); 
-            else {
-                const navBtn = document.querySelector(`.nav-item[onclick="window.nav('${section}')"]`);
-                if(navBtn) navBtn.classList.add('active');
-            }
+            if(event && event.currentTarget) event.currentTarget.classList.add('active'); 
+            else document.querySelector(`.nav-item[onclick="window.nav('${section}')"]`).classList.add('active');
 
             if (section === 'settings') { document.getElementById('settings-view').classList.remove('hidden'); document.getElementById('page-title').innerText = "Impostazioni"; return; }
             if (section === 'dashboard') { document.getElementById('page-title').innerText = "Home"; loadDashboardData(); return; }
@@ -767,31 +701,17 @@
             return itemField === user; 
         }
 
-        window.moveWidget = (index, direction) => {
-            const newIndex = index + direction;
-            if (newIndex < 0 || newIndex >= widgetOrder.length) return;
-            
-            const temp = widgetOrder[index];
-            widgetOrder[index] = widgetOrder[newIndex];
-            widgetOrder[newIndex] = temp;
-            
-            localStorage.setItem('widgetOrder', JSON.stringify(widgetOrder));
-            renderDashboard();
-        };
-
         function loadDashboardData() {
-            const container = document.getElementById('list-container');
-            if(container) container.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-sub);">Lettura database in corso...</div>';
+            document.getElementById('list-container').innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-sub);">Sincronizzazione in corso... <span class="material-symbols-outlined" style="animation: spin 1s linear infinite; vertical-align:middle; margin-left:5px;">sync</span></div>';
             clearSubscribes();
             if (!currentFamily) return;
 
-            // Uso normale del database
-            const queries = { 
-                todos: query(collection(db, `${currentFamily}_todos`), orderBy("timestamp", "desc")), 
-                shopping: query(collection(db, `${currentFamily}_shopping`), orderBy("timestamp", "desc")), 
-                calendar: query(collection(db, `${currentFamily}_calendar`), orderBy("date", "asc")), 
-                chat: query(collection(db, `${currentFamily}_chat`), orderBy("timestamp", "desc")) 
-            };
+            const qTodos = query(collection(db, `${currentFamily}_todos`), where("done", "==", false));
+            const qShop = query(collection(db, `${currentFamily}_shopping`), where("done", "==", false));
+            const qCal = query(collection(db, `${currentFamily}_calendar`), where("done", "==", false));
+            const qChat = query(collection(db, `${currentFamily}_chat`), orderBy("timestamp", "desc"), limit(20));
+
+            const queries = { todos: qTodos, shopping: qShop, calendar: qCal, chat: qChat };
             
             Object.keys(queries).forEach(col => {
                 const unsub = onSnapshot(queries[col], (snap) => {
@@ -816,7 +736,7 @@
             else { baseDate.setDate(today.getDate() - (currentDayOfWeek - 1)); }
 
             let colorMap = {};
-            (familySettings.members || []).forEach((m, i) => { colorMap[m] = memberColors[i % memberColors.length]; });
+            familySettings.members.forEach((m, i) => { colorMap[m] = memberColors[i % memberColors.length]; });
 
             let swHtml = '';
             const dayNames = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì'];
@@ -828,7 +748,7 @@
                 let dateStr = `${dayNames[i]} ${loopDate.getDate()}`;
 
                 let amHome = []; let pmHome = [];
-                (familySettings.members || []).forEach(m => {
+                familySettings.members.forEach(m => {
                     const p = familySettings.presenze[m] || {};
                     if(p[`${dayNum}_am`]) amHome.push(m);
                     if(p[`${dayNum}_pm`]) pmHome.push(m);
@@ -851,106 +771,44 @@
             }
 
             let legendHtml = '<div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px; padding-bottom:12px; border-bottom:1px solid var(--border); justify-content:center;">';
-            (familySettings.members || []).forEach(m => {
+            familySettings.members.forEach(m => {
                 legendHtml += `<div style="display:flex; align-items:center; font-size:0.8rem; color:var(--text-sub); font-weight:500;"><span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:${colorMap[m]}; margin-right:6px;"></span>${m}</div>`;
             });
             legendHtml += '</div>';
 
             let userOpts = `<option value="">Vista Generale: Tutti</option>`;
-            (familySettings.members || []).forEach(m => userOpts += `<option value="${m}" ${m===currentDashboardUser?'selected':''}>Focus su: ${m}</option>`);
+            familySettings.members.forEach(m => userOpts += `<option value="${m}" ${m===currentDashboardUser?'selected':''}>Focus su: ${m}</option>`);
 
-            const todayStr = getLocalYMD(today);
-            const limitDateStr = getLocalYMD(new Date(today.getTime() + (7 * 24 * 60 * 60 * 1000)));
+            const limitDateStr = new Date(today.getTime() + (7 * 24 * 60 * 60 * 1000)).toISOString().split('T')[0];
 
-            const pendingTodos = (dashboardData.todos || []).filter(t => !t.done && isAssignedToUser(t.assigned, currentDashboardUser));
-            const pendingShop = (dashboardData.shopping || []).filter(s => !s.done && isAssignedToUser(s.assigned, currentDashboardUser));
+            const pendingTodos = dashboardData.todos.filter(t => isAssignedToUser(t.assigned, currentDashboardUser));
+            const pendingShop = dashboardData.shopping.filter(s => isAssignedToUser(s.assigned, currentDashboardUser));
             const allPendingReqs = [...pendingTodos, ...pendingShop].sort((a,b)=> (a.date||'9999') > (b.date||'9999') ? 1 : -1);
 
-            const scaduti = (dashboardData.calendar || []).filter(c => !c.done && c.date && c.date < todayStr && isAssignedToUser(c.assigned, currentDashboardUser));
-            const futuri = (dashboardData.calendar || []).filter(c => !c.done && (!c.date || (c.date >= todayStr && c.date <= limitDateStr)) && isAssignedToUser(c.assigned, currentDashboardUser));
-            const upcEvents = [...scaduti, ...futuri]; 
+            const scaduti = dashboardData.calendar.filter(c => c.date && c.date < today.toISOString().split('T')[0] && isAssignedToUser(c.assigned, currentDashboardUser));
+            const futuri = dashboardData.calendar.filter(c => (!c.date || (c.date >= today.toISOString().split('T')[0] && c.date <= limitDateStr)) && isAssignedToUser(c.assigned, currentDashboardUser)).sort((a,b)=> (a.date||'9999') > (b.date||'9999') ? 1 : -1);
+            const upcEvents = [...scaduti, ...futuri];
 
-            const chatsList = (dashboardData.chat || []).filter(c => !c.archived && isAssignedToUser(c.tagged, currentDashboardUser)).slice(0,3);
-
-            const w_sw = `
-                <div class="widget-box">
-                    <div class="widget-header">
-                        <h3><span class="material-symbols-outlined" style="color:var(--primary); font-size:24px; line-height:1; transform:translateY(2px);">home_work</span> Smart Working</h3>
-                        <div class="order-controls">
-                            <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('sw')}, -1)">expand_less</i>
-                            <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('sw')}, 1)">expand_more</i>
-                        </div>
-                    </div>
-                    <div class="widget-content">
-                        ${legendHtml}
-                        ${swHtml}
-                        <button onclick="window.openPresenceModal()" style="margin-top:15px; width:100%; padding:10px; border-radius:12px; border:1px solid var(--border); background:var(--bg-body); color:var(--text-main); font-weight:600; cursor:pointer; font-family:var(--font-main);">Modifica Turni Smart Working</button>
-                    </div>
-                </div>
-            `;
-            
-            const w_req = `
-                <div class="widget-box">
-                    <div class="widget-header">
-                        <h3>Ultime richieste</h3>
-                        <div style="display:flex; align-items:center;">
-                            <span class="link-all" onclick="window.nav('todos')">Vedi tutte <span class="material-symbols-outlined" style="font-size:16px; margin-left:4px;">arrow_forward</span></span>
-                            <div class="order-controls">
-                                <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('req')}, -1)">expand_less</i>
-                                <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('req')}, 1)">expand_more</i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="widget-content">
-                        ${allPendingReqs.slice(0,4).map(c => renderHTMLCard(c, (dashboardData.todos.some(t=>t.id===c.id) ? 'todos' : 'shopping'))).join('') || '<div style="color:var(--text-sub); font-size:0.9rem; text-align:center; padding:15px;">Nessuna richiesta in attesa.</div>'}
-                    </div>
-                </div>
-            `;
-            
-            const w_cal = `
-                <div class="widget-box">
-                    <div class="widget-header">
-                        <h3>Agenda Eventi e Scadenze</h3>
-                        <div style="display:flex; align-items:center;">
-                            <span class="link-all" onclick="window.nav('calendar')">Vedi tutti <span class="material-symbols-outlined" style="font-size:16px; margin-left:4px;">arrow_forward</span></span>
-                            <div class="order-controls">
-                                <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('cal')}, -1)">expand_less</i>
-                                <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('cal')}, 1)">expand_more</i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="widget-content">
-                        ${upcEvents.slice(0,4).map(c => renderHTMLCard(c, 'calendar')).join('') || '<div style="color:var(--text-sub); font-size:0.9rem; text-align:center; padding:15px;">Nessun impegno nei prossimi 7 giorni.</div>'}
-                    </div>
-                </div>
-            `;
-            
-            const w_chat = `
-                <div class="widget-box">
-                    <div class="widget-header">
-                        <h3>Dalla bacheca di famiglia</h3>
-                        <div style="display:flex; align-items:center;">
-                            <span class="link-all" onclick="window.nav('chat')">Bacheca completa <span class="material-symbols-outlined" style="font-size:16px; margin-left:4px;">arrow_forward</span></span>
-                            <div class="order-controls">
-                                <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('chat')}, -1)">expand_less</i>
-                                <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('chat')}, 1)">expand_more</i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="widget-content">
-                        ${chatsList.map(c => renderHTMLCard(c, 'chat')).join('') || '<div style="color:var(--text-sub); font-size:0.9rem; text-align:center; padding:15px;">Nessun nuovo messaggio.</div>'}
-                    </div>
-                </div>
-            `;
-
-            const widgetsMap = { 'sw': w_sw, 'req': w_req, 'cal': w_cal, 'chat': w_chat };
-
-            let orderedWidgetsHtml = '';
-            widgetOrder.forEach(key => { if (widgetsMap[key]) orderedWidgetsHtml += widgetsMap[key]; });
+            // Filtra chat non archiviate per la Dashboard
+            const chats = dashboardData.chat.filter(c => !c.archived && isAssignedToUser(c.tagged, currentDashboardUser));
 
             let html = `
+                <!-- SMART WORKING / PRESENZE ALLINEATO AL CENTRO (FIX CSS FLEXBOX) -->
+                <div class="dash-section-title" style="margin-top:10px; display:flex; align-items:center; gap:8px;">
+                    <span class="material-symbols-outlined" style="color:var(--primary); font-size:24px; line-height:1; transform:translateY(2px);">home_work</span> 
+                    <span>Smart Working</span>
+                </div>
+                
+                <div class="card" style="flex-direction:column; align-items:stretch; gap:0; margin-bottom:20px; border-color:var(--border); padding: 15px;">
+                    ${legendHtml}
+                    ${swHtml}
+                    <button onclick="window.openPresenceModal()" style="margin-top:15px; width:100%; padding:10px; border-radius:12px; border:1px solid var(--border); background:var(--bg-body); color:var(--text-main); font-weight:600; cursor:pointer; font-family:var(--font-main);">Modifica Turni Smart Working</button>
+                </div>
+
+                <!-- FILTRO -->
                 <div class="dash-header-select"><select onchange="window.changeDashUser(this.value)">${userOpts}</select></div>
 
+                <!-- KPI / CONTATORI -->
                 <div class="kpi-grid">
                     <div class="kpi-card" onclick="window.nav('todos')">
                         <div class="kpi-icon"><span class="material-symbols-outlined">checklist</span></div>
@@ -962,31 +820,61 @@
                     </div>
                     <div class="kpi-card" onclick="window.nav('chat')">
                         <div class="kpi-icon" style="background:var(--bg-body); color:var(--alert);"><span class="material-symbols-outlined">forum</span></div>
-                        <div><div class="kpi-data-title">Bacheca</div><div class="kpi-data-val">${(dashboardData.chat||[]).filter(c=>!c.archived).length}</div></div>
+                        <div><div class="kpi-data-title">Bacheca</div><div class="kpi-data-val">${chats.length}</div></div>
                     </div>
                 </div>
 
+                <!-- WIDGETS A GRIGLIA -->
                 <div class="widget-grid">
-                    ${orderedWidgetsHtml}
+                    
+                    <div class="widget-box">
+                        <div class="widget-header">
+                            <h3>Ultime richieste</h3>
+                            <span class="link-all" onclick="window.nav('todos')">Vedi tutte <span class="material-symbols-outlined">arrow_forward</span></span>
+                        </div>
+                        <div class="widget-content">
+                            ${allPendingReqs.slice(0,4).map(c => renderHTMLCard(c, (dashboardData.todos.some(t=>t.id===c.id) ? 'todos' : 'shopping'))).join('') || '<div style="color:var(--text-sub); font-size:0.9rem; text-align:center; padding:15px;">Nessuna richiesta in attesa.</div>'}
+                        </div>
+                    </div>
+
+                    <div class="widget-box">
+                        <div class="widget-header">
+                            <h3>Agenda Eventi e Scadenze</h3>
+                            <span class="link-all" onclick="window.nav('calendar')">Vedi tutti <span class="material-symbols-outlined">arrow_forward</span></span>
+                        </div>
+                        <div class="widget-content">
+                            ${upcEvents.slice(0,4).map(c => renderHTMLCard(c, 'calendar')).join('') || '<div style="color:var(--text-sub); font-size:0.9rem; text-align:center; padding:15px;">Nessun impegno nei prossimi 7 giorni.</div>'}
+                        </div>
+                    </div>
+
+                    <div class="widget-box bacheca-widget">
+                        <div class="widget-header">
+                            <h3>Dalla bacheca di famiglia</h3>
+                            <span class="link-all" onclick="window.nav('chat')">Vai alla bacheca <span class="material-symbols-outlined">arrow_forward</span></span>
+                        </div>
+                        <div class="widget-content">
+                            ${chats.slice(0,3).map(c => renderHTMLCard(c, 'chat')).join('') || '<div style="color:var(--text-sub); font-size:0.9rem; text-align:center; padding:15px;">Nessun nuovo messaggio.</div>'}
+                        </div>
+                    </div>
+
                 </div>
             `;
             container.innerHTML = html;
         }
 
+        window.changeDashUser = (val) => { currentDashboardUser = val; renderDashboard(); };
+
+        function clearSubscribes() { unsubscribes.forEach(u => u()); unsubscribes = []; }
+
         function loadData(section) {
-            const container = document.getElementById('list-container');
-            if(container) container.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-sub);">Recupero dati database...</div>';
+            document.getElementById('list-container').innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-sub);">Recupero dati... <span class="material-symbols-outlined" style="animation: spin 1s linear infinite; vertical-align:middle; margin-left:5px;">sync</span></div>';
             clearSubscribes();
             if (!currentFamily) return;
             const col = `${currentFamily}_${section}`;
-            
-            let q = (section === 'calendar') 
-                ? query(collection(db, col), orderBy("date", "asc")) 
-                : query(collection(db, col), orderBy("timestamp", "desc"));
+            let q = (section === 'calendar') ? query(collection(db, col), orderBy("date", "asc")) : query(collection(db, col), orderBy("timestamp", "desc"));
             
             const unsub = onSnapshot(q, (snap) => {
-                allDataCache = []; 
-                snap.forEach(d => allDataCache.push({id:d.id, ...d.data()}));
+                allDataCache = []; snap.forEach(d => allDataCache.push({id:d.id, ...d.data()}));
                 if(isCalendarMode && section === 'calendar') renderWeekCalendarGrid();
                 renderList();
             });
@@ -997,23 +885,22 @@
 
         function renderList() {
             const listContainerLocal = document.getElementById('list-container');
-            if(!listContainerLocal) return;
             listContainerLocal.innerHTML = "";
             const filter = document.getElementById('filter-select').value;
             let filtered = allDataCache.filter(i => {
-                if (i.archived && currentSection === 'chat') return false; 
+                if (i.archived && currentSection === 'chat') return false; // Filtra i messaggi archiviati
                 const catMatch = filter === 'all' || i.category === filter;
                 const dateMatch = !selectedDate || i.date === selectedDate || currentSection !== 'calendar';
                 return catMatch && dateMatch;
             });
             
             if(filtered.length === 0) listContainerLocal.innerHTML = "<div style='text-align:center; color:var(--text-sub); margin-top:40px;'>Elenco vuoto.</div>";
-            let scrolled = false; const todayStr = getLocalYMD(new Date());
+            let scrolled = false; const today = new Date().toISOString().split('T')[0];
 
             filtered.forEach(data => {
-                if (currentSection === 'calendar' && !scrolled && data.date >= todayStr && !selectedDate) {
+                if (currentSection === 'calendar' && !scrolled && data.date >= today && !selectedDate) {
                     const wrap = document.createElement('div'); wrap.id = "scroll-target"; 
-                    wrap.innerHTML = renderHTMLCard(data, currentSection, (data.date === todayStr));
+                    wrap.innerHTML = renderHTMLCard(data, currentSection, (data.date === today));
                     listContainerLocal.appendChild(wrap);
                     scrolled = true;
                 } else {
@@ -1053,37 +940,35 @@
                 return `<div class="card note-card" style="flex-direction:row;">${checkboxHtml}<div style="width:100%"><div class="note-title">${data.title||"Senza titolo"}</div><div class="note-body">${data.text}</div><div class="note-footer">${editAction} ${deleteAction}</div></div></div>`;
             }
             if (sectionType === 'chat') {
-                let timeStr = 'Oggi';
-                if (data.timestamp && typeof data.timestamp.toDate === 'function') {
-                    timeStr = data.timestamp.toDate().toLocaleString('it-IT', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'});
-                }
+                const timeStr = (data.timestamp && typeof data.timestamp.toDate === 'function') ? data.timestamp.toDate().toLocaleString('it-IT', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'}) : 'Oggi';
                 
+                // LOGICA PERMESSI BACHECA
                 const isAuthor = (data.author === currentAuthorName);
+                
                 let isTagged = false;
                 if (Array.isArray(data.tagged)) isTagged = data.tagged.includes(myMemberName);
                 else if (typeof data.tagged === 'string' && data.tagged) isTagged = (data.tagged === myMemberName);
                 
                 let isGeneral = (!data.tagged || data.tagged.length === 0);
+                
                 const canArchive = isGeneral || isTagged || isAuthor;
 
                 let actionButtons = '';
                 if (canArchive) actionButtons += `<span class="material-symbols-outlined" style="color:var(--primary); cursor:pointer;" onclick="window.archiveItem('${data.id}','${sectionType}')" title="Archivia">inventory_2</span>`;
                 if (isAuthor) {
-                    actionButtons += `<span class="material-symbols-outlined" style="color:var(--warning); cursor:pointer; margin-left:10px;" onclick="window.editItem('${data.id}','${sectionType}')" title="Modifica">edit</span>`;
-                    actionButtons += `<span class="material-symbols-outlined" style="color:var(--alert); cursor:pointer; margin-left:10px;" onclick="window.del('${data.id}','${sectionType}', null)" title="Elimina">delete</span>`;
+                    actionButtons += `<span class="material-symbols-outlined" style="color:var(--warning); cursor:pointer;" onclick="window.editItem('${data.id}','${sectionType}')" title="Modifica">edit</span>`;
+                    actionButtons += `<span class="material-symbols-outlined" style="color:var(--alert); cursor:pointer;" onclick="window.del('${data.id}','${sectionType}', null)" title="Elimina">delete</span>`;
                 }
 
-                return `<div class="card chat-card">${checkboxHtml}<div style="width:100%;"><div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span class="chat-author">${data.author||'Utente'}</span> <span class="chat-time">${timeStr}</span></div><div style="font-size:1rem; white-space:pre-wrap; margin-bottom:5px;">${data.text||''}</div><div>${chatTags}</div></div> <div style="display:flex; flex-direction:column; gap:15px; justify-content:center; align-items:center; margin-left:10px;">${actionButtons}</div></div>`;
+                return `<div class="card chat-card">${checkboxHtml}<div style="width:100%;"><div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span class="chat-author">${data.author}</span> <span class="chat-time">${timeStr}</span></div><div style="font-size:1rem; white-space:pre-wrap; margin-bottom:5px;">${data.text}</div><div>${chatTags}</div></div> <div style="display:flex; flex-direction:column; gap:15px; justify-content:center; align-items:center; margin-left:10px;">${actionButtons}</div></div>`;
             }
 
+            // Standard Edit/Delete for other sections
             editAction = `<span class="material-symbols-outlined" style="color:var(--warning); margin-left:15px; cursor:pointer;" onclick="window.editItem('${data.id}','${sectionType}')">edit</span>`;
             deleteAction = `<span class="material-symbols-outlined" style="color:var(--alert); margin-left:15px; cursor:pointer;" onclick="window.del('${data.id}','${sectionType}', ${seriesIdSafe})">delete</span>`;
 
-            let catObj = { color: '#ccc' };
-            if(familySettings && familySettings.categories) {
-                const found = familySettings.categories.find(c => c.name === data.category);
-                if (found) catObj = found;
-            }
+            const catObj = familySettings.categories.find(c => c.name === data.category);
+            const color = catObj ? catObj.color : '#ccc';
             
             let content = "", actions = "";
             const strike = data.done ? 'text-decoration:line-through; color:var(--text-sub); opacity:0.6;' : '';
@@ -1091,20 +976,20 @@
             const checkColor = data.done ? 'var(--primary)' : 'var(--border)';
 
             if (sectionType === 'calendar') {
-                const dStr = data.date || getLocalYMD(new Date());
-                const d = new Date(dStr);
+                const d = data.date ? new Date(data.date) : new Date();
+                const dStr = data.date || new Date().toISOString().split('T')[0];
                 actions = `<span class="material-symbols-outlined" style="color:var(--text-sub); margin-left:10px; cursor:pointer;" onclick="window.exportGoogle('${data.text}','${dStr}')">calendar_add_on</span>`;
                 const locHtml = data.location ? `<br><a href="https://maps.google.com/?q=${encodeURIComponent(data.location)}" target="_blank" class="location-link"><span class="material-symbols-outlined" style="font-size:16px; margin-right:4px;">location_on</span> ${data.location}</a>` : '';
 
                 const timeHtml = data.time ? `<div class="date-time">${data.time}</div>` : "";
 
                 content = `<span class="material-symbols-outlined" style="color:${checkColor}; margin-right:15px; cursor:pointer; font-size:28px;" onclick="window.toggle('${data.id}',${!data.done},'${sectionType}')">${checkIcon}</span>
-                           <div class="date-badge" style="${data.done?'opacity:0.5;':''}"><span class="date-day">${d.getDate()||''}</span><span class="date-month">${d.toLocaleString('it-IT',{month:'short'})||''}</span>${timeHtml}</div>
-                           <div style="flex-grow:1; ${strike}"><div style="font-weight:600; font-size:1.05rem; margin-bottom:6px;">${data.text||''}</div>
-                           <div style="font-size:0.8rem; color:var(--text-sub);"><span class="cat-dot" style="background:${catObj.color}"></span>${data.category||'Generale'} ${assignedTags}</div>${locHtml}</div>`;
+                           <div class="date-badge" style="${data.done?'opacity:0.5;':''}"><span class="date-day">${d.getDate()}</span><span class="date-month">${d.toLocaleString('it-IT',{month:'short'})}</span>${timeHtml}</div>
+                           <div style="flex-grow:1; ${strike}"><div style="font-weight:600; font-size:1.05rem; margin-bottom:6px;">${data.text}</div>
+                           <div style="font-size:0.8rem; color:var(--text-sub);"><span class="cat-dot" style="background:${color}"></span>${data.category||'Generale'} ${assignedTags}</div>${locHtml}</div>`;
             } 
             else if (sectionType === 'contacts') {
-                content = `<div style="flex-grow:1"><div style="font-weight:600; font-size:1.1rem;">${data.text}</div><a href="tel:${data.detail}" style="color:var(--primary); text-decoration:none; display:flex; align-items:center; margin-top:8px;"><span class="material-symbols-outlined" style="font-size:18px; margin-right:6px;">call</span> ${data.detail||''}</a></div>`;
+                content = `<div style="flex-grow:1"><div style="font-weight:600; font-size:1.1rem;">${data.text}</div><a href="tel:${data.detail}" style="color:var(--primary); text-decoration:none; display:flex; align-items:center; margin-top:8px;"><span class="material-symbols-outlined" style="font-size:18px; margin-right:6px;">call</span> ${data.detail}</a></div>`;
             } 
             else { 
                 let dateHtml = "";
@@ -1114,7 +999,7 @@
                 const originLabel = currentSection === 'dashboard' ? `<span style="font-size:0.7rem; color:var(--text-sub); display:block; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.5px;">${sectionType === 'shopping' ? 'Spesa' : 'Compiti'}</span>` : '';
 
                 content = `<span class="material-symbols-outlined" style="color:${checkColor}; margin-right:15px; cursor:pointer; font-size:28px;" onclick="window.toggle('${data.id}',${!data.done},'${sectionType}')">${checkIcon}</span>
-                           <div style="flex-grow:1; ${strike}">${originLabel}<span class="cat-dot" style="background:${catObj.color}"></span><span style="font-weight:500;">${data.text||''}</span> ${assignedTags} ${dateHtml}</div>`;
+                           <div style="flex-grow:1; ${strike}">${originLabel}<span class="cat-dot" style="background:${color}"></span><span style="font-weight:500;">${data.text}</span> ${assignedTags} ${dateHtml}</div>`;
             }
 
             const todayCls = isToday ? 'today-card' : '';
@@ -1124,7 +1009,6 @@
         function renderWeekCalendarGrid() {
             const grid = document.getElementById('week-grid-days'); 
             const monthName = document.getElementById('week-month-name'); 
-            if(!grid || !monthName) return;
             grid.innerHTML = "";
             
             const daysNames = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"];
@@ -1133,21 +1017,18 @@
             for(let i=0; i<7; i++) {
                 let currentDay = new Date(weekStartDate);
                 currentDay.setDate(currentDay.getDate() + i);
-                const dStr = getLocalYMD(currentDay);
+                const dStr = currentDay.toISOString().split('T')[0];
                 
-                const isToday = dStr === getLocalYMD(new Date());
+                const isToday = dStr === new Date().toISOString().split('T')[0];
                 const bgStyle = isToday ? 'border-left: 4px solid var(--primary); background:var(--bg-body);' : '';
                 
                 const dayEvents = allDataCache.filter(ev => ev.date === dStr && !ev.done);
                 let eventsHtml = '';
                 if(dayEvents.length > 0) {
                     dayEvents.forEach(ev => {
-                        let catObj = { color: 'var(--primary)' };
-                        if(familySettings && familySettings.categories) {
-                            const found = familySettings.categories.find(c => c.name === ev.category);
-                            if(found) catObj = found;
-                        }
-                        eventsHtml += `<div class="mini-event" style="border-left-color:${catObj.color};"><span>${ev.text}</span> <span style="font-weight:bold; color:var(--text-main); margin-left:auto;">${ev.time||''}</span></div>`;
+                        const catObj = familySettings.categories.find(c => c.name === ev.category);
+                        const color = catObj ? catObj.color : 'var(--primary)';
+                        eventsHtml += `<div class="mini-event" style="border-left-color:${color};"><span>${ev.text}</span> <span style="font-weight:bold; color:var(--text-main); margin-left:auto;">${ev.time||''}</span></div>`;
                     });
                 } else {
                     eventsHtml = `<div style="color:var(--text-sub); font-size:0.8rem; font-style:italic; padding-left:5px;">Nessun impegno</div>`;
@@ -1162,6 +1043,121 @@
             }
         }
 
+        function renderSettingsView() {
+            const memList = document.getElementById('members-list'); memList.innerHTML = "";
+            familySettings.members.forEach((mem, i) => memList.innerHTML += `<div class="settings-row"><span>${mem}</span><span class="material-symbols-outlined" style="color:var(--alert); cursor:pointer;" onclick="window.removeMember(${i})">delete</span></div>`);
+            const catList = document.getElementById('categories-list'); catList.innerHTML = "";
+            familySettings.categories.forEach((cat, i) => catList.innerHTML += `<div class="settings-row"><div style="display:flex;align-items:center"><span style="width:16px;height:16px;background:${cat.color};border-radius:50%;margin-right:12px;"></span>${cat.name}</div><span class="material-symbols-outlined" style="color:var(--alert); cursor:pointer;" onclick="window.removeCategory(${i})">delete</span></div>`);
+        }
+        window.addMember = async () => { const n = document.getElementById('new-member-name').value; if(n){familySettings.members.push(n); await saveSettings(); document.getElementById('new-member-name').value="";}};
+        window.removeMember = async (i) => { if(confirm("Eliminare il membro dalla lista?")){familySettings.members.splice(i,1); await saveSettings();}};
+        window.addCategory = async () => { const n = document.getElementById('new-cat-name').value; const c=document.getElementById('new-cat-color').value; if(n){familySettings.categories.push({name:n, color:c}); await saveSettings(); document.getElementById('new-cat-name').value="";}};
+        window.removeCategory = async (i) => { if(confirm("Eliminare la categoria?")){familySettings.categories.splice(i,1); await saveSettings();}};
+
+        document.getElementById('add-btn').addEventListener('click', async () => {
+            const txt = document.getElementById('new-item-input').value; if(!txt) return;
+            const cat = document.getElementById('category-select').value; 
+            let dVal = document.getElementById('date-input').value; const tVal = document.getElementById('time-input').value; 
+            const locVal = document.getElementById('location-input').value;
+            const who = Array.from(document.querySelectorAll('#assign-who-container .chip.active')).map(c => c.innerText);
+            
+            if (editingItem) {
+                if(editingItemSection === 'chat') {
+                    await updateDoc(doc(db, `${currentFamily}_chat`, editingItem.id), { text: txt, tagged: who });
+                } else {
+                    let updates = { text: txt, category: cat, assigned: who };
+                    if (editingItemSection === 'calendar' || editingItemSection === 'todos') updates.date = dVal;
+                    if (editingItemSection === 'calendar') { updates.time = tVal; updates.location = locVal; }
+                    if (editingItemSection === 'contacts') updates.detail = document.getElementById('contact-detail-input').value;
+                    
+                    if (editingItemSection === 'calendar' && editingItem.seriesId) {
+                        const ans = prompt("Digita 1 per modificare SOLO QUESTO evento.\nDigita 2 per modificare TUTTA LA SERIE FUTURA.\n(Lascia vuoto per annullare)");
+                        if (ans === '2') {
+                            const q = query(collection(db, `${currentFamily}_${editingItemSection}`), where("seriesId", "==", editingItem.seriesId));
+                            const snap = await getDocs(q);
+                            snap.forEach(d => { if (d.data().date >= editingItem.date) updateDoc(d.ref, { text: txt, category: cat, assigned: who, time: tVal, location: locVal }); });
+                            await updateDoc(doc(db, `${currentFamily}_${editingItemSection}`, editingItem.id), updates);
+                        } else if (ans === '1') { await updateDoc(doc(db, `${currentFamily}_${editingItemSection}`, editingItem.id), updates); } 
+                        else { return; }
+                    } else { await updateDoc(doc(db, `${currentFamily}_${editingItemSection}`, editingItem.id), updates); }
+                }
+                
+                editingItem = null; editingItemSection = null;
+                document.querySelector('#add-btn span').innerText = 'add';
+                document.querySelector('#add-btn').classList.remove('edit-mode');
+                document.getElementById('new-item-input').value=""; document.getElementById('contact-detail-input').value=""; document.getElementById('location-input').value=""; 
+                document.querySelectorAll('#assign-who-container .chip').forEach(c => c.classList.remove('active'));
+                if (currentSection === 'calendar') { document.getElementById('recurrence-wrapper').classList.remove('hidden'); window.toggleRecurrenceInputs(); }
+                return;
+            }
+
+            if(currentSection === 'chat') {
+                const authorName = auth.currentUser.email.split('@')[0];
+                await addDoc(collection(db, `${currentFamily}_chat`), { text: txt, timestamp: serverTimestamp(), author: authorName, tagged: who, archived: false });
+                document.getElementById('new-item-input').value=""; document.querySelectorAll('#assign-who-container .chip').forEach(c => c.classList.remove('active')); return;
+            }
+
+            let loops = 1;
+            const rUnit = document.getElementById('rec-unit').value;
+            const rInt = parseInt(document.getElementById('rec-interval').value) || 1;
+            const rCount = parseInt(document.getElementById('rec-count').value) || 1;
+            if(currentSection === 'calendar' && rUnit !== 'none') loops = rCount;
+            
+            const selectedDays = Array.from(document.querySelectorAll('.day-chip.active')).map(c => parseInt(c.dataset.day));
+            let isMultiple = (loops > 1) || (rUnit === 'week' && selectedDays.length > 0 && rCount > 0);
+            const seriesId = isMultiple ? Date.now().toString(36) + Math.random().toString(36).substr(2, 5) : null;
+            
+            if(currentSection === 'calendar' && rUnit === 'week' && selectedDays.length > 0) {
+                if(!dVal) return alert("Seleziona la data del primo evento sul calendario.");
+                const baseDate = new Date(dVal);
+                for (let w = 0; w < rCount; w++) {
+                    for (let dayOfWeek of selectedDays) {
+                        let d = new Date(baseDate);
+                        let currentDayOfWeek = d.getDay(); 
+                        let dayOffset = dayOfWeek - currentDayOfWeek;
+                        d.setDate(d.getDate() + dayOffset + (w * rInt * 7));
+                        if (w === 0 && d < baseDate) continue; 
+                        const item = { text: txt, timestamp: serverTimestamp(), done: false, category: cat, assigned: who, time: tVal, seriesId: seriesId };
+                        if(locVal) item.location = locVal; item.date = d.toISOString().split('T')[0];
+                        await addDoc(collection(db, `${currentFamily}_${currentSection}`), item);
+                    }
+                }
+            } else {
+                for(let i=0; i<loops; i++) {
+                    const item = { text: txt, timestamp: serverTimestamp(), done: false, category: cat, assigned: who };
+                    if (seriesId) item.seriesId = seriesId;
+                    if(currentSection === 'calendar') {
+                        if(!dVal) return alert("Data mancante.");
+                        item.time = tVal; if(locVal) item.location = locVal;
+                        if (i > 0) {
+                            const d = new Date(dVal);
+                            if(rUnit === 'day') d.setDate(d.getDate() + (i * rInt));
+                            if(rUnit === 'week') d.setDate(d.getDate() + (i * rInt * 7));
+                            if(rUnit === 'month') d.setMonth(d.getMonth() + (i * rInt));
+                            if(rUnit === 'year') d.setFullYear(d.getFullYear() + (i * rInt));
+                            item.date = d.toISOString().split('T')[0];
+                        } else { item.date = dVal; }
+                    } else if(currentSection === 'todos') { if(dVal) item.date = dVal; } 
+                    else if(currentSection === 'contacts') { item.detail = document.getElementById('contact-detail-input').value || ""; }
+                    await addDoc(collection(db, `${currentFamily}_${currentSection}`), item);
+                    if(currentSection !== 'calendar') break; 
+                }
+            }
+            
+            document.getElementById('new-item-input').value=""; document.getElementById('contact-detail-input').value=""; document.getElementById('location-input').value=""; 
+            document.getElementById('rec-unit').value="none"; window.toggleRecurrenceInputs();
+            document.querySelectorAll('#assign-who-container .chip').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.day-chip.active').forEach(c => c.classList.remove('active'));
+        });
+
+        document.getElementById('save-note-btn').addEventListener('click', async () => {
+            const title = document.getElementById('note-title-input').value; const content = document.getElementById('note-content-input').value; const editId = document.getElementById('editing-note-id').value;
+            if(!content) return alert("Inserisci il contenuto della nota.");
+            if (editId) { await updateDoc(doc(db, `${currentFamily}_notes`, editId), { title: title, text: content, timestamp: serverTimestamp() }); document.getElementById('editing-note-id').value = ""; document.getElementById('save-note-btn').innerText = "Salva Nota"; } 
+            else { await addDoc(collection(db, `${currentFamily}_notes`), { title: title, text: content, timestamp: serverTimestamp() }); }
+            document.getElementById('note-title-input').value = ""; document.getElementById('note-content-input').value = "";
+        });
+
         window.del = async (id, section, seriesId) => {
             if(seriesId && seriesId !== 'null') {
                 const ans = prompt("Digita 1 per eliminare SOLO QUESTO evento.\nDigita 2 per eliminare TUTTA LA SERIE.\n(Lascia vuoto per annullare)");
@@ -1174,7 +1170,6 @@
         };
 
         window.toggle = async (id, st, section) => { await updateDoc(doc(db, `${currentFamily}_${section}`, id), {done:st}); };
-        window.editNote = (id) => { const note = allDataCache.find(n => n.id === id); if (note) { document.getElementById('note-title-input').value = note.title || ""; document.getElementById('note-content-input').value = note.text || ""; document.getElementById('editing-note-id').value = id; document.getElementById('save-note-btn').innerText = "Aggiorna Nota"; window.scrollTo({ top: 0, behavior: 'smooth' });}};
         window.exportGoogle = (t,d) => { const x=d.replace(/-/g,''); window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(t)}&dates=${x}/${x}`,'_blank');};
 
     </script>
