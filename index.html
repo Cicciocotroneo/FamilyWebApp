@@ -187,6 +187,14 @@
         #auth-container input { width: 100%; max-width: 320px; height: 55px; margin-bottom: 15px; border: 1px solid var(--border); border-radius: 12px; padding: 0 20px; font-size: 16px; font-family: var(--font-main); }
         #login-btn { width: 100%; max-width: 320px; height: 55px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; font-family: var(--font-main); cursor: pointer; }
         
+        /* Stile pagina guida */
+        .guide-section { background: var(--bg-card); border-radius: 16px; padding: 25px; border: 1px solid var(--border); margin-bottom: 20px; line-height: 1.6; }
+        .guide-section h3 { color: var(--primary); margin-top: 0; margin-bottom: 15px; }
+        .guide-section p { color: var(--text-sub); font-size: 0.95rem; margin-bottom: 10px; }
+        .guide-section ol { color: var(--text-sub); font-size: 0.95rem; padding-left: 20px; }
+        .guide-section li { margin-bottom: 8px; }
+        .guide-section code { background: var(--accent-bg); padding: 2px 6px; border-radius: 4px; color: var(--text-main); font-family: monospace; font-size: 0.85rem;}
+
         @media (max-width: 600px) {
             .kpi-card { padding: 10px; }
         }
@@ -208,7 +216,7 @@
         
         <p id="login-status" style="margin-top: 15px; color: var(--alert); font-size: 0.9rem;"></p>
 
-        <!-- GUIDA & SETUP (Nella pagina di Login) -->
+        <!-- GUIDA & SETUP -->
         <div id="auth-guide" class="hidden" style="margin-top:20px; background:var(--bg-card); padding:20px; border-radius:12px; border:1px solid var(--border); text-align:left; max-width:320px; font-size:0.85rem; width:100%; box-shadow:var(--shadow);">
             <h4 style="margin-top:0; color:var(--primary); font-family:var(--font-title); font-size:1.1rem; margin-bottom:10px;">Creare il tuo Family Hub</h4>
             <ol style="padding-left:18px; margin:0 0 15px 0; color:var(--text-sub); line-height:1.5;">
@@ -368,6 +376,7 @@
                     </div>
                 </div>
             </div>
+
         </main>
 
         <nav class="bottom-nav">
@@ -384,7 +393,7 @@
     <!-- JS LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy, serverTimestamp, getDoc, setDoc, getDocs, where, limit } 
+        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy, serverTimestamp, getDoc, setDoc, getDocs } 
         from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, updatePassword } 
         from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -402,7 +411,6 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
         
-        // EMAIL DEL SUPER AMMINISTRATORE (Modificabile per istanze private)
         const SUPER_ADMIN_EMAIL = "antonioderosa@gmail.com";
 
         let currentSection = 'dashboard';
@@ -429,7 +437,7 @@
         const savedOrder = localStorage.getItem('widgetOrder');
         if (savedOrder) {
             try { widgetOrder = JSON.parse(savedOrder); } 
-            catch (e) { console.error("Errore nel parsing dell'ordine dei widget", e); }
+            catch (e) {}
         }
 
         const getLocalYMD = (dateObj = new Date()) => {
@@ -479,7 +487,7 @@
             const email = document.getElementById('email-input').value;
             const pass = document.getElementById('password-input').value;
             if(!email || !pass) return;
-            document.getElementById('login-status').innerText = "Accesso in corso o registrazione...";
+            document.getElementById('login-status').innerText = "Accesso in corso...";
             signInWithEmailAndPassword(auth, email, pass).catch(e => document.getElementById('login-status').innerText = "Errore credenziali o utente non trovato");
         });
 
@@ -493,10 +501,17 @@
                         document.getElementById('auth-container').classList.add('hidden'); 
                         document.getElementById('app-container').classList.remove('hidden');
                         document.getElementById('family-display').innerText = `Famiglia: ${currentFamily}`;
-                        await loadSettings(); window.nav('dashboard'); 
+                        await loadSettings(); 
+                        window.nav('dashboard'); 
                     } else { 
-                        if (user.email === SUPER_ADMIN_EMAIL) { currentFamily = "ADMIN"; document.getElementById('auth-container').classList.add('hidden'); document.getElementById('app-container').classList.remove('hidden'); window.nav('settings'); } 
-                        else { alert("Utente in attesa di abilitazione. Contatta l'amministratore."); signOut(auth); }
+                        if (user.email === SUPER_ADMIN_EMAIL) { 
+                            currentFamily = "ADMIN"; 
+                            document.getElementById('auth-container').classList.add('hidden'); 
+                            document.getElementById('app-container').classList.remove('hidden'); 
+                            window.nav('settings'); 
+                        } else { 
+                            alert("Utente in attesa di abilitazione. Contatta l'amministratore."); signOut(auth); 
+                        }
                     }
                 } catch (error) { document.getElementById('login-status').innerText = "Errore connessione database."; }
             } else { document.getElementById('auth-container').classList.remove('hidden'); document.getElementById('app-container').classList.add('hidden'); }
@@ -521,22 +536,32 @@
 
         async function loadSettings() {
             onSnapshot(doc(db, "settings", currentFamily), (docSnap) => {
-                if (docSnap.exists()) {
-                    familySettings = { ...familySettings, ...docSnap.data() };
-                    if(!familySettings.presenze) familySettings.presenze = {};
-                    if(!familySettings.members) familySettings.members = [];
-                    if(!familySettings.categories) familySettings.categories = [];
-                }
-                
-                if (auth.currentUser) {
-                    currentAuthorName = auth.currentUser.email.split('@')[0];
-                    myMemberName = familySettings.members.find(m => auth.currentUser.email.toLowerCase().startsWith(m.toLowerCase())) || currentAuthorName;
-                }
+                try {
+                    if (docSnap.exists()) {
+                        let data = docSnap.data();
+                        familySettings.members = data.members || familySettings.members;
+                        familySettings.categories = data.categories || familySettings.categories;
+                        familySettings.presenze = data.presenze || familySettings.presenze;
+                    }
+                    
+                    if (auth.currentUser) {
+                        currentAuthorName = auth.currentUser.email.split('@')[0];
+                        myMemberName = currentAuthorName;
+                        if (familySettings.members && Array.isArray(familySettings.members)) {
+                            const found = familySettings.members.find(m => m && auth.currentUser.email.toLowerCase().includes(m.toLowerCase()));
+                            if(found) myMemberName = found;
+                        }
+                    }
 
-                renderDropdowns(); renderSettingsView();
-                if(currentSection === 'dashboard') renderDashboard();
+                    renderDropdowns(); 
+                    renderSettingsView();
+                    if(currentSection === 'dashboard') renderDashboard();
+                } catch(e) {
+                    console.error("Errore lettura impostazioni:", e);
+                }
             });
         }
+        
         async function saveSettings() { await setDoc(doc(db, "settings", currentFamily), familySettings, {merge: true}); }
 
         window.changeUserPassword = async () => {
@@ -549,8 +574,8 @@
         window.openPresenceModal = () => {
             const select = document.getElementById('presence-user-select');
             select.innerHTML = '';
-            familySettings.members.forEach(m => select.innerHTML += `<option value="${m}">${m}</option>`);
-            if(auth.currentUser && familySettings.members.length > 0) {
+            (familySettings.members || []).forEach(m => select.innerHTML += `<option value="${m}">${m}</option>`);
+            if(auth.currentUser && (familySettings.members || []).length > 0) {
                 select.value = myMemberName;
             }
             window.renderPresenceGrid();
@@ -598,14 +623,14 @@
             const catSel = document.getElementById('category-select');
             const filSel = document.getElementById('filter-select');
             catSel.innerHTML = ""; filSel.innerHTML = `<option value="all">Filtra: Tutti</option>`;
-            familySettings.categories.forEach(cat => {
+            (familySettings.categories || []).forEach(cat => {
                 catSel.innerHTML += `<option value="${cat.name}">${cat.name}</option>`;
                 filSel.innerHTML += `<option value="${cat.name}">Filtro: ${cat.name}</option>`;
             });
             
             const assignContainer = document.getElementById('assign-who-container');
             assignContainer.innerHTML = '';
-            familySettings.members.forEach(mem => {
+            (familySettings.members || []).forEach(mem => {
                 const chip = document.createElement('div');
                 chip.className = 'chip'; chip.innerText = mem;
                 chip.onclick = () => chip.classList.toggle('active');
@@ -767,26 +792,32 @@
         };
 
         function loadDashboardData() {
-            document.getElementById('list-container').innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-sub);">Lettura database in corso...</div>';
+            const container = document.getElementById('list-container');
+            if(container) container.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-sub);">Lettura database in corso...</div>';
             clearSubscribes();
             if (!currentFamily) return;
 
-            const collectionsToFetch = ['todos', 'shopping', 'calendar', 'chat'];
-            let loadedCount = 0;
+            // Uso puro ordinamento Firebase. Niente filtri per evitare crash
+            const queries = { 
+                todos: query(collection(db, `${currentFamily}_todos`), orderBy("timestamp", "desc")), 
+                shopping: query(collection(db, `${currentFamily}_shopping`), orderBy("timestamp", "desc")), 
+                calendar: query(collection(db, `${currentFamily}_calendar`), orderBy("date", "asc")), 
+                chat: query(collection(db, `${currentFamily}_chat`), orderBy("timestamp", "desc")) 
+            };
             
-            collectionsToFetch.forEach(col => {
-                const unsub = onSnapshot(collection(db, `${currentFamily}_${col}`), (snap) => {
+            Object.keys(queries).forEach(col => {
+                const unsub = onSnapshot(queries[col], (snap) => {
                     try {
                         dashboardData[col] = [];
                         snap.forEach(d => dashboardData[col].push({id: d.id, ...d.data()}));
-                        loadedCount++;
                         if(currentSection === 'dashboard') renderDashboard();
                     } catch (err) {
-                        document.getElementById('list-container').innerHTML = '<div style="text-align:center; padding:40px; color:var(--alert);">Errore interno: ' + err.message + '</div>';
+                        console.error(err);
+                        if(container) container.innerHTML = '<div style="padding:20px; color:var(--alert); text-align:center;">Errore calcolo ' + col + ': ' + err.message + '</div>';
                     }
                 }, (error) => {
-                    console.error("Errore lettura database:", error);
-                    document.getElementById('list-container').innerHTML = '<div style="text-align:center; padding:40px; color:var(--alert);">Connessione interrotta o errore di lettura. Ricarica la pagina.</div>';
+                    console.error("Firebase err su " + col, error);
+                    if(container) container.innerHTML = '<div style="color:var(--alert); padding:20px; text-align:center;">Errore connessione database. Ricarica la pagina.</div>';
                 });
                 unsubscribes.push(unsub);
             });
@@ -795,217 +826,209 @@
         function renderDashboard() {
             if(currentSection !== 'dashboard') return;
             const container = document.getElementById('list-container');
-
-            let today = new Date();
-            let currentDayOfWeek = today.getDay(); 
-            let baseDate = new Date(today);
             
-            if (currentDayOfWeek === 6) { baseDate.setDate(today.getDate() + 2); } 
-            else if (currentDayOfWeek === 0) { baseDate.setDate(today.getDate() + 1); } 
-            else { baseDate.setDate(today.getDate() - (currentDayOfWeek - 1)); }
+            try {
+                let today = new Date();
+                let currentDayOfWeek = today.getDay(); 
+                let baseDate = new Date(today);
+                
+                if (currentDayOfWeek === 6) { baseDate.setDate(today.getDate() + 2); } 
+                else if (currentDayOfWeek === 0) { baseDate.setDate(today.getDate() + 1); } 
+                else { baseDate.setDate(today.getDate() - (currentDayOfWeek - 1)); }
 
-            let colorMap = {};
-            familySettings.members.forEach((m, i) => { colorMap[m] = memberColors[i % memberColors.length]; });
+                let colorMap = {};
+                (familySettings.members || []).forEach((m, i) => { colorMap[m] = memberColors[i % memberColors.length]; });
 
-            let swHtml = '';
-            const dayNames = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì'];
-            
-            for(let i=0; i<5; i++) {
-                let loopDate = new Date(baseDate);
-                loopDate.setDate(baseDate.getDate() + i);
-                let dayNum = loopDate.getDay();
-                let dateStr = `${dayNames[i]} ${loopDate.getDate()}`;
+                let swHtml = '';
+                const dayNames = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì'];
+                
+                for(let i=0; i<5; i++) {
+                    let loopDate = new Date(baseDate);
+                    loopDate.setDate(baseDate.getDate() + i);
+                    let dayNum = loopDate.getDay();
+                    let dateStr = `${dayNames[i]} ${loopDate.getDate()}`;
 
-                let amHome = []; let pmHome = [];
-                familySettings.members.forEach(m => {
-                    const p = familySettings.presenze[m] || {};
-                    if(p[`${dayNum}_am`]) amHome.push(m);
-                    if(p[`${dayNum}_pm`]) pmHome.push(m);
+                    let amHome = []; let pmHome = [];
+                    (familySettings.members || []).forEach(m => {
+                        const p = familySettings.presenze[m] || {};
+                        if(p[`${dayNum}_am`]) amHome.push(m);
+                        if(p[`${dayNum}_pm`]) pmHome.push(m);
+                    });
+
+                    const amDots = amHome.map(m => `<span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:${colorMap[m]}; margin-right:4px;" title="${m}"></span>`).join('') || '<span style="color:var(--text-sub); font-size:0.8rem;">-</span>';
+                    const pmDots = pmHome.map(m => `<span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:${colorMap[m]}; margin-right:4px;" title="${m}"></span>`).join('') || '<span style="color:var(--text-sub); font-size:0.8rem;">-</span>';
+
+                    const borderStyle = i === 4 ? '' : 'border-bottom: 1px solid var(--border);';
+                    
+                    swHtml += `
+                        <div style="display:flex; justify-content:space-between; align-items:center; padding: 10px 0; ${borderStyle}">
+                            <div style="font-weight:600; font-size:0.95rem; width: 90px; color:var(--text-main);">${dateStr}</div>
+                            <div style="flex:1; display:flex; flex-direction:column; gap:6px;">
+                                <div style="display:flex; align-items:center; font-size:0.85rem;"><span class="material-symbols-outlined" style="font-size:16px; margin-right:8px; color:var(--warning);">light_mode</span> ${amDots}</div>
+                                <div style="display:flex; align-items:center; font-size:0.85rem;"><span class="material-symbols-outlined" style="font-size:16px; margin-right:8px; color:var(--primary);">dark_mode</span> ${pmDots}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                let legendHtml = '<div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px; padding-bottom:12px; border-bottom:1px solid var(--border); justify-content:center;">';
+                (familySettings.members || []).forEach(m => {
+                    legendHtml += `<div style="display:flex; align-items:center; font-size:0.8rem; color:var(--text-sub); font-weight:500;"><span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:${colorMap[m]}; margin-right:6px;"></span>${m}</div>`;
+                });
+                legendHtml += '</div>';
+
+                let userOpts = `<option value="">Vista Generale: Tutti</option>`;
+                (familySettings.members || []).forEach(m => userOpts += `<option value="${m}" ${m===currentDashboardUser?'selected':''}>Focus su: ${m}</option>`);
+
+                const todayStr = getLocalYMD(today);
+                const limitDateStr = getLocalYMD(new Date(today.getTime() + (7 * 24 * 60 * 60 * 1000)));
+
+                const pendingTodos = (dashboardData.todos || []).filter(t => !t.done && isAssignedToUser(t.assigned, currentDashboardUser));
+                const pendingShop = (dashboardData.shopping || []).filter(s => !s.done && isAssignedToUser(s.assigned, currentDashboardUser));
+                const allPendingReqs = [...pendingTodos, ...pendingShop];
+                // Ordinamento sicuro locale per richieste (senza date usiamo ID come fallback, altrimenti date)
+                allPendingReqs.sort((a,b) => {
+                    const da = a.date || '9999'; const dbStr = b.date || '9999';
+                    return da > dbStr ? 1 : -1;
                 });
 
-                const amDots = amHome.map(m => `<span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:${colorMap[m]}; margin-right:4px;" title="${m}"></span>`).join('') || '<span style="color:var(--text-sub); font-size:0.8rem;">-</span>';
-                const pmDots = pmHome.map(m => `<span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:${colorMap[m]}; margin-right:4px;" title="${m}"></span>`).join('') || '<span style="color:var(--text-sub); font-size:0.8rem;">-</span>';
+                const scaduti = (dashboardData.calendar || []).filter(c => !c.done && c.date && c.date < todayStr && isAssignedToUser(c.assigned, currentDashboardUser));
+                const futuri = (dashboardData.calendar || []).filter(c => !c.done && (!c.date || (c.date >= todayStr && c.date <= limitDateStr)) && isAssignedToUser(c.assigned, currentDashboardUser));
+                const upcEvents = [...scaduti, ...futuri]; 
+                // Ordine già garantito da Firebase orderBy("date", "asc")
 
-                const borderStyle = i === 4 ? '' : 'border-bottom: 1px solid var(--border);';
-                
-                swHtml += `
-                    <div style="display:flex; justify-content:space-between; align-items:center; padding: 10px 0; ${borderStyle}">
-                        <div style="font-weight:600; font-size:0.95rem; width: 90px; color:var(--text-main);">${dateStr}</div>
-                        <div style="flex:1; display:flex; flex-direction:column; gap:6px;">
-                            <div style="display:flex; align-items:center; font-size:0.85rem;"><span class="material-symbols-outlined" style="font-size:16px; margin-right:8px; color:var(--warning);">light_mode</span> ${amDots}</div>
-                            <div style="display:flex; align-items:center; font-size:0.85rem;"><span class="material-symbols-outlined" style="font-size:16px; margin-right:8px; color:var(--primary);">dark_mode</span> ${pmDots}</div>
+                const chatsList = (dashboardData.chat || []).filter(c => !c.archived && isAssignedToUser(c.tagged, currentDashboardUser)).slice(0,3);
+
+                const w_sw = `
+                    <div class="widget-box">
+                        <div class="widget-header">
+                            <h3><span class="material-symbols-outlined" style="color:var(--primary); font-size:24px; line-height:1; transform:translateY(2px);">home_work</span> Smart Working</h3>
+                            <div class="order-controls">
+                                <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('sw')}, -1)">expand_less</i>
+                                <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('sw')}, 1)">expand_more</i>
+                            </div>
+                        </div>
+                        <div class="widget-content">
+                            ${legendHtml}
+                            ${swHtml}
+                            <button onclick="window.openPresenceModal()" style="margin-top:15px; width:100%; padding:10px; border-radius:12px; border:1px solid var(--border); background:var(--bg-body); color:var(--text-main); font-weight:600; cursor:pointer; font-family:var(--font-main);">Modifica Turni Smart Working</button>
                         </div>
                     </div>
                 `;
+                
+                const w_req = `
+                    <div class="widget-box">
+                        <div class="widget-header">
+                            <h3>Ultime richieste</h3>
+                            <div style="display:flex; align-items:center;">
+                                <span class="link-all" onclick="window.nav('todos')">Vedi tutte <span class="material-symbols-outlined" style="font-size:16px;">arrow_forward</span></span>
+                                <div class="order-controls">
+                                    <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('req')}, -1)">expand_less</i>
+                                    <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('req')}, 1)">expand_more</i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="widget-content">
+                            ${allPendingReqs.slice(0,4).map(c => renderHTMLCard(c, (dashboardData.todos.some(t=>t.id===c.id) ? 'todos' : 'shopping'))).join('') || '<div style="color:var(--text-sub); font-size:0.9rem; text-align:center; padding:15px;">Nessuna richiesta in attesa.</div>'}
+                        </div>
+                    </div>
+                `;
+                
+                const w_cal = `
+                    <div class="widget-box">
+                        <div class="widget-header">
+                            <h3>Agenda Eventi</h3>
+                            <div style="display:flex; align-items:center;">
+                                <span class="link-all" onclick="window.nav('calendar')">Vedi tutti <span class="material-symbols-outlined" style="font-size:16px;">arrow_forward</span></span>
+                                <div class="order-controls">
+                                    <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('cal')}, -1)">expand_less</i>
+                                    <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('cal')}, 1)">expand_more</i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="widget-content">
+                            ${upcEvents.slice(0,4).map(c => renderHTMLCard(c, 'calendar')).join('') || '<div style="color:var(--text-sub); font-size:0.9rem; text-align:center; padding:15px;">Nessun impegno nei prossimi 7 giorni.</div>'}
+                        </div>
+                    </div>
+                `;
+                
+                const w_chat = `
+                    <div class="widget-box">
+                        <div class="widget-header">
+                            <h3>Bacheca Famiglia</h3>
+                            <div style="display:flex; align-items:center;">
+                                <span class="link-all" onclick="window.nav('chat')">Bacheca completa <span class="material-symbols-outlined" style="font-size:16px;">arrow_forward</span></span>
+                                <div class="order-controls">
+                                    <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('chat')}, -1)">expand_less</i>
+                                    <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('chat')}, 1)">expand_more</i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="widget-content">
+                            ${chatsList.map(c => renderHTMLCard(c, 'chat')).join('') || '<div style="color:var(--text-sub); font-size:0.9rem; text-align:center; padding:15px;">Nessun nuovo messaggio.</div>'}
+                        </div>
+                    </div>
+                `;
+
+                const widgetsMap = { 'sw': w_sw, 'req': w_req, 'cal': w_cal, 'chat': w_chat };
+
+                let orderedWidgetsHtml = '';
+                widgetOrder.forEach(key => { if (widgetsMap[key]) orderedWidgetsHtml += widgetsMap[key]; });
+
+                let html = `
+                    <div class="dash-header-select"><select onchange="window.changeDashUser(this.value)">${userOpts}</select></div>
+
+                    <div class="kpi-grid">
+                        <div class="kpi-card" onclick="window.nav('todos')">
+                            <div class="kpi-icon"><span class="material-symbols-outlined">checklist</span></div>
+                            <div><div class="kpi-data-title">Richieste</div><div class="kpi-data-val">${allPendingReqs.length}</div></div>
+                        </div>
+                        <div class="kpi-card" onclick="window.nav('calendar')">
+                            <div class="kpi-icon" style="background:var(--bg-body); color:var(--warning);"><span class="material-symbols-outlined">event_upcoming</span></div>
+                            <div><div class="kpi-data-title">Impegni</div><div class="kpi-data-val">${upcEvents.length}</div></div>
+                        </div>
+                        <div class="kpi-card" onclick="window.nav('chat')">
+                            <div class="kpi-icon" style="background:var(--bg-body); color:var(--alert);"><span class="material-symbols-outlined">forum</span></div>
+                            <div><div class="kpi-data-title">Bacheca</div><div class="kpi-data-val">${dashboardData.chat.filter(c => !c.archived).length}</div></div>
+                        </div>
+                    </div>
+
+                    <div class="widget-grid">
+                        ${orderedWidgetsHtml}
+                    </div>
+                `;
+                container.innerHTML = html;
+            } catch(e) {
+                console.error("Dashboard Render Error:", e);
+                container.innerHTML = `<div style="padding:20px; color:var(--alert); text-align:center;">Errore UI Dashboard. Ricarica la pagina.</div>`;
             }
-
-            let legendHtml = '<div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px; padding-bottom:12px; border-bottom:1px solid var(--border); justify-content:center;">';
-            familySettings.members.forEach(m => {
-                legendHtml += `<div style="display:flex; align-items:center; font-size:0.8rem; color:var(--text-sub); font-weight:500;"><span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:${colorMap[m]}; margin-right:6px;"></span>${m}</div>`;
-            });
-            legendHtml += '</div>';
-
-            let userOpts = `<option value="">Vista Generale: Tutti</option>`;
-            familySettings.members.forEach(m => userOpts += `<option value="${m}" ${m===currentDashboardUser?'selected':''}>Focus su: ${m}</option>`);
-
-            const todayStr = getLocalYMD(today);
-            const limitDateStr = getLocalYMD(new Date(today.getTime() + (7 * 24 * 60 * 60 * 1000)));
-
-            const pendingTodos = dashboardData.todos.filter(t => !t.done && isAssignedToUser(t.assigned, currentDashboardUser));
-            const pendingShop = dashboardData.shopping.filter(s => !s.done && isAssignedToUser(s.assigned, currentDashboardUser));
-            const allPendingReqs = [...pendingTodos, ...pendingShop].sort((a,b)=> (a.date||'9999') > (b.date||'9999') ? 1 : -1);
-
-            const scaduti = dashboardData.calendar.filter(c => !c.done && c.date && c.date < todayStr && isAssignedToUser(c.assigned, currentDashboardUser));
-            const futuri = dashboardData.calendar.filter(c => !c.done && (!c.date || (c.date >= todayStr && c.date <= limitDateStr)) && isAssignedToUser(c.assigned, currentDashboardUser));
-            const upcEvents = [...scaduti, ...futuri].sort((a,b)=> (a.date||'9999') > (b.date||'9999') ? 1 : -1);
-
-            const chatsList = dashboardData.chat
-                .filter(c => !c.archived && isAssignedToUser(c.tagged, currentDashboardUser))
-                .sort((a,b) => {
-                    const timeA = a.timestamp && a.timestamp.seconds ? a.timestamp.seconds : 0;
-                    const timeB = b.timestamp && b.timestamp.seconds ? b.timestamp.seconds : 0;
-                    return timeB - timeA;
-                });
-
-            const w_sw = `
-                <div class="widget-box">
-                    <div class="widget-header">
-                        <h3><span class="material-symbols-outlined">home_work</span> Smart Working</h3>
-                        <div class="order-controls">
-                            <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('sw')}, -1)">expand_less</i>
-                            <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('sw')}, 1)">expand_more</i>
-                        </div>
-                    </div>
-                    <div class="widget-content">
-                        ${legendHtml}
-                        ${swHtml}
-                        <button onclick="window.openPresenceModal()" style="margin-top:15px; width:100%; padding:10px; border-radius:12px; border:1px solid var(--border); background:var(--bg-body); color:var(--text-main); font-weight:600; cursor:pointer; font-family:var(--font-main);">Modifica Turni Smart Working</button>
-                    </div>
-                </div>
-            `;
-            
-            const w_req = `
-                <div class="widget-box">
-                    <div class="widget-header">
-                        <h3>Ultime richieste</h3>
-                        <div style="display:flex; align-items:center;">
-                            <span class="link-all" onclick="window.nav('todos')">Vedi tutte <span class="material-symbols-outlined" style="font-size:16px;">arrow_forward</span></span>
-                            <div class="order-controls">
-                                <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('req')}, -1)">expand_less</i>
-                                <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('req')}, 1)">expand_more</i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="widget-content">
-                        ${allPendingReqs.slice(0,4).map(c => renderHTMLCard(c, (dashboardData.todos.some(t=>t.id===c.id) ? 'todos' : 'shopping'))).join('') || '<div style="color:var(--text-sub); font-size:0.9rem; text-align:center; padding:15px;">Nessuna richiesta in attesa.</div>'}
-                    </div>
-                </div>
-            `;
-            
-            const w_cal = `
-                <div class="widget-box">
-                    <div class="widget-header">
-                        <h3>Agenda Eventi e Scadenze</h3>
-                        <div style="display:flex; align-items:center;">
-                            <span class="link-all" onclick="window.nav('calendar')">Vedi tutti <span class="material-symbols-outlined" style="font-size:16px;">arrow_forward</span></span>
-                            <div class="order-controls">
-                                <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('cal')}, -1)">expand_less</i>
-                                <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('cal')}, 1)">expand_more</i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="widget-content">
-                        ${upcEvents.slice(0,4).map(c => renderHTMLCard(c, 'calendar')).join('') || '<div style="color:var(--text-sub); font-size:0.9rem; text-align:center; padding:15px;">Nessun impegno nei prossimi 7 giorni.</div>'}
-                    </div>
-                </div>
-            `;
-            
-            const w_chat = `
-                <div class="widget-box">
-                    <div class="widget-header">
-                        <h3>Dalla bacheca di famiglia</h3>
-                        <div style="display:flex; align-items:center;">
-                            <span class="link-all" onclick="window.nav('chat')">Vai alla bacheca <span class="material-symbols-outlined" style="font-size:16px;">arrow_forward</span></span>
-                            <div class="order-controls">
-                                <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('chat')}, -1)">expand_less</i>
-                                <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('chat')}, 1)">expand_more</i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="widget-content">
-                        ${chatsList.slice(0,3).map(c => renderHTMLCard(c, 'chat')).join('') || '<div style="color:var(--text-sub); font-size:0.9rem; text-align:center; padding:15px;">Nessun nuovo messaggio.</div>'}
-                    </div>
-                </div>
-            `;
-
-            const widgetsMap = {
-                'sw': w_sw,
-                'req': w_req,
-                'cal': w_cal,
-                'chat': w_chat
-            };
-
-            let orderedWidgetsHtml = '';
-            widgetOrder.forEach(key => {
-                if (widgetsMap[key]) {
-                    orderedWidgetsHtml += widgetsMap[key];
-                }
-            });
-
-            let html = `
-                <div class="dash-header-select"><select onchange="window.changeDashUser(this.value)">${userOpts}</select></div>
-
-                <div class="kpi-grid">
-                    <div class="kpi-card" onclick="window.nav('todos')">
-                        <div class="kpi-icon"><span class="material-symbols-outlined">checklist</span></div>
-                        <div><div class="kpi-data-title">Richieste</div><div class="kpi-data-val">${allPendingReqs.length}</div></div>
-                    </div>
-                    <div class="kpi-card" onclick="window.nav('calendar')">
-                        <div class="kpi-icon" style="background:var(--bg-body); color:var(--warning);"><span class="material-symbols-outlined">event_upcoming</span></div>
-                        <div><div class="kpi-data-title">Impegni</div><div class="kpi-data-val">${upcEvents.length}</div></div>
-                    </div>
-                    <div class="kpi-card" onclick="window.nav('chat')">
-                        <div class="kpi-icon" style="background:var(--bg-body); color:var(--alert);"><span class="material-symbols-outlined">forum</span></div>
-                        <div><div class="kpi-data-title">Bacheca</div><div class="kpi-data-val">${chatsList.length}</div></div>
-                    </div>
-                </div>
-
-                <div class="widget-grid">
-                    ${orderedWidgetsHtml}
-                </div>
-            `;
-            container.innerHTML = html;
         }
 
         function loadData(section) {
-            document.getElementById('list-container').innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-sub);">Recupero dati database...</div>';
+            const container = document.getElementById('list-container');
+            if(container) container.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-sub);">Recupero dati database...</div>';
             clearSubscribes();
             if (!currentFamily) return;
             const col = `${currentFamily}_${section}`;
             
-            const unsub = onSnapshot(collection(db, col), (snap) => {
+            let q = (section === 'calendar') 
+                ? query(collection(db, col), orderBy("date", "asc")) 
+                : query(collection(db, col), orderBy("timestamp", "desc"));
+            
+            const unsub = onSnapshot(q, (snap) => {
                 try {
                     allDataCache = []; 
                     snap.forEach(d => allDataCache.push({id:d.id, ...d.data()}));
                     
-                    if (section === 'calendar') {
-                        allDataCache.sort((a,b) => (a.date||'9999') > (b.date||'9999') ? 1 : -1);
-                    } else {
-                        allDataCache.sort((a,b) => {
-                            const timeA = a.timestamp && a.timestamp.seconds ? a.timestamp.seconds : 0;
-                            const timeB = b.timestamp && b.timestamp.seconds ? b.timestamp.seconds : 0;
-                            return timeB - timeA;
-                        });
-                    }
-
                     if(isCalendarMode && section === 'calendar') renderWeekCalendarGrid();
                     renderList();
                 } catch (err) {
-                    document.getElementById('list-container').innerHTML = '<div style="padding:20px; color:var(--alert); text-align:center;">Errore elaborazione dati: ' + err.message + '</div>';
+                    console.error(err);
+                    if(container) container.innerHTML = '<div style="padding:20px; color:var(--alert); text-align:center;">Errore elaborazione dati: ' + err.message + '</div>';
                 }
             }, (error) => {
                 console.error("Firebase read error:", error);
-                document.getElementById('list-container').innerHTML = '<div style="text-align:center; padding:40px; color:var(--alert);">Errore di connessione al database. Ricarica la pagina.</div>';
+                if(container) container.innerHTML = '<div style="text-align:center; padding:40px; color:var(--alert);">Errore di connessione al database.</div>';
             });
             unsubscribes.push(unsub);
         }
@@ -1014,6 +1037,7 @@
 
         function renderList() {
             const listContainerLocal = document.getElementById('list-container');
+            if(!listContainerLocal) return;
             listContainerLocal.innerHTML = "";
             const filter = document.getElementById('filter-select').value;
             let filtered = allDataCache.filter(i => {
@@ -1069,7 +1093,10 @@
                 return `<div class="card note-card" style="flex-direction:row;">${checkboxHtml}<div style="width:100%"><div class="note-title">${data.title||"Senza titolo"}</div><div class="note-body">${data.text}</div><div class="note-footer">${editAction} ${deleteAction}</div></div></div>`;
             }
             if (sectionType === 'chat') {
-                const timeStr = (data.timestamp && typeof data.timestamp.toDate === 'function') ? data.timestamp.toDate().toLocaleString('it-IT', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'}) : 'Oggi';
+                let timeStr = 'Oggi';
+                if (data.timestamp && typeof data.timestamp.toDate === 'function') {
+                    timeStr = data.timestamp.toDate().toLocaleString('it-IT', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'});
+                }
                 
                 const isAuthor = (data.author === currentAuthorName);
                 let isTagged = false;
@@ -1086,14 +1113,17 @@
                     actionButtons += `<span class="material-symbols-outlined" style="color:var(--alert); cursor:pointer; margin-left:10px;" onclick="window.del('${data.id}','${sectionType}', null)" title="Elimina">delete</span>`;
                 }
 
-                return `<div class="card chat-card">${checkboxHtml}<div style="width:100%;"><div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span class="chat-author">${data.author}</span> <span class="chat-time">${timeStr}</span></div><div style="font-size:1rem; white-space:pre-wrap; margin-bottom:5px;">${data.text}</div><div>${chatTags}</div></div> <div style="display:flex; flex-direction:column; gap:15px; justify-content:center; align-items:center; margin-left:10px;">${actionButtons}</div></div>`;
+                return `<div class="card chat-card">${checkboxHtml}<div style="width:100%;"><div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span class="chat-author">${data.author||'Utente'}</span> <span class="chat-time">${timeStr}</span></div><div style="font-size:1rem; white-space:pre-wrap; margin-bottom:5px;">${data.text||''}</div><div>${chatTags}</div></div> <div style="display:flex; flex-direction:column; gap:15px; justify-content:center; align-items:center; margin-left:10px;">${actionButtons}</div></div>`;
             }
 
             editAction = `<span class="material-symbols-outlined" style="color:var(--warning); margin-left:15px; cursor:pointer;" onclick="window.editItem('${data.id}','${sectionType}')">edit</span>`;
             deleteAction = `<span class="material-symbols-outlined" style="color:var(--alert); margin-left:15px; cursor:pointer;" onclick="window.del('${data.id}','${sectionType}', ${seriesIdSafe})">delete</span>`;
 
-            const catObj = familySettings.categories.find(c => c.name === data.category);
-            const color = catObj ? catObj.color : '#ccc';
+            let catObj = { color: '#ccc' };
+            if(familySettings && familySettings.categories) {
+                const found = familySettings.categories.find(c => c.name === data.category);
+                if (found) catObj = found;
+            }
             
             let content = "", actions = "";
             const strike = data.done ? 'text-decoration:line-through; color:var(--text-sub); opacity:0.6;' : '';
@@ -1109,12 +1139,12 @@
                 const timeHtml = data.time ? `<div class="date-time">${data.time}</div>` : "";
 
                 content = `<span class="material-symbols-outlined" style="color:${checkColor}; margin-right:15px; cursor:pointer; font-size:28px;" onclick="window.toggle('${data.id}',${!data.done},'${sectionType}')">${checkIcon}</span>
-                           <div class="date-badge" style="${data.done?'opacity:0.5;':''}"><span class="date-day">${d.getDate()}</span><span class="date-month">${d.toLocaleString('it-IT',{month:'short'})}</span>${timeHtml}</div>
-                           <div style="flex-grow:1; ${strike}"><div style="font-weight:600; font-size:1.05rem; margin-bottom:6px;">${data.text}</div>
-                           <div style="font-size:0.8rem; color:var(--text-sub);"><span class="cat-dot" style="background:${color}"></span>${data.category||'Generale'} ${assignedTags}</div>${locHtml}</div>`;
+                           <div class="date-badge" style="${data.done?'opacity:0.5;':''}"><span class="date-day">${d.getDate()||''}</span><span class="date-month">${d.toLocaleString('it-IT',{month:'short'})||''}</span>${timeHtml}</div>
+                           <div style="flex-grow:1; ${strike}"><div style="font-weight:600; font-size:1.05rem; margin-bottom:6px;">${data.text||''}</div>
+                           <div style="font-size:0.8rem; color:var(--text-sub);"><span class="cat-dot" style="background:${catObj.color}"></span>${data.category||'Generale'} ${assignedTags}</div>${locHtml}</div>`;
             } 
             else if (sectionType === 'contacts') {
-                content = `<div style="flex-grow:1"><div style="font-weight:600; font-size:1.1rem;">${data.text}</div><a href="tel:${data.detail}" style="color:var(--primary); text-decoration:none; display:flex; align-items:center; margin-top:8px;"><span class="material-symbols-outlined" style="font-size:18px; margin-right:6px;">call</span> ${data.detail}</a></div>`;
+                content = `<div style="flex-grow:1"><div style="font-weight:600; font-size:1.1rem;">${data.text}</div><a href="tel:${data.detail}" style="color:var(--primary); text-decoration:none; display:flex; align-items:center; margin-top:8px;"><span class="material-symbols-outlined" style="font-size:18px; margin-right:6px;">call</span> ${data.detail||''}</a></div>`;
             } 
             else { 
                 let dateHtml = "";
@@ -1124,7 +1154,7 @@
                 const originLabel = currentSection === 'dashboard' ? `<span style="font-size:0.7rem; color:var(--text-sub); display:block; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.5px;">${sectionType === 'shopping' ? 'Spesa' : 'Compiti'}</span>` : '';
 
                 content = `<span class="material-symbols-outlined" style="color:${checkColor}; margin-right:15px; cursor:pointer; font-size:28px;" onclick="window.toggle('${data.id}',${!data.done},'${sectionType}')">${checkIcon}</span>
-                           <div style="flex-grow:1; ${strike}">${originLabel}<span class="cat-dot" style="background:${color}"></span><span style="font-weight:500;">${data.text}</span> ${assignedTags} ${dateHtml}</div>`;
+                           <div style="flex-grow:1; ${strike}">${originLabel}<span class="cat-dot" style="background:${catObj.color}"></span><span style="font-weight:500;">${data.text||''}</span> ${assignedTags} ${dateHtml}</div>`;
             }
 
             const todayCls = isToday ? 'today-card' : '';
@@ -1134,6 +1164,7 @@
         function renderWeekCalendarGrid() {
             const grid = document.getElementById('week-grid-days'); 
             const monthName = document.getElementById('week-month-name'); 
+            if(!grid || !monthName) return;
             grid.innerHTML = "";
             
             const daysNames = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"];
@@ -1151,9 +1182,12 @@
                 let eventsHtml = '';
                 if(dayEvents.length > 0) {
                     dayEvents.forEach(ev => {
-                        const catObj = familySettings.categories.find(c => c.name === ev.category);
-                        const color = catObj ? catObj.color : 'var(--primary)';
-                        eventsHtml += `<div class="mini-event" style="border-left-color:${color};"><span>${ev.text}</span> <span style="font-weight:bold; color:var(--text-main); margin-left:auto;">${ev.time||''}</span></div>`;
+                        let catObj = { color: 'var(--primary)' };
+                        if(familySettings && familySettings.categories) {
+                            const found = familySettings.categories.find(c => c.name === ev.category);
+                            if(found) catObj = found;
+                        }
+                        eventsHtml += `<div class="mini-event" style="border-left-color:${catObj.color};"><span>${ev.text}</span> <span style="font-weight:bold; color:var(--text-main); margin-left:auto;">${ev.time||''}</span></div>`;
                     });
                 } else {
                     eventsHtml = `<div style="color:var(--text-sub); font-size:0.8rem; font-style:italic; padding-left:5px;">Nessun impegno</div>`;
