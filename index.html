@@ -208,11 +208,13 @@
         </header>
 
         <main>
+            <!-- TOGGLE VISTA AGENDA -->
             <div id="agenda-view-toggle" class="agenda-view-toggle hidden">
                 <button id="btn-view-list" class="active" onclick="window.setAgendaView('list')"><span class="material-symbols-outlined">view_agenda</span> Lista</button>
                 <button id="btn-view-cal" onclick="window.setAgendaView('calendar')"><span class="material-symbols-outlined">view_week</span> Settimana</button>
             </div>
 
+            <!-- VISTA SETTIMANA CALENDARIO -->
             <div id="calendar-view-container" class="hidden">
                 <div class="week-nav">
                     <i class="material-symbols-outlined" style="cursor:pointer; padding:5px;" onclick="window.changeWeek(-1)">chevron_left</i>
@@ -222,6 +224,7 @@
                 <div id="week-grid-days"></div>
             </div>
 
+            <!-- BARRA INPUT -->
             <div id="add-bar-container" class="add-bar hidden">
                 <input type="date" id="date-input" class="hidden">
                 <input type="time" id="time-input" class="hidden" style="width:100%;">
@@ -378,8 +381,8 @@
         let familySettings = { members: ["Mamma", "Papà"], categories: [{name:"Generale", color:"#859B8B"}], presenze: {} };
         
         let currentDashboardUser = "";
-        let currentAuthorName = ""; // Nome dell'utente loggato basato sull'email
-        let myMemberName = "";      // Nome mappato dalla lista famiglia
+        let currentAuthorName = "";
+        let myMemberName = "";
         
         let isCalendarMode = false;
         let weekStartDate = new Date();
@@ -476,11 +479,12 @@
                     familySettings = { ...familySettings, ...docSnap.data() };
                     if(!familySettings.presenze) familySettings.presenze = {};
                 }
+                
                 if (auth.currentUser) {
                     currentAuthorName = auth.currentUser.email.split('@')[0];
                     myMemberName = familySettings.members.find(m => auth.currentUser.email.toLowerCase().startsWith(m.toLowerCase())) || currentAuthorName;
                 }
-                
+
                 renderDropdowns(); renderSettingsView();
                 if(currentSection === 'dashboard') renderDashboard();
             });
@@ -498,9 +502,7 @@
             const select = document.getElementById('presence-user-select');
             select.innerHTML = '';
             familySettings.members.forEach(m => select.innerHTML += `<option value="${m}">${m}</option>`);
-            if(auth.currentUser && familySettings.members.length > 0) {
-                select.value = myMemberName;
-            }
+            if(auth.currentUser && familySettings.members.length > 0) { select.value = myMemberName; }
             window.renderPresenceGrid();
             document.getElementById('presence-modal').classList.remove('hidden');
         };
@@ -691,6 +693,7 @@
                     title.innerText = "Spesa"; newItemInput.placeholder = "Cosa manca?"; 
                 }
             }
+            // Usa query SEMPLICI, senza limit o order by se non strettamente necessario, filtrando lato JS.
             loadData(section);
         };
 
@@ -701,24 +704,26 @@
             return itemField === user; 
         }
 
+        // --- DASHBOARD ---
         function loadDashboardData() {
-            document.getElementById('list-container').innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-sub);">Sincronizzazione in corso... <span class="material-symbols-outlined" style="animation: spin 1s linear infinite; vertical-align:middle; margin-left:5px;">sync</span></div>';
+            document.getElementById('list-container').innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-sub);">Sincronizzazione in corso...</div>';
             clearSubscribes();
             if (!currentFamily) return;
 
-            const qTodos = query(collection(db, `${currentFamily}_todos`), where("done", "==", false));
-            const qShop = query(collection(db, `${currentFamily}_shopping`), where("done", "==", false));
-            const qCal = query(collection(db, `${currentFamily}_calendar`), where("done", "==", false));
-            const qChat = query(collection(db, `${currentFamily}_chat`), orderBy("timestamp", "desc"), limit(20));
-
-            const queries = { todos: qTodos, shopping: qShop, calendar: qCal, chat: qChat };
+            // Niente where(). Si scarica tutto e si filtra in locale. Metodo Firebase-safe senza indici custom!
+            const queries = { 
+                todos: collection(db, `${currentFamily}_todos`), 
+                shopping: collection(db, `${currentFamily}_shopping`), 
+                calendar: collection(db, `${currentFamily}_calendar`), 
+                chat: query(collection(db, `${currentFamily}_chat`), orderBy("timestamp", "desc"), limit(30)) 
+            };
             
             Object.keys(queries).forEach(col => {
                 const unsub = onSnapshot(queries[col], (snap) => {
                     dashboardData[col] = [];
                     snap.forEach(d => dashboardData[col].push({id: d.id, ...d.data()}));
                     if(currentSection === 'dashboard') renderDashboard();
-                });
+                }, (error) => console.log("Firebase sync fallback:", error));
                 unsubscribes.push(unsub);
             });
         }
@@ -781,19 +786,19 @@
 
             const limitDateStr = new Date(today.getTime() + (7 * 24 * 60 * 60 * 1000)).toISOString().split('T')[0];
 
-            const pendingTodos = dashboardData.todos.filter(t => isAssignedToUser(t.assigned, currentDashboardUser));
-            const pendingShop = dashboardData.shopping.filter(s => isAssignedToUser(s.assigned, currentDashboardUser));
+            // Local Filters
+            const pendingTodos = dashboardData.todos.filter(t => !t.done && isAssignedToUser(t.assigned, currentDashboardUser));
+            const pendingShop = dashboardData.shopping.filter(s => !s.done && isAssignedToUser(s.assigned, currentDashboardUser));
             const allPendingReqs = [...pendingTodos, ...pendingShop].sort((a,b)=> (a.date||'9999') > (b.date||'9999') ? 1 : -1);
 
-            const scaduti = dashboardData.calendar.filter(c => c.date && c.date < today.toISOString().split('T')[0] && isAssignedToUser(c.assigned, currentDashboardUser));
-            const futuri = dashboardData.calendar.filter(c => (!c.date || (c.date >= today.toISOString().split('T')[0] && c.date <= limitDateStr)) && isAssignedToUser(c.assigned, currentDashboardUser)).sort((a,b)=> (a.date||'9999') > (b.date||'9999') ? 1 : -1);
+            const scaduti = dashboardData.calendar.filter(c => !c.done && c.date && c.date < today.toISOString().split('T')[0] && isAssignedToUser(c.assigned, currentDashboardUser));
+            const futuri = dashboardData.calendar.filter(c => !c.done && (!c.date || (c.date >= today.toISOString().split('T')[0] && c.date <= limitDateStr)) && isAssignedToUser(c.assigned, currentDashboardUser)).sort((a,b)=> (a.date||'9999') > (b.date||'9999') ? 1 : -1);
             const upcEvents = [...scaduti, ...futuri];
 
-            // Filtra chat non archiviate per la Dashboard
             const chats = dashboardData.chat.filter(c => !c.archived && isAssignedToUser(c.tagged, currentDashboardUser));
 
             let html = `
-                <!-- SMART WORKING / PRESENZE ALLINEATO AL CENTRO (FIX CSS FLEXBOX) -->
+                <!-- SMART WORKING / PRESENZE ALLINEATO AL CENTRO -->
                 <div class="dash-section-title" style="margin-top:10px; display:flex; align-items:center; gap:8px;">
                     <span class="material-symbols-outlined" style="color:var(--primary); font-size:24px; line-height:1; transform:translateY(2px);">home_work</span> 
                     <span>Smart Working</span>
@@ -867,10 +872,12 @@
         function clearSubscribes() { unsubscribes.forEach(u => u()); unsubscribes = []; }
 
         function loadData(section) {
-            document.getElementById('list-container').innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-sub);">Recupero dati... <span class="material-symbols-outlined" style="animation: spin 1s linear infinite; vertical-align:middle; margin-left:5px;">sync</span></div>';
+            document.getElementById('list-container').innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-sub);">Recupero dati...</div>';
             clearSubscribes();
             if (!currentFamily) return;
             const col = `${currentFamily}_${section}`;
+            
+            // Simple query without compound indexes
             let q = (section === 'calendar') ? query(collection(db, col), orderBy("date", "asc")) : query(collection(db, col), orderBy("timestamp", "desc"));
             
             const unsub = onSnapshot(q, (snap) => {
@@ -888,7 +895,7 @@
             listContainerLocal.innerHTML = "";
             const filter = document.getElementById('filter-select').value;
             let filtered = allDataCache.filter(i => {
-                if (i.archived && currentSection === 'chat') return false; // Filtra i messaggi archiviati
+                if (i.archived && currentSection === 'chat') return false; 
                 const catMatch = filter === 'all' || i.category === filter;
                 const dateMatch = !selectedDate || i.date === selectedDate || currentSection !== 'calendar';
                 return catMatch && dateMatch;
@@ -942,15 +949,12 @@
             if (sectionType === 'chat') {
                 const timeStr = (data.timestamp && typeof data.timestamp.toDate === 'function') ? data.timestamp.toDate().toLocaleString('it-IT', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'}) : 'Oggi';
                 
-                // LOGICA PERMESSI BACHECA
                 const isAuthor = (data.author === currentAuthorName);
-                
                 let isTagged = false;
                 if (Array.isArray(data.tagged)) isTagged = data.tagged.includes(myMemberName);
                 else if (typeof data.tagged === 'string' && data.tagged) isTagged = (data.tagged === myMemberName);
                 
                 let isGeneral = (!data.tagged || data.tagged.length === 0);
-                
                 const canArchive = isGeneral || isTagged || isAuthor;
 
                 let actionButtons = '';
@@ -963,7 +967,6 @@
                 return `<div class="card chat-card">${checkboxHtml}<div style="width:100%;"><div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span class="chat-author">${data.author}</span> <span class="chat-time">${timeStr}</span></div><div style="font-size:1rem; white-space:pre-wrap; margin-bottom:5px;">${data.text}</div><div>${chatTags}</div></div> <div style="display:flex; flex-direction:column; gap:15px; justify-content:center; align-items:center; margin-left:10px;">${actionButtons}</div></div>`;
             }
 
-            // Standard Edit/Delete for other sections
             editAction = `<span class="material-symbols-outlined" style="color:var(--warning); margin-left:15px; cursor:pointer;" onclick="window.editItem('${data.id}','${sectionType}')">edit</span>`;
             deleteAction = `<span class="material-symbols-outlined" style="color:var(--alert); margin-left:15px; cursor:pointer;" onclick="window.del('${data.id}','${sectionType}', ${seriesIdSafe})">delete</span>`;
 
