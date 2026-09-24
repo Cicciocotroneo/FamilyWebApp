@@ -182,19 +182,11 @@
         .settings-section { background: var(--bg-card); border-radius: 16px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); }
         .settings-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); color: var(--text-main); font-size: 0.95rem; }
         
-        #auth-container { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; background: var(--bg-body); }
+        #auth-container { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; background: var(--bg-body); overflow-y: auto;}
         #auth-container h1 { font-family: var(--font-title); color: var(--primary); font-size: 3rem; margin-bottom: 10px; }
         #auth-container input { width: 100%; max-width: 320px; height: 55px; margin-bottom: 15px; border: 1px solid var(--border); border-radius: 12px; padding: 0 20px; font-size: 16px; font-family: var(--font-main); }
         #login-btn { width: 100%; max-width: 320px; height: 55px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; font-family: var(--font-main); cursor: pointer; }
         
-        /* Stile pagina guida */
-        .guide-section { background: var(--bg-card); border-radius: 16px; padding: 25px; border: 1px solid var(--border); margin-bottom: 20px; line-height: 1.6; }
-        .guide-section h3 { color: var(--primary); margin-top: 0; margin-bottom: 15px; }
-        .guide-section p { color: var(--text-sub); font-size: 0.95rem; margin-bottom: 10px; }
-        .guide-section ol { color: var(--text-sub); font-size: 0.95rem; padding-left: 20px; }
-        .guide-section li { margin-bottom: 8px; }
-        .guide-section code { background: var(--accent-bg); padding: 2px 6px; border-radius: 4px; color: var(--text-main); font-family: monospace; font-size: 0.85rem;}
-
         @media (max-width: 600px) {
             .kpi-card { padding: 10px; }
         }
@@ -202,6 +194,7 @@
 </head>
 <body>
 
+    <!-- SCHERMATA LOGIN E GUIDA -->
     <div id="auth-container">
         <h1>Family Hub</h1>
         <p style="color:var(--text-sub); margin-bottom: 30px;">Il centro della tua casa.</p>
@@ -211,25 +204,28 @@
         
         <div style="display:flex; justify-content:space-between; width:100%; max-width:320px; margin-top:20px;">
             <p onclick="window.resetPassword()" style="color:var(--primary); cursor:pointer; margin:0; font-size: 0.9rem; font-weight:500;">Password dimenticata?</p>
-            <p onclick="document.getElementById('auth-guide').classList.toggle('hidden')" style="color:var(--text-sub); cursor:pointer; margin:0; font-size: 0.9rem; display:flex; align-items:center; gap:4px; font-weight:500;"><span class="material-symbols-outlined" style="font-size:18px;">help</span> Guida</p>
+            <p onclick="document.getElementById('auth-guide').classList.toggle('hidden')" style="color:var(--text-sub); cursor:pointer; margin:0; font-size: 0.9rem; display:flex; align-items:center; gap:4px; font-weight:500;">
+                <span class="material-symbols-outlined" style="font-size:18px;">help</span> Guida
+            </p>
         </div>
         
         <p id="login-status" style="margin-top: 15px; color: var(--alert); font-size: 0.9rem;"></p>
 
-        <!-- GUIDA & SETUP -->
+        <!-- GUIDA ADMIN (Nascosta di default) -->
         <div id="auth-guide" class="hidden" style="margin-top:20px; background:var(--bg-card); padding:20px; border-radius:12px; border:1px solid var(--border); text-align:left; max-width:320px; font-size:0.85rem; width:100%; box-shadow:var(--shadow);">
             <h4 style="margin-top:0; color:var(--primary); font-family:var(--font-title); font-size:1.1rem; margin-bottom:10px;">Creare il tuo Family Hub</h4>
             <ol style="padding-left:18px; margin:0 0 15px 0; color:var(--text-sub); line-height:1.5;">
-                <li style="margin-bottom:6px;">Vai su Firebase Console e crea un progetto.</li>
+                <li style="margin-bottom:6px;">Vai su Firebase Console e crea un progetto vuoto.</li>
                 <li style="margin-bottom:6px;">Abilita <b>Authentication</b> (Email/Password) e <b>Firestore Database</b>.</li>
-                <li style="margin-bottom:6px;">Aggiungi un'app Web e copia le chiavi del <code>firebaseConfig</code>.</li>
-                <li style="margin-bottom:6px;">Sostituisci le chiavi nel codice <code>index.html</code> e metti la tua email come <code>SUPER_ADMIN_EMAIL</code>.</li>
-                <li>Registrati qui, vai in Impostazioni e abilita i familiari tramite la Console Admin.</li>
+                <li style="margin-bottom:6px;">Aggiungi un'app Web al progetto e copia le chiavi del <code>firebaseConfig</code>.</li>
+                <li style="margin-bottom:6px;">Sostituisci le chiavi nel codice <code>index.html</code>. Metti la tua email come <code>SUPER_ADMIN_EMAIL</code>.</li>
+                <li>Registrati qui, vai in Impostazioni e abilita i tuoi familiari tramite la Console Super Admin.</li>
             </ol>
-            <button onclick="document.getElementById('auth-guide').classList.add('hidden')" style="width:100%; padding:8px; border-radius:8px; border:1px solid var(--border); background:var(--bg-body); cursor:pointer; font-weight:bold; color:var(--text-main);">Chiudi Guida</button>
+            <button onclick="document.getElementById('auth-guide').classList.add('hidden')" style="width:100%; padding:8px; border-radius:8px; border:1px solid var(--border); background:var(--bg-body); cursor:pointer; font-weight:bold; color:var(--text-main); font-family:var(--font-main);">Chiudi Guida</button>
         </div>
     </div>
 
+    <!-- APP PRINCIPALE -->
     <div id="app-container" class="hidden">
         <header>
             <div>
@@ -317,6 +313,7 @@
                 </select>
             </div>
 
+            <!-- CONTENITORE LISTE E DASHBOARD -->
             <div id="list-container"></div>
             
             <button id="bulk-delete-btn" class="hidden" onclick="window.executeBulkDelete()"><span class="material-symbols-outlined">delete</span> Elimina (<span id="bulk-count">0</span>)</button>
@@ -376,7 +373,6 @@
                     </div>
                 </div>
             </div>
-
         </main>
 
         <nav class="bottom-nav">
@@ -393,7 +389,7 @@
     <!-- JS LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy, serverTimestamp, getDoc, setDoc, getDocs } 
+        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy, serverTimestamp, getDoc, setDoc, getDocs, where, limit } 
         from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, updatePassword } 
         from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -411,6 +407,7 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
         
+        // EMAIL DEL SUPER AMMINISTRATORE (Modificabile per istanze private)
         const SUPER_ADMIN_EMAIL = "antonioderosa@gmail.com";
 
         let currentSection = 'dashboard';
@@ -437,7 +434,7 @@
         const savedOrder = localStorage.getItem('widgetOrder');
         if (savedOrder) {
             try { widgetOrder = JSON.parse(savedOrder); } 
-            catch (e) {}
+            catch (e) { console.error("Errore nel parsing dell'ordine dei widget", e); }
         }
 
         const getLocalYMD = (dateObj = new Date()) => {
@@ -487,7 +484,7 @@
             const email = document.getElementById('email-input').value;
             const pass = document.getElementById('password-input').value;
             if(!email || !pass) return;
-            document.getElementById('login-status').innerText = "Accesso in corso...";
+            document.getElementById('login-status').innerText = "Accesso in corso o registrazione...";
             signInWithEmailAndPassword(auth, email, pass).catch(e => document.getElementById('login-status').innerText = "Errore credenziali o utente non trovato");
         });
 
@@ -784,9 +781,11 @@
         window.moveWidget = (index, direction) => {
             const newIndex = index + direction;
             if (newIndex < 0 || newIndex >= widgetOrder.length) return;
+            
             const temp = widgetOrder[index];
             widgetOrder[index] = widgetOrder[newIndex];
             widgetOrder[newIndex] = temp;
+            
             localStorage.setItem('widgetOrder', JSON.stringify(widgetOrder));
             renderDashboard();
         };
@@ -797,7 +796,7 @@
             clearSubscribes();
             if (!currentFamily) return;
 
-            // Uso puro ordinamento Firebase. Niente filtri per evitare crash
+            // Uso nativo Firebase ordinato, garantisce stabilità cross-device!
             const queries = { 
                 todos: query(collection(db, `${currentFamily}_todos`), orderBy("timestamp", "desc")), 
                 shopping: query(collection(db, `${currentFamily}_shopping`), orderBy("timestamp", "desc")), 
@@ -807,17 +806,12 @@
             
             Object.keys(queries).forEach(col => {
                 const unsub = onSnapshot(queries[col], (snap) => {
-                    try {
-                        dashboardData[col] = [];
-                        snap.forEach(d => dashboardData[col].push({id: d.id, ...d.data()}));
-                        if(currentSection === 'dashboard') renderDashboard();
-                    } catch (err) {
-                        console.error(err);
-                        if(container) container.innerHTML = '<div style="padding:20px; color:var(--alert); text-align:center;">Errore calcolo ' + col + ': ' + err.message + '</div>';
-                    }
+                    dashboardData[col] = [];
+                    snap.forEach(d => dashboardData[col].push({id: d.id, ...d.data()}));
+                    if(currentSection === 'dashboard') renderDashboard();
                 }, (error) => {
                     console.error("Firebase err su " + col, error);
-                    if(container) container.innerHTML = '<div style="color:var(--alert); padding:20px; text-align:center;">Errore connessione database. Ricarica la pagina.</div>';
+                    if(container) container.innerHTML = '<div style="color:var(--alert); padding:20px; text-align:center;">Errore connessione database. Controlla la rete e ricarica.</div>';
                 });
                 unsubscribes.push(unsub);
             });
@@ -885,17 +879,12 @@
 
                 const pendingTodos = (dashboardData.todos || []).filter(t => !t.done && isAssignedToUser(t.assigned, currentDashboardUser));
                 const pendingShop = (dashboardData.shopping || []).filter(s => !s.done && isAssignedToUser(s.assigned, currentDashboardUser));
+                // Essendo ordinate da Firebase in ingresso per timestamp, restano ordinate.
                 const allPendingReqs = [...pendingTodos, ...pendingShop];
-                // Ordinamento sicuro locale per richieste (senza date usiamo ID come fallback, altrimenti date)
-                allPendingReqs.sort((a,b) => {
-                    const da = a.date || '9999'; const dbStr = b.date || '9999';
-                    return da > dbStr ? 1 : -1;
-                });
 
                 const scaduti = (dashboardData.calendar || []).filter(c => !c.done && c.date && c.date < todayStr && isAssignedToUser(c.assigned, currentDashboardUser));
                 const futuri = (dashboardData.calendar || []).filter(c => !c.done && (!c.date || (c.date >= todayStr && c.date <= limitDateStr)) && isAssignedToUser(c.assigned, currentDashboardUser));
                 const upcEvents = [...scaduti, ...futuri]; 
-                // Ordine già garantito da Firebase orderBy("date", "asc")
 
                 const chatsList = (dashboardData.chat || []).filter(c => !c.archived && isAssignedToUser(c.tagged, currentDashboardUser)).slice(0,3);
 
@@ -921,7 +910,7 @@
                         <div class="widget-header">
                             <h3>Ultime richieste</h3>
                             <div style="display:flex; align-items:center;">
-                                <span class="link-all" onclick="window.nav('todos')">Vedi tutte <span class="material-symbols-outlined" style="font-size:16px;">arrow_forward</span></span>
+                                <span class="link-all" onclick="window.nav('todos')">Vedi tutte <span class="material-symbols-outlined" style="font-size:16px; margin-left:4px;">arrow_forward</span></span>
                                 <div class="order-controls">
                                     <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('req')}, -1)">expand_less</i>
                                     <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('req')}, 1)">expand_more</i>
@@ -937,9 +926,9 @@
                 const w_cal = `
                     <div class="widget-box">
                         <div class="widget-header">
-                            <h3>Agenda Eventi</h3>
+                            <h3>Agenda Eventi e Scadenze</h3>
                             <div style="display:flex; align-items:center;">
-                                <span class="link-all" onclick="window.nav('calendar')">Vedi tutti <span class="material-symbols-outlined" style="font-size:16px;">arrow_forward</span></span>
+                                <span class="link-all" onclick="window.nav('calendar')">Vedi tutti <span class="material-symbols-outlined" style="font-size:16px; margin-left:4px;">arrow_forward</span></span>
                                 <div class="order-controls">
                                     <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('cal')}, -1)">expand_less</i>
                                     <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('cal')}, 1)">expand_more</i>
@@ -955,9 +944,9 @@
                 const w_chat = `
                     <div class="widget-box">
                         <div class="widget-header">
-                            <h3>Bacheca Famiglia</h3>
+                            <h3>Dalla bacheca di famiglia</h3>
                             <div style="display:flex; align-items:center;">
-                                <span class="link-all" onclick="window.nav('chat')">Bacheca completa <span class="material-symbols-outlined" style="font-size:16px;">arrow_forward</span></span>
+                                <span class="link-all" onclick="window.nav('chat')">Bacheca completa <span class="material-symbols-outlined" style="font-size:16px; margin-left:4px;">arrow_forward</span></span>
                                 <div class="order-controls">
                                     <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('chat')}, -1)">expand_less</i>
                                     <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('chat')}, 1)">expand_more</i>
@@ -989,7 +978,7 @@
                         </div>
                         <div class="kpi-card" onclick="window.nav('chat')">
                             <div class="kpi-icon" style="background:var(--bg-body); color:var(--alert);"><span class="material-symbols-outlined">forum</span></div>
-                            <div><div class="kpi-data-title">Bacheca</div><div class="kpi-data-val">${dashboardData.chat.filter(c => !c.archived).length}</div></div>
+                            <div><div class="kpi-data-title">Bacheca</div><div class="kpi-data-val">${(dashboardData.chat||[]).filter(c=>!c.archived).length}</div></div>
                         </div>
                     </div>
 
@@ -1000,7 +989,7 @@
                 container.innerHTML = html;
             } catch(e) {
                 console.error("Dashboard Render Error:", e);
-                container.innerHTML = `<div style="padding:20px; color:var(--alert); text-align:center;">Errore UI Dashboard. Ricarica la pagina.</div>`;
+                if(container) container.innerHTML = `<div style="padding:20px; color:var(--alert); text-align:center;">Errore UI Dashboard: ${e.message}. Ricarica la pagina.</div>`;
             }
         }
 
@@ -1028,7 +1017,7 @@
                 }
             }, (error) => {
                 console.error("Firebase read error:", error);
-                if(container) container.innerHTML = '<div style="text-align:center; padding:40px; color:var(--alert);">Errore di connessione al database.</div>';
+                if(container) container.innerHTML = '<div style="text-align:center; padding:40px; color:var(--alert);">Errore di connessione al database. Ricarica la pagina.</div>';
             });
             unsubscribes.push(unsub);
         }
