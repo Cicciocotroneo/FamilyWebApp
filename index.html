@@ -794,17 +794,17 @@
 
             let html = `
                 <!-- SMART WORKING / PRESENZE ALLINEATO AL CENTRO (FIX CSS FLEXBOX) -->
-                <div class="dash-section-title" style="margin-top:10px; display:flex; align-items:center; gap:8px;">
-                </div>
-                 <div class="widget-header">
+                <div class="widget-box">
+                                <div class="widget-header">
                             <h3>Smart working</h3>
                             </div>
+
                 <div class="card" style="flex-direction:column; align-items:stretch; gap:0; margin-bottom:20px; border-color:var(--border); padding: 15px;">
                     ${legendHtml}
                     ${swHtml}
                     <button onclick="window.openPresenceModal()" style="margin-top:15px; width:100%; padding:10px; border-radius:12px; border:1px solid var(--border); background:var(--bg-body); color:var(--text-main); font-weight:600; cursor:pointer; font-family:var(--font-main);">Modifica Turni Smart Working</button>
                 </div>
-
+</div>
                 <!-- FILTRO -->
                 <div class="dash-header-select"><select onchange="window.changeDashUser(this.value)">${userOpts}</select></div>
 
@@ -847,7 +847,7 @@
                         </div>
                     </div>
 
-                    <div class="widget-box bacheca-widget">
+                    <div class="widget-box">
                         <div class="widget-header">
                             <h3>Dalla bacheca di famiglia</h3>
                             <span class="link-all" onclick="window.nav('chat')">Vai alla bacheca <span class="material-symbols-outlined">arrow_forward</span></span>
