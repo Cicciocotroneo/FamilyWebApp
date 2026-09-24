@@ -653,8 +653,15 @@
             if (section === 'settings') { document.getElementById('settings-view').classList.remove('hidden'); document.getElementById('page-title').innerText = "Impostazioni"; return; }
             if (section === 'dashboard') { document.getElementById('page-title').innerText = "Home"; loadDashboardData(); return; }
 
-            document.querySelector('.filter-row').classList.remove('hidden');
-            if(section === 'chat' || section === 'contacts' || section === 'notes') document.querySelector('.filter-row').classList.add('hidden');
+            if (section === 'chat') {
+                document.querySelector('.filter-row').classList.remove('hidden');
+                document.getElementById('filter-select').innerHTML = '<option value="all">Mostra: Attivi</option><option value="archived">Mostra: Archiviati</option>';
+            } else if (section === 'contacts' || section === 'notes') {
+                document.querySelector('.filter-row').classList.add('hidden');
+            } else {
+                document.querySelector('.filter-row').classList.remove('hidden');
+                renderDropdowns(); 
+            }
             
             document.getElementById('date-input').classList.add('hidden'); document.getElementById('time-input').classList.add('hidden'); document.getElementById('recurrence-wrapper').classList.add('hidden'); 
             document.getElementById('rec-unit').value = 'none'; window.toggleRecurrenceInputs(); 
@@ -895,7 +902,10 @@
             listContainerLocal.innerHTML = "";
             const filter = document.getElementById('filter-select').value;
             let filtered = allDataCache.filter(i => {
-                if (i.archived && currentSection === 'chat') return false; 
+                if (currentSection === 'chat') {
+                    if (filter === 'archived') return i.archived === true;
+                    return !i.archived;
+                }
                 const catMatch = filter === 'all' || i.category === filter;
                 const dateMatch = !selectedDate || i.date === selectedDate || currentSection !== 'calendar';
                 return catMatch && dateMatch;
@@ -924,6 +934,10 @@
             if(confirm("Vuoi archiviare questo messaggio? Non sarà più visibile in bacheca.")) {
                 await updateDoc(doc(db, `${currentFamily}_${section}`, id), { archived: true });
             }
+        };
+
+        window.unarchiveItem = async (id, section) => {
+            await updateDoc(doc(db, `${currentFamily}_${section}`, id), { archived: false });
         };
 
         function renderHTMLCard(data, sectionType, isToday = false) {
@@ -958,7 +972,12 @@
                 const canArchive = isGeneral || isTagged || isAuthor;
 
                 let actionButtons = '';
-                if (canArchive) actionButtons += `<span class="material-symbols-outlined" style="color:var(--primary); cursor:pointer;" onclick="window.archiveItem('${data.id}','${sectionType}')" title="Archivia">inventory_2</span>`;
+                if (data.archived) {
+                    actionButtons += `<span class="material-symbols-outlined" style="color:var(--primary); cursor:pointer;" onclick="window.unarchiveItem('${data.id}','${sectionType}')" title="Ripristina">unarchive</span>`;
+                } else if (canArchive) {
+                    actionButtons += `<span class="material-symbols-outlined" style="color:var(--primary); cursor:pointer;" onclick="window.archiveItem('${data.id}','${sectionType}')" title="Archivia">inventory_2</span>`;
+                }
+                
                 if (isAuthor) {
                     actionButtons += `<span class="material-symbols-outlined" style="color:var(--warning); cursor:pointer;" onclick="window.editItem('${data.id}','${sectionType}')" title="Modifica">edit</span>`;
                     actionButtons += `<span class="material-symbols-outlined" style="color:var(--alert); cursor:pointer;" onclick="window.del('${data.id}','${sectionType}', null)" title="Elimina">delete</span>`;
