@@ -402,23 +402,15 @@
         let editingItem = null;
         let editingItemSection = null;
         
-        // Palette colori fissa per i pallini utente
         const memberColors = ['#E11D48', '#2563EB', '#10B981', '#F59E0B', '#8B5CF6', '#14B8A6', '#F43F5E'];
         
-        // Ordine di default dei widget
         let widgetOrder = ['sw', 'req', 'cal', 'chat'];
-        
-        // Carica l'ordine salvato, se esiste
         const savedOrder = localStorage.getItem('widgetOrder');
         if (savedOrder) {
-            try {
-                widgetOrder = JSON.parse(savedOrder);
-            } catch (e) {
-                console.error("Errore nel parsing dell'ordine dei widget", e);
-            }
+            try { widgetOrder = JSON.parse(savedOrder); } 
+            catch (e) { console.error("Errore nel parsing dell'ordine dei widget", e); }
         }
 
-        // --- HELPER FUNCTION PER GESTIRE LE DATE LOCALI SENZA ERRORI UTC ---
         const getLocalYMD = (dateObj = new Date()) => {
             const y = dateObj.getFullYear();
             const m = String(dateObj.getMonth() + 1).padStart(2, '0');
@@ -512,12 +504,10 @@
                     familySettings = { ...familySettings, ...docSnap.data() };
                     if(!familySettings.presenze) familySettings.presenze = {};
                 }
-                
                 if (auth.currentUser) {
                     currentAuthorName = auth.currentUser.email.split('@')[0];
                     myMemberName = familySettings.members.find(m => auth.currentUser.email.toLowerCase().startsWith(m.toLowerCase())) || currentAuthorName;
                 }
-
                 renderDropdowns(); renderSettingsView();
                 if(currentSection === 'dashboard') renderDashboard();
             });
@@ -535,9 +525,7 @@
             const select = document.getElementById('presence-user-select');
             select.innerHTML = '';
             familySettings.members.forEach(m => select.innerHTML += `<option value="${m}">${m}</option>`);
-            if(auth.currentUser && familySettings.members.length > 0) {
-                select.value = myMemberName;
-            }
+            if(auth.currentUser && familySettings.members.length > 0) { select.value = myMemberName; }
             window.renderPresenceGrid();
             document.getElementById('presence-modal').classList.remove('hidden');
         };
@@ -741,17 +729,15 @@
         window.moveWidget = (index, direction) => {
             const newIndex = index + direction;
             if (newIndex < 0 || newIndex >= widgetOrder.length) return;
-            
             const temp = widgetOrder[index];
             widgetOrder[index] = widgetOrder[newIndex];
             widgetOrder[newIndex] = temp;
-            
             localStorage.setItem('widgetOrder', JSON.stringify(widgetOrder));
             renderDashboard();
         };
 
         function loadDashboardData() {
-            document.getElementById('list-container').innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-sub);">Sincronizzazione in corso...</div>';
+            document.getElementById('list-container').innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-sub);">Recupero dati...</div>';
             clearSubscribes();
             if (!currentFamily) return;
 
@@ -759,7 +745,7 @@
                 todos: collection(db, `${currentFamily}_todos`), 
                 shopping: collection(db, `${currentFamily}_shopping`), 
                 calendar: collection(db, `${currentFamily}_calendar`), 
-                chat: query(collection(db, `${currentFamily}_chat`), orderBy("timestamp", "desc"), limit(30)) 
+                chat: collection(db, `${currentFamily}_chat`)
             };
             
             Object.keys(queries).forEach(col => {
@@ -839,7 +825,7 @@
             const futuri = dashboardData.calendar.filter(c => !c.done && (!c.date || (c.date >= todayStr && c.date <= limitDateStr)) && isAssignedToUser(c.assigned, currentDashboardUser)).sort((a,b)=> (a.date||'9999') > (b.date||'9999') ? 1 : -1);
             const upcEvents = [...scaduti, ...futuri];
 
-            const chats = dashboardData.chat.filter(c => !c.archived && isAssignedToUser(c.tagged, currentDashboardUser));
+            let chatsList = dashboardData.chat.filter(c => !c.archived && isAssignedToUser(c.tagged, currentDashboardUser)).sort((a,b)=> (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
 
             const w_sw = `
                 <div class="widget-box">
@@ -907,7 +893,7 @@
                         </div>
                     </div>
                     <div class="widget-content">
-                        ${chats.slice(0,3).map(c => renderHTMLCard(c, 'chat')).join('') || '<div style="color:var(--text-sub); font-size:0.9rem; text-align:center; padding:15px;">Nessun nuovo messaggio.</div>'}
+                        ${chatsList.slice(0,3).map(c => renderHTMLCard(c, 'chat')).join('') || '<div style="color:var(--text-sub); font-size:0.9rem; text-align:center; padding:15px;">Nessun nuovo messaggio.</div>'}
                     </div>
                 </div>
             `;
@@ -940,7 +926,7 @@
                     </div>
                     <div class="kpi-card" onclick="window.nav('chat')">
                         <div class="kpi-icon" style="background:var(--bg-body); color:var(--alert);"><span class="material-symbols-outlined">forum</span></div>
-                        <div><div class="kpi-data-title">Bacheca</div><div class="kpi-data-val">${chats.length}</div></div>
+                        <div><div class="kpi-data-title">Bacheca</div><div class="kpi-data-val">${chatsList.length}</div></div>
                     </div>
                 </div>
 
@@ -956,12 +942,21 @@
             clearSubscribes();
             if (!currentFamily) return;
             const col = `${currentFamily}_${section}`;
-            let q = (section === 'calendar') ? query(collection(db, col), orderBy("date", "asc")) : query(collection(db, col), orderBy("timestamp", "desc"));
             
-            const unsub = onSnapshot(q, (snap) => {
-                allDataCache = []; snap.forEach(d => allDataCache.push({id:d.id, ...d.data()}));
+            const unsub = onSnapshot(collection(db, col), (snap) => {
+                allDataCache = []; 
+                snap.forEach(d => allDataCache.push({id:d.id, ...d.data()}));
+                
+                if (section === 'calendar') {
+                    allDataCache.sort((a,b) => (a.date||'9999') > (b.date||'9999') ? 1 : -1);
+                } else {
+                    allDataCache.sort((a,b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+                }
+
                 if(isCalendarMode && section === 'calendar') renderWeekCalendarGrid();
                 renderList();
+            }, (error) => {
+                document.getElementById('list-container').innerHTML = '<div style="text-align:center; padding:40px; color:var(--alert);">Errore di connessione.</div>';
             });
             unsubscribes.push(unsub);
         }
@@ -1038,8 +1033,8 @@
                 let actionButtons = '';
                 if (canArchive) actionButtons += `<span class="material-symbols-outlined" style="color:var(--primary); cursor:pointer;" onclick="window.archiveItem('${data.id}','${sectionType}')" title="Archivia">inventory_2</span>`;
                 if (isAuthor) {
-                    actionButtons += `<span class="material-symbols-outlined" style="color:var(--warning); cursor:pointer;" onclick="window.editItem('${data.id}','${sectionType}')" title="Modifica">edit</span>`;
-                    actionButtons += `<span class="material-symbols-outlined" style="color:var(--alert); cursor:pointer;" onclick="window.del('${data.id}','${sectionType}', null)" title="Elimina">delete</span>`;
+                    actionButtons += `<span class="material-symbols-outlined" style="color:var(--warning); cursor:pointer; margin-left:10px;" onclick="window.editItem('${data.id}','${sectionType}')" title="Modifica">edit</span>`;
+                    actionButtons += `<span class="material-symbols-outlined" style="color:var(--alert); cursor:pointer; margin-left:10px;" onclick="window.del('${data.id}','${sectionType}', null)" title="Elimina">delete</span>`;
                 }
 
                 return `<div class="card chat-card">${checkboxHtml}<div style="width:100%;"><div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span class="chat-author">${data.author}</span> <span class="chat-time">${timeStr}</span></div><div style="font-size:1rem; white-space:pre-wrap; margin-bottom:5px;">${data.text}</div><div>${chatTags}</div></div> <div style="display:flex; flex-direction:column; gap:15px; justify-content:center; align-items:center; margin-left:10px;">${actionButtons}</div></div>`;
@@ -1253,7 +1248,6 @@
         };
 
         window.toggle = async (id, st, section) => { await updateDoc(doc(db, `${currentFamily}_${section}`, id), {done:st}); };
-        window.editNote = (id) => { const note = allDataCache.find(n => n.id === id); if (note) { document.getElementById('note-title-input').value = note.title || ""; document.getElementById('note-content-input').value = note.text || ""; document.getElementById('editing-note-id').value = id; document.getElementById('save-note-btn').innerText = "Aggiorna Nota"; window.scrollTo({ top: 0, behavior: 'smooth' });}};
         window.exportGoogle = (t,d) => { const x=d.replace(/-/g,''); window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(t)}&dates=${x}/${x}`,'_blank');};
 
     </script>
