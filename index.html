@@ -146,99 +146,8 @@
         .kpi-data-title { font-size: 0.75rem; color: var(--text-sub); font-weight: 500; }
         .kpi-data-val { font-size: 1.4rem; font-weight: bold; color: var(--text-main); font-family: var(--font-title); }
 
-.widget-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px;
-    align-items: stretch;
-    align-content: start;
-}
-
-.widget-box {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 20px;
-    box-shadow: var(--shadow);
-
-    /* Tutti i widget occupano una sola cella */
-    grid-column: auto;
-    width: 100%;
-    min-width: 0;
-
-    /* Struttura interna uniforme */
-    display: flex;
-    flex-direction: column;
-
-    /* Supporto al trascinamento */
-    cursor: grab;
-    transition*
-        transform 0.2s ease,
-    *   opacity 0.2s ease,
-        bord*r-color 0.2s ease,
-        box-sha*ow 0.2s ease;
-}
-
-.widget-box:activ* {
-    cursor: grabbing;
-}
-
-.widge*-box.dragging {
-    opacity: 0.45;*    transform: scale(0.98);
-    bo*der-color: var(--primary);
-}
-
-.wid*et-box.drag-over {
-    border-colo*: var(--primary);
-    box-shadow: * 8px 24px var(--shadow);
-}
-
-.widge*-header {
-    display: flex;
-    j*stify-content: space-between;
-    *lign-items: center;
-    gap: 12px;*    border-bottom: 1px solid var(-*border);
-    padding-bottom: 12px;*    margin-bottom: 15px;
-}
-
-.widge*-title-group {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    min-width: 0;
-}
-
-.widget-title-group .material-symbols-outlined {
-    color: var(--primary);
-    font-size: 23px;
-    flex-shrink: 0;
-}
-
-.widget-drag-handle {
-    color: var(--text-sub);
-    font-size: 22px;
-    cursor: grab;
-    flex-shrink: 0;
-    user-select: none;
-}
-
-.widget-content {
-    flex: 1;
-    min-width: 0;
-}
-
-@media (min-width: 800px) {
-    .widget-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    /* Evita che qualsiasi widget occupi due colonne */
-    .widget-box,
-    .bacheca-wi*get,
-    .smart-working-widget {
- *      grid-column: auto !important*
-    }
-}
+        .widget-grid { display: grid; grid-template-columns: 1fr; gap: 20px; align-content: start; }
+        @media (min-width: 800px) { .widget-grid { grid-template-columns: 1fr 1fr; } .bacheca-widget { grid-column: 1 / -1; } }
         
         .widget-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; box-shadow: var(--shadow); }
         .widget-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 15px; }
@@ -884,7 +793,17 @@
             const chats = dashboardData.chat.filter(c => !c.archived && isAssignedToUser(c.tagged, currentDashboardUser));
 
             let html = `
-
+                <!-- SMART WORKING / PRESENZE ALLINEATO AL CENTRO (FIX CSS FLEXBOX) -->
+                <div class="dash-section-title" style="margin-top:10px; display:flex; align-items:center; gap:8px;">
+                    <span class="material-symbols-outlined" style="color:var(--primary); font-size:24px; line-height:1; transform:translateY(2px);">home_work</span> 
+                    <span>Smart Working</span>
+                </div>
+                
+                <div class="card" style="flex-direction:column; align-items:stretch; gap:0; margin-bottom:20px; border-color:var(--border); padding: 15px;">
+                    ${legendHtml}
+                    ${swHtml}
+                    <button onclick="window.openPresenceModal()" style="margin-top:15px; width:100%; padding:10px; border-radius:12px; border:1px solid var(--border); background:var(--bg-body); color:var(--text-main); font-weight:600; cursor:pointer; font-family:var(--font-main);">Modifica Turni Smart Working</button>
+                </div>
 
                 <!-- FILTRO -->
                 <div class="dash-header-select"><select onchange="window.changeDashUser(this.value)">${userOpts}</select></div>
@@ -908,162 +827,15 @@
                 <!-- WIDGETS A GRIGLIA -->
                 <div class="widget-grid">
                     
-<!-- WIDGE* RIORDINABILI -->
-<div class="widg*t-grid" id="dashboard-widget-grid"*
-
-    <!-- SMART WORKING -->
-    <*iv
-        class="widget-box smart*working-widget"
-        data-widge*-id="smart-working"
-        dragga*le="true"
-    >
-        <div class*"widget-header">
-            <div *lass="widget-title-group">
-       *        <span class="material-symb*ls-outlined">home_work</span>
-    *           <h3>Smart Working</h3>
-*           </div>
-
-            <sp*n
-                class="material-*ymbols-outlined widget-drag-handle*
-                title="Trascina p*r riordinare"
-            >
-      *         drag_indicator
-          * </span>
-        </div>
-
-        <*iv class="widget-content">
-       *    ${legendHtml}
-            ${sw*tml}
-        </div>
-
-        <butt*n
-            onclick="window.open*resenceModal()"
-            style=*
-                margin-top:15px;
-*               width:100%;
-       *        padding:10px;
-            *   border-radius:12px;
-           *    border:1px solid var(--border)*
-                background:var(--*g-body);
-                color:var*--text-main);
-                font*weight:600;
-                cursor*pointer;
-                font-fami*y:var(--font-main);
-            "
-*       >
-            Modifica turn*
-        </button>
-    </div>
-
-   *<!-- ULTIME RICHIESTE -->
-    <div*        class="widget-box"
-       *data-widget-id="richieste"
-       *draggable="true"
-    >
-        <di* class="widget-header">
-          * <div class="widget-title-group">
-*               <span class="materi*l-symbols-outlined">checklist</spa*>
-                <h3>Ultime richi*ste</h3>
-            </div>
-
-     *      <span
-                class=*material-symbols-outlined widget-d*ag-handle"
-                title="*rascina per riordinare"
-          * >
-                drag_indicator
-*           </span>
-        </div>
-*        <div class="widget-content*>
-            ${
-                a*lPendingReqs.slice(0,4)
-          *         .map(c => renderHTMLCard(*                        c,
-       *                dashboardData.todo*.some(t => t.id === c.id)
-        *                   ? 'todos'
-     *                      : 'shopping'*                    ))
-           *        .join('')
-                *|
-                '<div style="col*r:var(--text-sub); font-size:0.9re*; text-align:center; padding:15px;*>Nessuna richiesta in attesa.</div*'
-            }
-        </div>
-
-  *     <span class="link-all" onclic*="window.nav('todos')">
-          * Vedi tutte
-            <span clas*="material-symbols-outlined">arrow*forward</span>
-        </span>
-   *</div>
-
-    <!-- AGENDA -->
-    <d*v
-        class="widget-box"
-     *  data-widget-id="agenda"
-        *raggable="true"
-    >
-        <div*class="widget-header">
-           *<div class="widget-title-group">
- *              <span class="materia*-symbols-outlined">event_upcoming<*span>
-                <h3>Agenda e*scadenze</h3>
-            </div>
-
-*           <span
-                c*ass="material-symbols-outlined wid*et-drag-handle"
-                ti*le="Trascina per riordinare"
-     *      >
-                drag_indic*tor
-            </span>
-        </*iv>
-
-        <div class="widget-co*tent">
-            ${
-            *   upcEvents.slice(0,4)
-          *         .map(c => renderHTMLCard(*, 'calendar'))
-                   *.join('')
-                ||
-     *          '<div style="color:var(-*text-sub); font-size:0.9rem; text-*lign:center; padding:15px;">Nessun*impegno nei prossimi 7 giorni.</di*>'
-            }
-        </div>
-
- *      <span class="link-all" oncli*k="window.nav('calendar')">
-      *     Vedi tutti
-            <span *lass="material-symbols-outlined">a*row_forward</span>
-        </span>*    </div>
-
-    <!-- BACHECA -->
- *  <div
-        class="widget-box b*checa-widget"
-        data-widget-*d="bacheca"
-        draggable="tru*"
-    >
-        <div class="widget*header">
-            <div class="w*dget-title-group">
-               *<span class="material-symbols-outl*ned">forum</span>
-                *h3>Bacheca di famiglia</h3>
-      *     </div>
-
-            <span
-   *            class="material-symbol*-outlined widget-drag-handle"
-                title="Trascina per riordinare"
-            >
-                drag_indicator
-            </span>
-        </div>
-
-        <div class="widget-content">
-            ${
-                chats.slice(0,3)
-                    .map(c => renderHTMLCard(c, 'chat'))
-                    .join('')
-                ||
-                '<div style="color:var(--text-sub); font-size:0.9rem; text-align:center; padding:15px;">Nessun nuovo messaggio.</div>'
-            }
-        </div>
-
-        <span class="link-all" onclick="window.nav('chat')">
-            Vai alla bacheca
-            <span class="material-symbols-outlined">arrow_forward</span>
-        </span>
-    </div>
-
-</div>
+                    <div class="widget-box">
+                        <div class="widget-header">
+                            <h3>Ultime richieste</h3>
+                            <span class="link-all" onclick="window.nav('todos')">Vedi tutte <span class="material-symbols-outlined">arrow_forward</span></span>
+                        </div>
+                        <div class="widget-content">
+                            ${allPendingReqs.slice(0,4).map(c => renderHTMLCard(c, (dashboardData.todos.some(t=>t.id===c.id) ? 'todos' : 'shopping'))).join('') || '<div style="color:var(--text-sub); font-size:0.9rem; text-align:center; padding:15px;">Nessuna richiesta in attesa.</div>'}
+                        </div>
+                    </div>
 
                     <div class="widget-box">
                         <div class="widget-header">
@@ -1088,131 +860,8 @@
                 </div>
             `;
             container.innerHTML = html;
-            initializeDashboardWidgetSorting();
         }
-function initializeDashboardWidgetSorting() {
-    const grid = document.getElementById('dashboard-widget-grid');
-    if (!grid) return;
 
-    const storageKey = `familyHubWidgetOrder_${currentFamily || 'default'}`;
-
-    /*
-     * Ripristina l'ordine precedentemente salvato.
-     */
-    try {
-        const savedOrder = JSON.parse(localStorage.getItem(storageKey));
-
-        if (Array.isArray(savedOrder)) {
-            savedOrder.forEach(widgetId => {
-                const widget = grid.querySelector(
-                    `[data-widget-id="${widgetId}"]`
-                );
-
-                if (widget) {
-                    grid.appendChild(widget);
-                }
-            });
-        }
-    } catch (error) {
-        console.warn("Impossibile ripristinare l'ordine dei widget:", error);
-    }
-
-    let draggedWidget = null;
-
-    const widgets = grid.querySelectorAll('.widget-box[draggable="true"]');
-
-    widgets.forEach(widget => {
-        widget.addEventListener('dragstart', event => {
-            draggedWidget = widget;
-            widget.classList.add('dragging');
-
-            event.dataTransfer.effectAllowed = 'move';
-            event.dataTransfer.setData(
-                'text/plain',
-                widget.dataset.widgetId
-            );
-        });
-
-        widget.addEventListener('dragend', () => {
-            widget.classList.remove('dragging');
-
-            grid.querySelectorAll('.widget-box').forEach(item => {
-                item.classList.remove('drag-over');
-            });
-
-            draggedWidget = null;
-            saveDashboardWidgetOrder(grid, storageKey);
-        });
-
-        widget.addEventListener('dragover', event => {
-            event.preventDefault();
-
-            if (!draggedWidget || draggedWidget === widget) return;
-
-            event.dataTransfer.dropEffect = 'move';
-            widget.classList.add('drag-over');
-        });
-
-        widget.addEventListener('dragleave', () => {
-            widget.classList.remove('drag-over');
-        });
-
-        widget.addEventListener('drop', event => {
-            event.preventDefault();
-            widget.classList.remove('drag-over');
-
-            if (!draggedWidget || draggedWidget === widget) return;
-            const widgetRect = widget.getBoundingClientRect();
-
-            const isDesktop = window.innerWidth >= 800;
-
-            if (isDesktop) {
-                /*
-                 * Su desktop considera sia la posizione orizzontale
-                 * sia quella verticale del puntatore.
-                 */
-                const pointerBeforeWidget =
-                    event.clientY < widgetRect.top + widgetRect.height / 2 ||
-                    (
-                        Math.abs(
-                            event.clientY -
-                            (widgetRect.top + widgetRect.height / 2)
-                        ) < widgetRect.height / 3 &&
-                        event.clientX < widgetRect.left + widgetRect.width / 2
-                    );
-
-                if (pointerBeforeWidget) {
-                    grid.insertBefore(draggedWidget, widget);
-                } else {
-                    grid.insertBefore(draggedWidget, widget.nextSibling);
-                }
-            } else {
-                /*
-                 * Su una sola colonna utilizza soltanto
-                 * la posizione verticale.
-                 */
-                const pointerBeforeWidget =
-                    event.clientY < widgetRect.top + widgetRect.height / 2;
-
-                if (pointerBeforeWidget) {
-                    grid.insertBefore(draggedWidget, widget);
-                } else {
-                    grid.insertBefore(draggedWidget, widget.nextSibling);
-                }
-            }
-
-            saveDashboardWidgetOrder(grid, storageKey);
-        });
-    });
-}
-
-function saveDashboardWidgetOrder(grid, storageKey) {
-    const widgetOrder = Array.from(
-        grid.querySelectorAll('[data-widget-id]')
-    ).map(widget => widget.dataset.widgetId);
-
-    localStorage.setItem(storageKey, JSON.stringify(widgetOrder));
-}
         window.changeDashUser = (val) => { currentDashboardUser = val; renderDashboard(); };
 
         function clearSubscribes() { unsubscribes.forEach(u => u()); unsubscribes = []; }
