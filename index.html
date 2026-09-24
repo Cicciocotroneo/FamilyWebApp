@@ -113,7 +113,7 @@
         .hidden { display: none !important; }
 
         #list-container { padding: 0 20px 100px 20px; overflow-x: hidden; } 
-        .card { background: var(--bg-card); padding: 18px; border-radius: 16px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; transition: 0.2s; box-shadow: 0 2px 6px var(--shadow); gap: 10px; min-width: 0; width: 100%; box-sizing: border-box; overflow: hidden; }
+        .card { background: var(--bg-card); padding: 18px; border-radius: 16px; border: 1px solid var(--border); display: flex; justify-content: space-between; margin-bottom: 15px; transition: 0.2s; box-shadow: 0 2px 6px var(--shadow); gap: 10px; min-width: 0; width: 100%; box-sizing: border-box; overflow: hidden; }
         
         .note-card { flex-direction: column; align-items: flex-start; gap: 12px; }
         .note-title { font-size: 1.15rem; color: var(--text-main); width: 100%; margin: 0; }
@@ -124,17 +124,17 @@
         .chat-time { font-size: 0.75rem; color: var(--text-sub); margin-left: auto; }
         .chat-tag { background: var(--accent-bg); color: var(--primary); padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; display: inline-block; margin-top: 10px; font-weight: 600; }
         
-        .date-badge { background: var(--accent-bg); color: var(--primary); padding: 8px; border-radius: 12px; text-align: center; min-width: 65px; display: flex; flex-direction: column; justify-content: center; }
+        .date-badge { background: var(--accent-bg); color: var(--primary); padding: 8px 0; width: 100%; border-radius: 12px; text-align: center; display: flex; flex-direction: column; justify-content: center; box-sizing: border-box; }
         .date-day { font-size: 1.3rem; font-weight: bold; line-height: 1; margin-bottom: 2px;}
         .date-month { font-size: 0.65rem; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; }
-        .date-time { font-size: 0.7rem; color: var(--text-main); background: var(--bg-card); border-radius: 4px; padding: 3px 0; margin-top: 6px; font-weight: 600; border: 1px solid var(--border); }
+        .date-time { font-size: 0.7rem; color: var(--text-main); background: var(--bg-card); border-radius: 4px; padding: 3px 0; margin-top: 6px; font-weight: 600; border: 1px solid var(--border); margin-left: 6px; margin-right: 6px; }
         
         .due-date-display { font-size: 0.75rem; color: var(--alert); font-weight: 500; display: block; margin-top: 4px; }
-        .location-link { display: inline-flex; align-items: center; color: var(--text-sub); text-decoration: none; font-size: 0.8rem; margin-top: 8px; transition: 0.2s; background: var(--bg-body); padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border); max-width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+        .location-link { display: inline-flex; align-items: center; color: var(--text-sub); text-decoration: none; font-size: 0.8rem; transition: 0.2s; background: var(--bg-body); padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border); max-width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; box-sizing: border-box;}
         .location-link:hover { color: var(--primary); border-color: var(--primary); }
         
         .cat-dot { height: 8px; width: 8px; border-radius: 50%; display: inline-block; margin-right: 8px; vertical-align: middle; }
-        .assigned-badge { font-size: 0.7rem; color: var(--text-sub); margin-left: 8px; display: inline-block; vertical-align: middle; font-weight: 500; border: 1px solid var(--border); padding: 2px 6px; border-radius: 6px; }
+        .assigned-badge { font-size: 0.7rem; color: var(--text-sub); display: inline-block; vertical-align: middle; font-weight: 500; border: 1px solid var(--border); padding: 2px 6px; border-radius: 6px; }
 
         .dash-header-select { background: var(--bg-card); padding: 12px 20px; border-radius: 16px; margin-bottom: 20px; border: 1px solid var(--border); }
         .dash-header-select select { font-family: var(--font-main); width: 100%; border: none; background: transparent; font-size: 0.95rem; font-weight: 600; color: var(--primary); outline: none; cursor: pointer;}
@@ -393,7 +393,6 @@
         
         const memberColors = ['#E11D48', '#2563EB', '#10B981', '#F59E0B', '#8B5CF6', '#14B8A6', '#F43F5E'];
 
-        // Helper timezone-safe per le date YYYY-MM-DD
         function getLocalISODate(d) {
             const date = d || new Date();
             return date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
@@ -571,11 +570,19 @@
         }
 
         window.editItem = (id, section) => {
-            if(currentSection === 'dashboard') { editingItem = dashboardData[section].find(x => x.id === id); } 
-            else { editingItem = allDataCache.find(x => x.id === id); }
-            if(!editingItem) return;
+            let itemToEdit = null;
+            if(currentSection === 'dashboard') { 
+                itemToEdit = dashboardData[section].find(x => x.id === id); 
+                window.nav(section); // Naviga PRIMA per mostrare il menù, ripristina la UI
+            } else { 
+                itemToEdit = allDataCache.find(x => x.id === id); 
+            }
             
+            if(!itemToEdit) return;
+            
+            editingItem = itemToEdit;
             editingItemSection = section;
+            
             document.getElementById('new-item-input').value = editingItem.text || "";
             if (section === 'calendar' || section === 'todos' || section === 'shopping') {
                 document.getElementById('date-input').value = editingItem.date || "";
@@ -648,7 +655,10 @@
             
             document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
             if(event && event.currentTarget) event.currentTarget.classList.add('active'); 
-            else document.querySelector(`.nav-item[onclick="window.nav('${section}')"]`).classList.add('active');
+            else {
+                const navBtn = document.querySelector(`.nav-item[onclick="window.nav('${section}')"]`);
+                if(navBtn) navBtn.classList.add('active');
+            }
 
             if (section === 'settings') { document.getElementById('settings-view').classList.remove('hidden'); document.getElementById('page-title').innerText = "Impostazioni"; return; }
             if (section === 'dashboard') { document.getElementById('page-title').innerText = "Home"; loadDashboardData(); return; }
@@ -945,20 +955,18 @@
             const checkboxHtml = `<input type="checkbox" class="bulk-checkbox" value="${data.id}" data-section="${sectionType}" onclick="window.updateBulkCount()">`;
             
             let assignedTags = "";
-            if (Array.isArray(data.assigned) && data.assigned.length > 0) { assignedTags = data.assigned.map(m => `<span class="assigned-badge">@${m}</span>`).join(" "); } 
+            if (Array.isArray(data.assigned) && data.assigned.length > 0) { assignedTags = data.assigned.map(m => `<span class="assigned-badge">@${m}</span>`).join(""); } 
             else if (typeof data.assigned === 'string' && data.assigned) { assignedTags = `<span class="assigned-badge">@${data.assigned}</span>`; }
 
             let chatTags = "";
             if (Array.isArray(data.tagged) && data.tagged.length > 0) { chatTags = data.tagged.map(m => `<div class="chat-tag">@${m}</div>`).join(" "); } 
             else if (typeof data.tagged === 'string' && data.tagged) { chatTags = `<div class="chat-tag">@${data.tagged}</div>`; }
             
-            let editAction = "";
-            let deleteAction = "";
+            let editAction = `<span class="material-symbols-outlined" style="color:var(--warning); font-size:22px; cursor:pointer;" onclick="window.editItem('${data.id}','${sectionType}')">edit</span>`;
+            let deleteAction = `<span class="material-symbols-outlined" style="color:var(--alert); font-size:22px; cursor:pointer;" onclick="window.del('${data.id}','${sectionType}', ${seriesIdSafe})">delete</span>`;
 
             if (sectionType === 'notes') {
-                editAction = `<span class="material-symbols-outlined" style="color:var(--warning); margin-left:15px; cursor:pointer;" onclick="window.editItem('${data.id}','${sectionType}')">edit</span>`;
-                deleteAction = `<span class="material-symbols-outlined" style="color:var(--alert); margin-left:15px; cursor:pointer;" onclick="window.del('${data.id}','${sectionType}', ${seriesIdSafe})">delete</span>`;
-                return `<div class="card note-card" style="flex-direction:row;">${checkboxHtml}<div style="width:100%"><div class="note-title">${data.title||"Senza titolo"}</div><div class="note-body">${data.text}</div><div class="note-footer">${editAction} ${deleteAction}</div></div></div>`;
+                return `<div class="card note-card" style="flex-direction:row;">${checkboxHtml}<div style="width:100%"><div class="note-title">${data.title||"Senza titolo"}</div><div class="note-body">${data.text}</div><div class="note-footer" style="display:flex; gap:15px; margin-top:10px;">${editAction} ${deleteAction}</div></div></div>`;
             }
             if (sectionType === 'chat') {
                 const timeStr = (data.timestamp && typeof data.timestamp.toDate === 'function') ? data.timestamp.toDate().toLocaleString('it-IT', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'}) : 'Oggi';
@@ -973,26 +981,23 @@
 
                 let actionButtons = '';
                 if (data.archived) {
-                    actionButtons += `<span class="material-symbols-outlined" style="color:var(--primary); cursor:pointer;" onclick="window.unarchiveItem('${data.id}','${sectionType}')" title="Ripristina">unarchive</span>`;
+                    actionButtons += `<span class="material-symbols-outlined" style="color:var(--primary); font-size:22px; cursor:pointer;" onclick="window.unarchiveItem('${data.id}','${sectionType}')" title="Ripristina">unarchive</span>`;
                 } else if (canArchive) {
-                    actionButtons += `<span class="material-symbols-outlined" style="color:var(--primary); cursor:pointer;" onclick="window.archiveItem('${data.id}','${sectionType}')" title="Archivia">inventory_2</span>`;
+                    actionButtons += `<span class="material-symbols-outlined" style="color:var(--primary); font-size:22px; cursor:pointer;" onclick="window.archiveItem('${data.id}','${sectionType}')" title="Archivia">inventory_2</span>`;
                 }
                 
                 if (isAuthor) {
-                    actionButtons += `<span class="material-symbols-outlined" style="color:var(--warning); cursor:pointer;" onclick="window.editItem('${data.id}','${sectionType}')" title="Modifica">edit</span>`;
-                    actionButtons += `<span class="material-symbols-outlined" style="color:var(--alert); cursor:pointer;" onclick="window.del('${data.id}','${sectionType}', null)" title="Elimina">delete</span>`;
+                    actionButtons += editAction;
+                    actionButtons += deleteAction;
                 }
 
                 return `<div class="card chat-card">${checkboxHtml}<div style="width:100%;"><div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span class="chat-author">${data.author}</span> <span class="chat-time">${timeStr}</span></div><div style="font-size:1rem; white-space:pre-wrap; margin-bottom:5px;">${data.text}</div><div>${chatTags}</div></div> <div style="display:flex; flex-direction:column; gap:15px; justify-content:center; align-items:center; margin-left:10px;">${actionButtons}</div></div>`;
             }
 
-            editAction = `<span class="material-symbols-outlined" style="color:var(--warning); cursor:pointer;" onclick="window.editItem('${data.id}','${sectionType}')">edit</span>`;
-            deleteAction = `<span class="material-symbols-outlined" style="color:var(--alert); cursor:pointer;" onclick="window.del('${data.id}','${sectionType}', ${seriesIdSafe})">delete</span>`;
-
             const catObj = familySettings.categories.find(c => c.name === data.category);
             const color = catObj ? catObj.color : '#ccc';
             
-            let content = "", actions = "";
+            let leftCol = "", rightCol = "";
             const strike = data.done ? 'text-decoration:line-through; color:var(--text-sub); opacity:0.6;' : '';
             const checkIcon = data.done ? 'check_circle' : 'radio_button_unchecked';
             const checkColor = data.done ? 'var(--primary)' : 'var(--border)';
@@ -1000,22 +1005,51 @@
             if (sectionType === 'calendar') {
                 const d = data.date ? new Date(data.date) : new Date();
                 const dStr = data.date || getLocalISODate(new Date());
-                actions = `<span class="material-symbols-outlined" style="color:var(--text-sub); cursor:pointer;" onclick="window.exportGoogle('${data.text}','${dStr}')">calendar_add_on</span>`;
+                let actions = `<span class="material-symbols-outlined" style="color:var(--text-sub); font-size:22px; cursor:pointer;" onclick="window.exportGoogle('${data.text}','${dStr}')">calendar_add_on</span>`;
                 const locHtml = data.location ? `<div style="margin-top:8px; width:100%; overflow:hidden;"><a href="https://maps.google.com/?q=${encodeURIComponent(data.location)}" target="_blank" class="location-link" style="display:inline-flex; align-items:center; max-width:100%; box-sizing:border-box;"><span class="material-symbols-outlined" style="font-size:16px; margin-right:4px; flex-shrink:0;">location_on</span> <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:block;">${data.location}</span></a></div>` : '';
                 const timeHtml = data.time ? `<div class="date-time">${data.time}</div>` : "";
 
-                content = `<span class="material-symbols-outlined" style="color:${checkColor}; margin-right:10px; cursor:pointer; font-size:28px; flex-shrink:0;" onclick="window.toggle('${data.id}',${!data.done},'${sectionType}')">${checkIcon}</span>
-                           <div class="date-badge" style="${data.done?'opacity:0.5;':''} flex-shrink:0; margin-right:10px;"><span class="date-day">${d.getDate()}</span><span class="date-month">${d.toLocaleString('it-IT',{month:'short'})}</span>${timeHtml}</div>
-                           <div style="flex-grow:1; min-width:0; ${strike}">
-                               <div style="font-weight:600; font-size:1.05rem; margin-bottom:6px; word-break:break-word;">${data.text}</div>
-                               <div style="font-size:0.8rem; color:var(--text-sub); display:flex; flex-wrap:wrap; gap:4px; align-items:center;">
-                                   <div style="display:flex; align-items:center;"><span class="cat-dot" style="background:${color}"></span>${data.category||'Generale'}</div> ${assignedTags}
-                               </div>
-                               ${locHtml}
-                           </div>`;
+                leftCol = `
+                    <div style="display:flex; flex-direction:column; flex-shrink:0; margin-right:15px; width:65px; align-items:center;">
+                        <div style="display:flex; align-items:center; justify-content:center; gap:6px; margin-bottom:8px;">
+                            ${checkboxHtml}
+                            <span class="material-symbols-outlined" style="color:${checkColor}; cursor:pointer; font-size:28px; flex-shrink:0;" onclick="window.toggle('${data.id}',${!data.done},'${sectionType}')">${checkIcon}</span>
+                        </div>
+                        <div class="date-badge" style="${data.done?'opacity:0.5;':''} margin:0; margin-bottom:8px; width:100%;">
+                            <span class="date-day">${d.getDate()}</span><span class="date-month">${d.toLocaleString('it-IT',{month:'short'})}</span>${timeHtml}
+                        </div>
+                        <div style="display:flex; align-items:center; justify-content:space-between; width:100%; padding:0 2px;">
+                            ${actions}${editAction}${deleteAction}
+                        </div>
+                    </div>
+                `;
+
+                rightCol = `
+                    <div style="flex-grow:1; min-width:0; ${strike} display:flex; flex-direction:column; justify-content:center;">
+                        <div style="font-weight:600; font-size:1.1rem; margin-bottom:8px; word-break:break-word; line-height:1.3;">${data.text}</div>
+                        <div style="font-size:0.85rem; color:var(--text-sub); display:flex; flex-wrap:wrap; row-gap:6px; column-gap:8px; align-items:center;">
+                            <div style="display:flex; align-items:center;"><span class="cat-dot" style="background:${color}"></span>${data.category||'Generale'}</div>
+                            ${assignedTags}
+                        </div>
+                        ${locHtml}
+                    </div>
+                `;
             } 
             else if (sectionType === 'contacts') {
-                content = `<div style="flex-grow:1; min-width:0;"><div style="font-weight:600; font-size:1.1rem; word-break:break-word;">${data.text}</div><a href="tel:${data.detail}" style="color:var(--primary); text-decoration:none; display:flex; align-items:center; margin-top:8px;"><span class="material-symbols-outlined" style="font-size:18px; margin-right:6px;">call</span> ${data.detail}</a></div>`;
+                leftCol = `
+                    <div style="display:flex; flex-direction:column; flex-shrink:0; margin-right:15px; width:65px; align-items:center;">
+                        ${checkboxHtml}
+                        <div style="display:flex; align-items:center; justify-content:center; gap:12px; margin-top:8px;">
+                            ${editAction}${deleteAction}
+                        </div>
+                    </div>
+                `;
+                rightCol = `
+                    <div style="flex-grow:1; min-width:0; display:flex; flex-direction:column; justify-content:center;">
+                        <div style="font-weight:600; font-size:1.1rem; word-break:break-word; line-height:1.3;">${data.text}</div>
+                        <a href="tel:${data.detail}" style="color:var(--primary); text-decoration:none; display:flex; align-items:center; margin-top:8px;"><span class="material-symbols-outlined" style="font-size:18px; margin-right:6px;">call</span> ${data.detail}</a>
+                    </div>
+                `;
             } 
             else { 
                 let dateHtml = "";
@@ -1024,12 +1058,32 @@
                 }
                 const originLabel = currentSection === 'dashboard' ? `<span style="font-size:0.7rem; color:var(--text-sub); display:block; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.5px;">${sectionType === 'shopping' ? 'Spesa' : 'Compiti'}</span>` : '';
 
-                content = `<span class="material-symbols-outlined" style="color:${checkColor}; margin-right:10px; cursor:pointer; font-size:28px; flex-shrink:0;" onclick="window.toggle('${data.id}',${!data.done},'${sectionType}')">${checkIcon}</span>
-                           <div style="flex-grow:1; min-width:0; ${strike}">${originLabel}<div style="display:flex; align-items:center; flex-wrap:wrap; gap:4px;"><span class="cat-dot" style="background:${color}"></span><span style="font-weight:500; word-break:break-word;">${data.text}</span> ${assignedTags}</div> ${dateHtml}</div>`;
+                leftCol = `
+                    <div style="display:flex; flex-direction:column; flex-shrink:0; margin-right:15px; width:65px; align-items:center;">
+                        <div style="display:flex; align-items:center; justify-content:center; gap:6px; margin-bottom:8px;">
+                            ${checkboxHtml}
+                            <span class="material-symbols-outlined" style="color:${checkColor}; cursor:pointer; font-size:28px; flex-shrink:0;" onclick="window.toggle('${data.id}',${!data.done},'${sectionType}')">${checkIcon}</span>
+                        </div>
+                        <div style="display:flex; align-items:center; justify-content:center; gap:12px;">
+                            ${editAction}${deleteAction}
+                        </div>
+                    </div>
+                `;
+
+                rightCol = `
+                    <div style="flex-grow:1; min-width:0; ${strike} display:flex; flex-direction:column; justify-content:center;">
+                        ${originLabel}
+                        <div style="font-weight:600; font-size:1.05rem; margin-bottom:8px; word-break:break-word; line-height:1.3;">${data.text}</div>
+                        <div style="font-size:0.85rem; color:var(--text-sub); display:flex; flex-wrap:wrap; row-gap:6px; column-gap:8px; align-items:center;">
+                            <div style="display:flex; align-items:center;"><span class="cat-dot" style="background:${color}"></span>${data.category||'Generale'}</div> ${assignedTags}
+                        </div>
+                        ${dateHtml}
+                    </div>
+                `;
             }
 
             const todayCls = isToday ? 'today-card' : '';
-            return `<div class="card ${todayCls}">${checkboxHtml}${content} <div style="display:flex; align-items:center; gap:12px; flex-shrink:0;">${actions}${editAction}${deleteAction}</div></div>`;
+            return `<div class="card ${todayCls}" style="align-items:flex-start;">${leftCol}${rightCol}</div>`;
         }
 
         function renderWeekCalendarGrid() {
