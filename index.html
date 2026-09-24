@@ -77,7 +77,6 @@
         .agenda-view-toggle button { font-family: var(--font-main); flex: 1; padding: 12px; border: none; background: transparent; color: var(--text-sub); font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.9rem; transition: 0.3s; }
         .agenda-view-toggle button.active { background: var(--primary); color: white; }
 
-        /* VISTA SETTIMANALE CALENDARIO */
         #calendar-view-container { margin: 20px; }
         .week-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-family: var(--font-title); font-size: 1.1rem; color: var(--text-main); background: var(--bg-card); padding: 10px 15px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 2px 8px var(--shadow); }
         .week-day-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; overflow: hidden; box-shadow: 0 2px 8px var(--shadow); }
@@ -85,7 +84,6 @@
         .week-day-events { padding: 10px 15px; display: flex; flex-direction: column; gap: 6px; }
         .mini-event { font-size: 0.85rem; background: var(--bg-body); padding: 6px 10px; border-radius: 6px; border-left: 4px solid var(--border); display: flex; align-items: center; gap: 8px; color: var(--text-main); }
         
-        /* BARRA INSERIMENTO E CHIPS */
         .add-bar { background: var(--bg-card); padding: 20px; margin: 20px; border-radius: 16px; border: 1px solid var(--border); display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: start; box-shadow: 0 4px 15px var(--shadow); }
         .add-bar select, .add-bar input, #add-btn, .note-editor input, .note-editor button { font-family: var(--font-main); height: 50px !important; width: 100%; border: 1px solid var(--border); border-radius: 12px; background-color: var(--input-bg); font-size: 15px; padding: 0 16px; color: var(--text-main); margin: 0; outline: none; transition: border-color 0.2s; }
         .add-bar input:focus, .add-bar select:focus { border-color: var(--primary); }
@@ -478,7 +476,6 @@
                     familySettings = { ...familySettings, ...docSnap.data() };
                     if(!familySettings.presenze) familySettings.presenze = {};
                 }
-                
                 renderDropdowns(); renderSettingsView();
                 if(currentSection === 'dashboard') renderDashboard();
             });
@@ -510,7 +507,7 @@
         window.renderPresenceGrid = () => {
             const user = document.getElementById('presence-user-select').value;
             const grid = document.getElementById('presence-grid');
-            const daysOfWeek = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì']; // SOLO WORKDAYS nel planner
+            const daysOfWeek = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì'];
             const jsDays = [1, 2, 3, 4, 5];
             let html = '';
             const userP = familySettings.presenze[user] || {};
@@ -741,7 +738,6 @@
                 baseDate.setDate(today.getDate() - (currentDayOfWeek - 1));
             }
 
-            // Mappatura colori per i membri (pallini)
             let colorMap = {};
             familySettings.members.forEach((m, i) => { colorMap[m] = memberColors[i % memberColors.length]; });
 
@@ -777,15 +773,11 @@
                 `;
             }
 
-            // Legenda Utenti per Smart Working
             let legendHtml = '<div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px; padding-bottom:12px; border-bottom:1px solid var(--border); justify-content:center;">';
             familySettings.members.forEach(m => {
                 legendHtml += `<div style="display:flex; align-items:center; font-size:0.8rem; color:var(--text-sub); font-weight:500;"><span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:${colorMap[m]}; margin-right:6px;"></span>${m}</div>`;
             });
             legendHtml += '</div>';
-
-
-            // --- FINE LOGICA SMART WORKING ---
 
             let userOpts = `<option value="">Vista Generale: Tutti</option>`;
             familySettings.members.forEach(m => userOpts += `<option value="${m}" ${m===currentDashboardUser?'selected':''}>Focus su: ${m}</option>`);
@@ -803,10 +795,10 @@
             const chats = dashboardData.chat.filter(c => isAssignedToUser(c.tagged, currentDashboardUser));
 
             let html = `
-                <!-- SMART WORKING / PRESENZE ALLINEATO AL CENTRO -->
-                <div style="display: flex; align-items: center; gap: 8px; margin: 20px 0 12px 0;">
-                    <span class="material-symbols-outlined" style="color:var(--primary); font-size: 24px;">home_work</span>
-                    <h3 style="margin:0; font-size: 1.15rem; color: var(--text-main);">Smart Working</h3>
+                <!-- SMART WORKING RIGOROSAMENTE ALLINEATO -->
+                <div class="dash-section-title" style="margin-top:10px; display:flex; align-items:center; gap:8px;">
+                    <span class="material-symbols-outlined" style="color:var(--primary); font-size:24px; line-height:1; transform:translateY(2px);">home_work</span> 
+                    <span>Smart Working</span>
                 </div>
                 
                 <div class="card" style="flex-direction:column; align-items:stretch; gap:0; margin-bottom:20px; border-color:var(--border); padding: 15px;">
@@ -871,6 +863,10 @@
             `;
             container.innerHTML = html;
         }
+
+        window.changeDashUser = (val) => { currentDashboardUser = val; renderDashboard(); };
+
+        function clearSubscribes() { unsubscribes.forEach(u => u()); unsubscribes = []; }
 
         function loadData(section) {
             document.getElementById('list-container').innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-sub);">Recupero dati... <span class="material-symbols-outlined" style="animation: spin 1s linear infinite; vertical-align:middle; margin-left:5px;">sync</span></div>';
@@ -980,6 +976,158 @@
             return `<div class="card ${todayCls}">${checkboxHtml}${content} <div style="display:flex; align-items:center;">${actions}${editAction}${deleteAction}</div></div>`;
         }
 
+        function renderWeekCalendarGrid() {
+            const grid = document.getElementById('week-grid-days'); 
+            const monthName = document.getElementById('week-month-name'); 
+            grid.innerHTML = "";
+            
+            const daysNames = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"];
+            monthName.innerText = "Settimana: " + weekStartDate.toLocaleString('it-IT', { day:'numeric', month: 'long', year: 'numeric' });
+            
+            for(let i=0; i<7; i++) {
+                let currentDay = new Date(weekStartDate);
+                currentDay.setDate(currentDay.getDate() + i);
+                const dStr = currentDay.toISOString().split('T')[0];
+                
+                const isToday = dStr === new Date().toISOString().split('T')[0];
+                const bgStyle = isToday ? 'border-left: 4px solid var(--primary); background:var(--bg-body);' : '';
+                
+                const dayEvents = allDataCache.filter(ev => ev.date === dStr && !ev.done);
+                let eventsHtml = '';
+                if(dayEvents.length > 0) {
+                    dayEvents.forEach(ev => {
+                        const catObj = familySettings.categories.find(c => c.name === ev.category);
+                        const color = catObj ? catObj.color : 'var(--primary)';
+                        eventsHtml += `<div class="mini-event" style="border-left-color:${color};"><span>${ev.text}</span> <span style="font-weight:bold; color:var(--text-main); margin-left:auto;">${ev.time||''}</span></div>`;
+                    });
+                } else {
+                    eventsHtml = `<div style="color:var(--text-sub); font-size:0.8rem; font-style:italic; padding-left:5px;">Nessun impegno</div>`;
+                }
+
+                grid.innerHTML += `
+                    <div class="week-day-card" style="${bgStyle}">
+                        <div class="week-day-header">${daysNames[i]} ${currentDay.getDate()}</div>
+                        <div class="week-day-events">${eventsHtml}</div>
+                    </div>
+                `;
+            }
+        }
+
+        function renderSettingsView() {
+            const memList = document.getElementById('members-list'); memList.innerHTML = "";
+            familySettings.members.forEach((mem, i) => memList.innerHTML += `<div class="settings-row"><span>${mem}</span><span class="material-symbols-outlined" style="color:var(--alert); cursor:pointer;" onclick="window.removeMember(${i})">delete</span></div>`);
+            const catList = document.getElementById('categories-list'); catList.innerHTML = "";
+            familySettings.categories.forEach((cat, i) => catList.innerHTML += `<div class="settings-row"><div style="display:flex;align-items:center"><span style="width:16px;height:16px;background:${cat.color};border-radius:50%;margin-right:12px;"></span>${cat.name}</div><span class="material-symbols-outlined" style="color:var(--alert); cursor:pointer;" onclick="window.removeCategory(${i})">delete</span></div>`);
+        }
+        window.addMember = async () => { const n = document.getElementById('new-member-name').value; if(n){familySettings.members.push(n); await saveSettings(); document.getElementById('new-member-name').value="";}};
+        window.removeMember = async (i) => { if(confirm("Eliminare il membro dalla lista?")){familySettings.members.splice(i,1); await saveSettings();}};
+        window.addCategory = async () => { const n = document.getElementById('new-cat-name').value; const c=document.getElementById('new-cat-color').value; if(n){familySettings.categories.push({name:n, color:c}); await saveSettings(); document.getElementById('new-cat-name').value="";}};
+        window.removeCategory = async (i) => { if(confirm("Eliminare la categoria?")){familySettings.categories.splice(i,1); await saveSettings();}};
+
+        document.getElementById('add-btn').addEventListener('click', async () => {
+            const txt = document.getElementById('new-item-input').value; if(!txt) return;
+            const cat = document.getElementById('category-select').value; 
+            let dVal = document.getElementById('date-input').value; const tVal = document.getElementById('time-input').value; 
+            const locVal = document.getElementById('location-input').value;
+            const who = Array.from(document.querySelectorAll('#assign-who-container .chip.active')).map(c => c.innerText);
+            
+            if (editingItem) {
+                if(editingItemSection === 'chat') {
+                    await updateDoc(doc(db, `${currentFamily}_chat`, editingItem.id), { text: txt, tagged: who });
+                } else {
+                    let updates = { text: txt, category: cat, assigned: who };
+                    if (editingItemSection === 'calendar' || editingItemSection === 'todos') updates.date = dVal;
+                    if (editingItemSection === 'calendar') { updates.time = tVal; updates.location = locVal; }
+                    if (editingItemSection === 'contacts') updates.detail = document.getElementById('contact-detail-input').value;
+                    
+                    if (editingItemSection === 'calendar' && editingItem.seriesId) {
+                        const ans = prompt("Digita 1 per modificare SOLO QUESTO evento.\nDigita 2 per modificare TUTTA LA SERIE FUTURA.\n(Lascia vuoto per annullare)");
+                        if (ans === '2') {
+                            const q = query(collection(db, `${currentFamily}_${editingItemSection}`), where("seriesId", "==", editingItem.seriesId));
+                            const snap = await getDocs(q);
+                            snap.forEach(d => { if (d.data().date >= editingItem.date) updateDoc(d.ref, { text: txt, category: cat, assigned: who, time: tVal, location: locVal }); });
+                            await updateDoc(doc(db, `${currentFamily}_${editingItemSection}`, editingItem.id), updates);
+                        } else if (ans === '1') { await updateDoc(doc(db, `${currentFamily}_${editingItemSection}`, editingItem.id), updates); } 
+                        else { return; }
+                    } else { await updateDoc(doc(db, `${currentFamily}_${editingItemSection}`, editingItem.id), updates); }
+                }
+                
+                editingItem = null; editingItemSection = null;
+                document.querySelector('#add-btn span').innerText = 'add';
+                document.querySelector('#add-btn').classList.remove('edit-mode');
+                document.getElementById('new-item-input').value=""; document.getElementById('contact-detail-input').value=""; document.getElementById('location-input').value=""; 
+                document.querySelectorAll('#assign-who-container .chip').forEach(c => c.classList.remove('active'));
+                if (currentSection === 'calendar') { document.getElementById('recurrence-wrapper').classList.remove('hidden'); window.toggleRecurrenceInputs(); }
+                return;
+            }
+
+            if(currentSection === 'chat') {
+                const authorName = auth.currentUser.email.split('@')[0];
+                await addDoc(collection(db, `${currentFamily}_chat`), { text: txt, timestamp: serverTimestamp(), author: authorName, tagged: who });
+                document.getElementById('new-item-input').value=""; document.querySelectorAll('#assign-who-container .chip').forEach(c => c.classList.remove('active')); return;
+            }
+
+            let loops = 1;
+            const rUnit = document.getElementById('rec-unit').value;
+            const rInt = parseInt(document.getElementById('rec-interval').value) || 1;
+            const rCount = parseInt(document.getElementById('rec-count').value) || 1;
+            if(currentSection === 'calendar' && rUnit !== 'none') loops = rCount;
+            
+            const selectedDays = Array.from(document.querySelectorAll('.day-chip.active')).map(c => parseInt(c.dataset.day));
+            let isMultiple = (loops > 1) || (rUnit === 'week' && selectedDays.length > 0 && rCount > 0);
+            const seriesId = isMultiple ? Date.now().toString(36) + Math.random().toString(36).substr(2, 5) : null;
+            
+            if(currentSection === 'calendar' && rUnit === 'week' && selectedDays.length > 0) {
+                if(!dVal) return alert("Seleziona la data del primo evento sul calendario.");
+                const baseDate = new Date(dVal);
+                for (let w = 0; w < rCount; w++) {
+                    for (let dayOfWeek of selectedDays) {
+                        let d = new Date(baseDate);
+                        let currentDayOfWeek = d.getDay(); 
+                        let dayOffset = dayOfWeek - currentDayOfWeek;
+                        d.setDate(d.getDate() + dayOffset + (w * rInt * 7));
+                        if (w === 0 && d < baseDate) continue; 
+                        const item = { text: txt, timestamp: serverTimestamp(), done: false, category: cat, assigned: who, time: tVal, seriesId: seriesId };
+                        if(locVal) item.location = locVal; item.date = d.toISOString().split('T')[0];
+                        await addDoc(collection(db, `${currentFamily}_${currentSection}`), item);
+                    }
+                }
+            } else {
+                for(let i=0; i<loops; i++) {
+                    const item = { text: txt, timestamp: serverTimestamp(), done: false, category: cat, assigned: who };
+                    if (seriesId) item.seriesId = seriesId;
+                    if(currentSection === 'calendar') {
+                        if(!dVal) return alert("Data mancante.");
+                        item.time = tVal; if(locVal) item.location = locVal;
+                        if (i > 0) {
+                            const d = new Date(dVal);
+                            if(rUnit === 'day') d.setDate(d.getDate() + (i * rInt));
+                            if(rUnit === 'week') d.setDate(d.getDate() + (i * rInt * 7));
+                            if(rUnit === 'month') d.setMonth(d.getMonth() + (i * rInt));
+                            if(rUnit === 'year') d.setFullYear(d.getFullYear() + (i * rInt));
+                            item.date = d.toISOString().split('T')[0];
+                        } else { item.date = dVal; }
+                    } else if(currentSection === 'todos') { if(dVal) item.date = dVal; } 
+                    else if(currentSection === 'contacts') { item.detail = document.getElementById('contact-detail-input').value || ""; }
+                    await addDoc(collection(db, `${currentFamily}_${currentSection}`), item);
+                    if(currentSection !== 'calendar') break; 
+                }
+            }
+            
+            document.getElementById('new-item-input').value=""; document.getElementById('contact-detail-input').value=""; document.getElementById('location-input').value=""; 
+            document.getElementById('rec-unit').value="none"; window.toggleRecurrenceInputs();
+            document.querySelectorAll('#assign-who-container .chip').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.day-chip.active').forEach(c => c.classList.remove('active'));
+        });
+
+        document.getElementById('save-note-btn').addEventListener('click', async () => {
+            const title = document.getElementById('note-title-input').value; const content = document.getElementById('note-content-input').value; const editId = document.getElementById('editing-note-id').value;
+            if(!content) return alert("Inserisci il contenuto della nota.");
+            if (editId) { await updateDoc(doc(db, `${currentFamily}_notes`, editId), { title: title, text: content, timestamp: serverTimestamp() }); document.getElementById('editing-note-id').value = ""; document.getElementById('save-note-btn').innerText = "Salva Nota"; } 
+            else { await addDoc(collection(db, `${currentFamily}_notes`), { title: title, text: content, timestamp: serverTimestamp() }); }
+            document.getElementById('note-title-input').value = ""; document.getElementById('note-content-input').value = "";
+        });
+
         window.del = async (id, section, seriesId) => {
             if(seriesId && seriesId !== 'null') {
                 const ans = prompt("Digita 1 per eliminare SOLO QUESTO evento.\nDigita 2 per eliminare TUTTA LA SERIE.\n(Lascia vuoto per annullare)");
@@ -992,6 +1140,7 @@
         };
 
         window.toggle = async (id, st, section) => { await updateDoc(doc(db, `${currentFamily}_${section}`, id), {done:st}); };
+        window.editNote = (id) => { const note = allDataCache.find(n => n.id === id); if (note) { document.getElementById('note-title-input').value = note.title || ""; document.getElementById('note-content-input').value = note.text || ""; document.getElementById('editing-note-id').value = id; document.getElementById('save-note-btn').innerText = "Aggiorna Nota"; window.scrollTo({ top: 0, behavior: 'smooth' });}};
         window.exportGoogle = (t,d) => { const x=d.replace(/-/g,''); window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(t)}&dates=${x}/${x}`,'_blank');};
 
     </script>
