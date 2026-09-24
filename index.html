@@ -157,6 +157,7 @@
         .link-all span { font-size: 16px; margin-left: 2px; }
         .widget-content .card { box-shadow: none; border-color: var(--border); margin-bottom: 10px; padding: 12px 15px; }
         
+        /* Controlli ordinamento */
         .order-controls { display: flex; flex-direction: column; margin-left: 8px; opacity: 0.5; transition: opacity 0.2s;}
         .widget-box:hover .order-controls { opacity: 1; }
         .order-controls i { cursor: pointer; font-size: 18px; margin: -3px 0;}
@@ -401,15 +402,23 @@
         let editingItem = null;
         let editingItemSection = null;
         
+        // Palette colori fissa per i pallini utente
         const memberColors = ['#E11D48', '#2563EB', '#10B981', '#F59E0B', '#8B5CF6', '#14B8A6', '#F43F5E'];
         
+        // Ordine di default dei widget
         let widgetOrder = ['sw', 'req', 'cal', 'chat'];
+        
+        // Carica l'ordine salvato, se esiste
         const savedOrder = localStorage.getItem('widgetOrder');
         if (savedOrder) {
-            try { widgetOrder = JSON.parse(savedOrder); } 
-            catch (e) { console.error("Errore nel parsing dell'ordine dei widget", e); }
+            try {
+                widgetOrder = JSON.parse(savedOrder);
+            } catch (e) {
+                console.error("Errore nel parsing dell'ordine dei widget", e);
+            }
         }
 
+        // --- HELPER FUNCTION PER GESTIRE LE DATE LOCALI SENZA ERRORI UTC ---
         const getLocalYMD = (dateObj = new Date()) => {
             const y = dateObj.getFullYear();
             const m = String(dateObj.getMonth() + 1).padStart(2, '0');
@@ -854,7 +863,7 @@
                     <div class="widget-header">
                         <h3>Ultime richieste</h3>
                         <div style="display:flex; align-items:center;">
-                            <span class="link-all" onclick="window.nav('todos')">Vedi tutte <span>arrow_forward</span></span>
+                            <span class="link-all" onclick="window.nav('todos')">Vedi tutte <span class="material-symbols-outlined" style="font-size:16px;">arrow_forward</span></span>
                             <div class="order-controls">
                                 <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('req')}, -1)">expand_less</i>
                                 <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('req')}, 1)">expand_more</i>
@@ -872,7 +881,7 @@
                     <div class="widget-header">
                         <h3>Agenda Eventi e Scadenze</h3>
                         <div style="display:flex; align-items:center;">
-                            <span class="link-all" onclick="window.nav('calendar')">Vedi tutti <span>arrow_forward</span></span>
+                            <span class="link-all" onclick="window.nav('calendar')">Vedi tutti <span class="material-symbols-outlined" style="font-size:16px;">arrow_forward</span></span>
                             <div class="order-controls">
                                 <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('cal')}, -1)">expand_less</i>
                                 <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('cal')}, 1)">expand_more</i>
@@ -890,7 +899,7 @@
                     <div class="widget-header">
                         <h3>Dalla bacheca di famiglia</h3>
                         <div style="display:flex; align-items:center;">
-                            <span class="link-all" onclick="window.nav('chat')">Vai alla bacheca <span>arrow_forward</span></span>
+                            <span class="link-all" onclick="window.nav('chat')">Vai alla bacheca <span class="material-symbols-outlined" style="font-size:16px;">arrow_forward</span></span>
                             <div class="order-controls">
                                 <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('chat')}, -1)">expand_less</i>
                                 <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('chat')}, 1)">expand_more</i>
