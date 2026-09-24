@@ -187,6 +187,14 @@
         #auth-container input { width: 100%; max-width: 320px; height: 55px; margin-bottom: 15px; border: 1px solid var(--border); border-radius: 12px; padding: 0 20px; font-size: 16px; font-family: var(--font-main); }
         #login-btn { width: 100%; max-width: 320px; height: 55px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; font-family: var(--font-main); cursor: pointer; }
         
+        /* Stile pagina guida */
+        .guide-section { background: var(--bg-card); border-radius: 16px; padding: 25px; border: 1px solid var(--border); margin-bottom: 20px; line-height: 1.6; }
+        .guide-section h3 { color: var(--primary); margin-top: 0; margin-bottom: 15px; }
+        .guide-section p { color: var(--text-sub); font-size: 0.95rem; margin-bottom: 10px; }
+        .guide-section ol { color: var(--text-sub); font-size: 0.95rem; padding-left: 20px; }
+        .guide-section li { margin-bottom: 8px; }
+        .guide-section code { background: var(--accent-bg); padding: 2px 6px; border-radius: 4px; color: var(--text-main); font-family: monospace; font-size: 0.85rem;}
+
         @media (max-width: 600px) {
             .kpi-card { padding: 10px; }
         }
@@ -213,6 +221,7 @@
             <div class="header-controls">
                 <i class="material-symbols-outlined" onclick="window.toggleThemePalette()" title="Cambia Stile">palette</i>
                 <i id="theme-toggle" class="material-symbols-outlined" onclick="window.toggleDarkMode()">dark_mode</i>
+                <i class="material-symbols-outlined" onclick="window.nav('guide')" title="Guida & Admin">help</i>
                 <i class="material-symbols-outlined" onclick="window.nav('settings')">settings</i>
                 <i class="material-symbols-outlined" onclick="window.logout()">logout</i>
             </div>
@@ -316,9 +325,10 @@
             <div id="settings-view" class="hidden settings-view">
                 <div class="settings-section admin-panel hidden" id="super-admin-area">
                     <h4 style="margin:0 0 15px 0; color:var(--warning);">Console Super Admin</h4>
-                    <input type="email" id="admin-user-email" placeholder="Email Utente" style="margin-bottom:10px; width:100%; height:45px; border:1px solid var(--border); border-radius:12px; padding:0 15px;">
+                    <p style="font-size:0.85rem; color:var(--text-sub); margin-bottom:15px;">Usa questa sezione per autorizzare nuove email ad accedere all'app. Crea una riga nel database associando l'email al codice famiglia.</p>
+                    <input type="email" id="admin-user-email" placeholder="Email Utente da abilitare" style="margin-bottom:10px; width:100%; height:45px; border:1px solid var(--border); border-radius:12px; padding:0 15px;">
                     <input type="text" id="admin-family-code" placeholder="Codice Famiglia (es. ROSSI)" style="margin-bottom:10px; text-transform:uppercase; width:100%; height:45px; border:1px solid var(--border); border-radius:12px; padding:0 15px;">
-                    <button onclick="window.adminAssociate()" style="background:var(--warning); color:white; border:none; width:100%; height:45px; border-radius:12px; font-weight:bold; cursor:pointer;">Associa Ora</button>
+                    <button onclick="window.adminAssociate()" style="background:var(--warning); color:white; border:none; width:100%; height:45px; border-radius:12px; font-weight:bold; cursor:pointer;">Abilita Utente</button>
                     <p id="admin-status" style="font-size:0.8rem; margin-top:10px;"></p>
                 </div>
                 
@@ -349,6 +359,34 @@
                     </div>
                 </div>
             </div>
+
+            <!-- GUIDA & SETUP -->
+            <div id="guide-view" class="hidden settings-view">
+                <div class="guide-section">
+                    <h3><span class="material-symbols-outlined" style="vertical-align:middle;">rocket_launch</span> Creare un proprio Family Hub</h3>
+                    <p>Vuoi slegarti dall'amministratore originale e creare una tua istanza dell'app gratuita e indipendente su Google Firebase? Ecco i passaggi:</p>
+                    <ol>
+                        <li>Vai su <a href="https://console.firebase.google.com/" target="_blank" style="color:var(--primary)">Firebase Console</a> e crea un nuovo progetto (es. "MioHub").</li>
+                        <li>Nel menu a sinistra, vai su <b>Authentication</b> -> Get Started -> Abilita "Email/Password".</li>
+                        <li>Vai su <b>Firestore Database</b> -> Create Database. Scegli le regole "Test Mode" (per iniziare) o usa regole di base.</li>
+                        <li>Vai nelle <b>Impostazioni del progetto</b> (l'ingranaggio in alto a sinistra), scorri in basso, aggiungi un'app Web (simbolo `</>`) e copia le chiavi del <code>firebaseConfig</code>.</li>
+                        <li>Apri il file <code>index.html</code> di questa app, trova la costante <code>firebaseConfig</code> e sostituiscila con le tue chiavi.</li>
+                        <li>Nello stesso file, trova la variabile <code>SUPER_ADMIN_EMAIL</code> e scrivi la tua email (es. mario.rossi@gmail.com).</li>
+                        <li>Salva il file e mettilo online (su GitHub Pages, Netlify o dove preferisci).</li>
+                    </ol>
+                </div>
+                <div class="guide-section">
+                    <h3><span class="material-symbols-outlined" style="vertical-align:middle;">admin_panel_settings</span> Come abilitare gli utenti</h3>
+                    <p>Una volta creata la tua app:</p>
+                    <ol>
+                        <li>Apri l'app e registrati con l'email che hai impostato come Super Admin.</li>
+                        <li>Entra in Impostazioni (l'icona ingranaggio) e usa la <b>Console Super Admin</b> (che ora appare solo a te).</li>
+                        <li>Scrivi la tua email e inventa un codice per la tua famiglia (es. "ROSSI"). Clicca "Associa Ora". Esci e rientra nell'app. Ora sei dentro!</li>
+                        <li>Per far entrare tua moglie o i tuoi figli: fagli creare un account (email e password) nella schermata di login. Poi tu vai nella Console Super Admin, scrivi la loro email, lo stesso codice "ROSSI", e associali.</li>
+                    </ol>
+                </div>
+            </div>
+
         </main>
 
         <nav class="bottom-nav">
@@ -382,6 +420,8 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
+        
+        // EMAIL DEL SUPER AMMINISTRATORE (Modificabile per istanze private)
         const SUPER_ADMIN_EMAIL = "antonioderosa@gmail.com";
 
         let currentSection = 'dashboard';
@@ -458,8 +498,8 @@
             const email = document.getElementById('email-input').value;
             const pass = document.getElementById('password-input').value;
             if(!email || !pass) return;
-            document.getElementById('login-status').innerText = "Accesso in corso...";
-            signInWithEmailAndPassword(auth, email, pass).catch(e => document.getElementById('login-status').innerText = "Errore credenziali");
+            document.getElementById('login-status').innerText = "Accesso in corso o registrazione...";
+            signInWithEmailAndPassword(auth, email, pass).catch(e => document.getElementById('login-status').innerText = "Errore credenziali o utente non trovato");
         });
 
         onAuthStateChanged(auth, async (user) => {
@@ -475,9 +515,9 @@
                         await loadSettings(); window.nav('dashboard'); 
                     } else { 
                         if (user.email === SUPER_ADMIN_EMAIL) { currentFamily = "ADMIN"; document.getElementById('auth-container').classList.add('hidden'); document.getElementById('app-container').classList.remove('hidden'); window.nav('settings'); } 
-                        else { alert("Utente non abilitato."); signOut(auth); }
+                        else { alert("Utente in attesa di abilitazione. Contatta l'amministratore."); signOut(auth); }
                     }
-                } catch (error) { document.getElementById('login-status').innerText = "Errore connessione."; }
+                } catch (error) { document.getElementById('login-status').innerText = "Errore connessione database."; }
             } else { document.getElementById('auth-container').classList.remove('hidden'); document.getElementById('app-container').classList.add('hidden'); }
         });
 
@@ -495,7 +535,7 @@
             const code = document.getElementById('admin-family-code').value.trim().toUpperCase();
             if(!email || !code) return;
             await setDoc(doc(db, "registro_utenti", email), { famiglia: code });
-            document.getElementById('admin-status').innerText = `✅ Assegnato: ${email}`;
+            document.getElementById('admin-status').innerText = `✅ Assegnato con successo: ${email}`;
         };
 
         async function loadSettings() {
@@ -527,9 +567,7 @@
             const select = document.getElementById('presence-user-select');
             select.innerHTML = '';
             familySettings.members.forEach(m => select.innerHTML += `<option value="${m}">${m}</option>`);
-            if(auth.currentUser && familySettings.members.length > 0) {
-                select.value = myMemberName;
-            }
+            if(auth.currentUser && familySettings.members.length > 0) { select.value = myMemberName; }
             window.renderPresenceGrid();
             document.getElementById('presence-modal').classList.remove('hidden');
         };
@@ -660,6 +698,7 @@
             document.getElementById('list-container').innerHTML = '';
             
             document.getElementById('settings-view').classList.add('hidden');
+            document.getElementById('guide-view').classList.add('hidden');
             document.getElementById('add-bar-container').classList.add('hidden');
             document.getElementById('note-editor-container').classList.add('hidden');
             document.getElementById('calendar-view-container').classList.add('hidden');
@@ -667,10 +706,14 @@
             document.querySelector('.filter-row').classList.add('hidden');
             
             document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
-            if(event && event.currentTarget) event.currentTarget.classList.add('active'); 
-            else document.querySelector(`.nav-item[onclick="window.nav('${section}')"]`).classList.add('active');
+            if(event && event.currentTarget && event.currentTarget.classList) event.currentTarget.classList.add('active'); 
+            else {
+                const navBtn = document.querySelector(`.nav-item[onclick="window.nav('${section}')"]`);
+                if(navBtn) navBtn.classList.add('active');
+            }
 
             if (section === 'settings') { document.getElementById('settings-view').classList.remove('hidden'); document.getElementById('page-title').innerText = "Impostazioni"; return; }
+            if (section === 'guide') { document.getElementById('guide-view').classList.remove('hidden'); document.getElementById('page-title').innerText = "Guida & Setup"; return; }
             if (section === 'dashboard') { document.getElementById('page-title').innerText = "Home"; loadDashboardData(); return; }
 
             document.querySelector('.filter-row').classList.remove('hidden');
@@ -720,7 +763,6 @@
                     title.innerText = "Spesa"; newItemInput.placeholder = "Cosa manca?"; 
                 }
             }
-            // Simple query
             loadData(section);
         };
 
@@ -742,24 +784,24 @@
         };
 
         function loadDashboardData() {
-            document.getElementById('list-container').innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-sub);">Sincronizzazione in corso...</div>';
+            document.getElementById('list-container').innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-sub);">Lettura database in corso...</div>';
             clearSubscribes();
             if (!currentFamily) return;
 
-            // Queries normali
-            const queries = { 
-                todos: collection(db, `${currentFamily}_todos`), 
-                shopping: collection(db, `${currentFamily}_shopping`), 
-                calendar: collection(db, `${currentFamily}_calendar`), 
-                chat: collection(db, `${currentFamily}_chat`)
-            };
+            // Scarica intere collection in locale per evitare ogni bug/limite di Firebase con indici mancanti
+            const collectionsToFetch = ['todos', 'shopping', 'calendar', 'chat'];
+            let loadedCount = 0;
             
-            Object.keys(queries).forEach(col => {
-                const unsub = onSnapshot(queries[col], (snap) => {
+            collectionsToFetch.forEach(col => {
+                const unsub = onSnapshot(collection(db, `${currentFamily}_${col}`), (snap) => {
                     dashboardData[col] = [];
                     snap.forEach(d => dashboardData[col].push({id: d.id, ...d.data()}));
+                    loadedCount++;
                     if(currentSection === 'dashboard') renderDashboard();
-                }, (error) => console.log("Firebase sync fallback:", error));
+                }, (error) => {
+                    console.error("Errore lettura database:", error);
+                    document.getElementById('list-container').innerHTML = '<div style="text-align:center; padding:40px; color:var(--alert);">Connessione interrotta o errore di lettura dal server.</div>';
+                });
                 unsubscribes.push(unsub);
             });
         }
@@ -828,13 +870,10 @@
             const allPendingReqs = [...pendingTodos, ...pendingShop].sort((a,b)=> (a.date||'9999') > (b.date||'9999') ? 1 : -1);
 
             const scaduti = dashboardData.calendar.filter(c => !c.done && c.date && c.date < todayStr && isAssignedToUser(c.assigned, currentDashboardUser));
-            const futuri = dashboardData.calendar.filter(c => !c.done && (!c.date || (c.date >= todayStr && c.date <= limitDateStr)) && isAssignedToUser(c.assigned, currentDashboardUser)).sort((a,b)=> (a.date||'9999') > (b.date||'9999') ? 1 : -1);
-            const upcEvents = [...scaduti, ...futuri];
+            const futuri = dashboardData.calendar.filter(c => !c.done && (!c.date || (c.date >= todayStr && c.date <= limitDateStr)) && isAssignedToUser(c.assigned, currentDashboardUser));
+            const upcEvents = [...scaduti, ...futuri].sort((a,b)=> (a.date||'9999') > (b.date||'9999') ? 1 : -1);
 
-            // Filtro e ordinamento JS locale (invece di query complessa)
-            let chatsList = dashboardData.chat
-                .filter(c => !c.archived && isAssignedToUser(c.tagged, currentDashboardUser))
-                .sort((a,b)=> (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+            const chatsList = dashboardData.chat.filter(c => !c.archived && isAssignedToUser(c.tagged, currentDashboardUser)).sort((a,b)=> (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
 
             const w_sw = `
                 <div class="widget-box">
@@ -848,7 +887,7 @@
                     <div class="widget-content">
                         ${legendHtml}
                         ${swHtml}
-                        <button onclick="window.openPresenceModal()" style="margin-top:15px; width:100%; padding:10px; border-radius:12px; border:1px solid var(--border); background:var(--bg-body); color:var(--text-main); font-weight:600; cursor:pointer; font-family:var(--font-main);">Modifica Turni Smart Working</button>
+                        <button onclick="window.openPresenceModal()" style="margin-top:15px; width:100%; padding:10px; border-radius:12px; border:1px solid var(--border); background:var(--bg-body); color:var(--text-main); font-weight:600; cursor:pointer; font-family:var(--font-main);">Modifica Turni</button>
                     </div>
                 </div>
             `;
@@ -874,7 +913,7 @@
             const w_cal = `
                 <div class="widget-box">
                     <div class="widget-header">
-                        <h3>Agenda Eventi e Scadenze</h3>
+                        <h3>Agenda Eventi</h3>
                         <div style="display:flex; align-items:center;">
                             <span class="link-all" onclick="window.nav('calendar')">Vedi tutti <span class="material-symbols-outlined" style="font-size:16px;">arrow_forward</span></span>
                             <div class="order-controls">
@@ -892,9 +931,9 @@
             const w_chat = `
                 <div class="widget-box">
                     <div class="widget-header">
-                        <h3>Dalla bacheca di famiglia</h3>
+                        <h3>Bacheca Famiglia</h3>
                         <div style="display:flex; align-items:center;">
-                            <span class="link-all" onclick="window.nav('chat')">Vai alla bacheca <span class="material-symbols-outlined" style="font-size:16px;">arrow_forward</span></span>
+                            <span class="link-all" onclick="window.nav('chat')">Bacheca completa <span class="material-symbols-outlined" style="font-size:16px;">arrow_forward</span></span>
                             <div class="order-controls">
                                 <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('chat')}, -1)">expand_less</i>
                                 <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('chat')}, 1)">expand_more</i>
@@ -947,7 +986,7 @@
         }
 
         function loadData(section) {
-            document.getElementById('list-container').innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-sub);">Recupero dati...</div>';
+            document.getElementById('list-container').innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-sub);">Recupero dati database...</div>';
             clearSubscribes();
             if (!currentFamily) return;
             const col = `${currentFamily}_${section}`;
@@ -966,7 +1005,7 @@
                 renderList();
             }, (error) => {
                 console.error("Firebase read error:", error);
-                document.getElementById('list-container').innerHTML = '<div style="text-align:center; padding:40px; color:var(--alert);">Errore di connessione.</div>';
+                document.getElementById('list-container').innerHTML = '<div style="text-align:center; padding:40px; color:var(--alert);">Errore di connessione al database. Ricarica la pagina.</div>';
             });
             unsubscribes.push(unsub);
         }
@@ -1129,123 +1168,6 @@
             }
         }
 
-        function renderSettingsView() {
-            const memList = document.getElementById('members-list'); memList.innerHTML = "";
-            familySettings.members.forEach((mem, i) => memList.innerHTML += `<div class="settings-row"><span>${mem}</span><span class="material-symbols-outlined" style="color:var(--alert); cursor:pointer;" onclick="window.removeMember(${i})">delete</span></div>`);
-            const catList = document.getElementById('categories-list'); catList.innerHTML = "";
-            familySettings.categories.forEach((cat, i) => catList.innerHTML += `<div class="settings-row"><div style="display:flex;align-items:center"><span style="width:16px;height:16px;background:${cat.color};border-radius:50%;margin-right:12px;"></span>${cat.name}</div><span class="material-symbols-outlined" style="color:var(--alert); cursor:pointer;" onclick="window.removeCategory(${i})">delete</span></div>`);
-        }
-        window.addMember = async () => { const n = document.getElementById('new-member-name').value; if(n){familySettings.members.push(n); await saveSettings(); document.getElementById('new-member-name').value="";}};
-        window.removeMember = async (i) => { if(confirm("Eliminare il membro dalla lista?")){familySettings.members.splice(i,1); await saveSettings();}};
-        window.addCategory = async () => { const n = document.getElementById('new-cat-name').value; const c=document.getElementById('new-cat-color').value; if(n){familySettings.categories.push({name:n, color:c}); await saveSettings(); document.getElementById('new-cat-name').value="";}};
-        window.removeCategory = async (i) => { if(confirm("Eliminare la categoria?")){familySettings.categories.splice(i,1); await saveSettings();}};
-
-        document.getElementById('add-btn').addEventListener('click', async () => {
-            const txt = document.getElementById('new-item-input').value; if(!txt) return;
-            const cat = document.getElementById('category-select').value; 
-            let dVal = document.getElementById('date-input').value; const tVal = document.getElementById('time-input').value; 
-            const locVal = document.getElementById('location-input').value;
-            const who = Array.from(document.querySelectorAll('#assign-who-container .chip.active')).map(c => c.innerText);
-            
-            if (editingItem) {
-                if(editingItemSection === 'chat') {
-                    await updateDoc(doc(db, `${currentFamily}_chat`, editingItem.id), { text: txt, tagged: who });
-                } else {
-                    let updates = { text: txt, category: cat, assigned: who };
-                    if (editingItemSection === 'calendar' || editingItemSection === 'todos') updates.date = dVal;
-                    if (editingItemSection === 'calendar') { updates.time = tVal; updates.location = locVal; }
-                    if (editingItemSection === 'contacts') updates.detail = document.getElementById('contact-detail-input').value;
-                    
-                    if (editingItemSection === 'calendar' && editingItem.seriesId) {
-                        const ans = prompt("Digita 1 per modificare SOLO QUESTO evento.\nDigita 2 per modificare TUTTA LA SERIE FUTURA.\n(Lascia vuoto per annullare)");
-                        if (ans === '2') {
-                            const q = query(collection(db, `${currentFamily}_${editingItemSection}`), where("seriesId", "==", editingItem.seriesId));
-                            const snap = await getDocs(q);
-                            snap.forEach(d => { if (d.data().date >= editingItem.date) updateDoc(d.ref, { text: txt, category: cat, assigned: who, time: tVal, location: locVal }); });
-                            await updateDoc(doc(db, `${currentFamily}_${editingItemSection}`, editingItem.id), updates);
-                        } else if (ans === '1') { await updateDoc(doc(db, `${currentFamily}_${editingItemSection}`, editingItem.id), updates); } 
-                        else { return; }
-                    } else { await updateDoc(doc(db, `${currentFamily}_${editingItemSection}`, editingItem.id), updates); }
-                }
-                
-                editingItem = null; editingItemSection = null;
-                document.querySelector('#add-btn span').innerText = 'add';
-                document.querySelector('#add-btn').classList.remove('edit-mode');
-                document.getElementById('new-item-input').value=""; document.getElementById('contact-detail-input').value=""; document.getElementById('location-input').value=""; 
-                document.querySelectorAll('#assign-who-container .chip').forEach(c => c.classList.remove('active'));
-                if (currentSection === 'calendar') { document.getElementById('recurrence-wrapper').classList.remove('hidden'); window.toggleRecurrenceInputs(); }
-                return;
-            }
-
-            if(currentSection === 'chat') {
-                const authorName = auth.currentUser.email.split('@')[0];
-                await addDoc(collection(db, `${currentFamily}_chat`), { text: txt, timestamp: serverTimestamp(), author: authorName, tagged: who, archived: false });
-                document.getElementById('new-item-input').value=""; document.querySelectorAll('#assign-who-container .chip').forEach(c => c.classList.remove('active')); return;
-            }
-
-            let loops = 1;
-            const rUnit = document.getElementById('rec-unit').value;
-            const rInt = parseInt(document.getElementById('rec-interval').value) || 1;
-            const rCount = parseInt(document.getElementById('rec-count').value) || 1;
-            if(currentSection === 'calendar' && rUnit !== 'none') loops = rCount;
-            
-            const selectedDays = Array.from(document.querySelectorAll('.day-chip.active')).map(c => parseInt(c.dataset.day));
-            let isMultiple = (loops > 1) || (rUnit === 'week' && selectedDays.length > 0 && rCount > 0);
-            const seriesId = isMultiple ? Date.now().toString(36) + Math.random().toString(36).substr(2, 5) : null;
-            
-            let initialDateStr = dVal || getLocalYMD(new Date());
-
-            if(currentSection === 'calendar' && rUnit === 'week' && selectedDays.length > 0) {
-                if(!dVal) return alert("Seleziona la data del primo evento sul calendario.");
-                const baseDate = new Date(initialDateStr);
-                for (let w = 0; w < rCount; w++) {
-                    for (let dayOfWeek of selectedDays) {
-                        let d = new Date(baseDate);
-                        let currentDayOfWeek = d.getDay(); 
-                        let dayOffset = dayOfWeek - currentDayOfWeek;
-                        d.setDate(d.getDate() + dayOffset + (w * rInt * 7));
-                        if (w === 0 && d < baseDate) continue; 
-                        const item = { text: txt, timestamp: serverTimestamp(), done: false, category: cat, assigned: who, time: tVal, seriesId: seriesId };
-                        if(locVal) item.location = locVal; item.date = getLocalYMD(d);
-                        await addDoc(collection(db, `${currentFamily}_${currentSection}`), item);
-                    }
-                }
-            } else {
-                for(let i=0; i<loops; i++) {
-                    const item = { text: txt, timestamp: serverTimestamp(), done: false, category: cat, assigned: who };
-                    if (seriesId) item.seriesId = seriesId;
-                    if(currentSection === 'calendar') {
-                        if(!dVal) return alert("Data mancante.");
-                        item.time = tVal; if(locVal) item.location = locVal;
-                        if (i > 0) {
-                            const d = new Date(initialDateStr);
-                            if(rUnit === 'day') d.setDate(d.getDate() + (i * rInt));
-                            if(rUnit === 'week') d.setDate(d.getDate() + (i * rInt * 7));
-                            if(rUnit === 'month') d.setMonth(d.getMonth() + (i * rInt));
-                            if(rUnit === 'year') d.setFullYear(d.getFullYear() + (i * rInt));
-                            item.date = getLocalYMD(d);
-                        } else { item.date = initialDateStr; }
-                    } else if(currentSection === 'todos') { if(dVal) item.date = dVal; } 
-                    else if(currentSection === 'contacts') { item.detail = document.getElementById('contact-detail-input').value || ""; }
-                    await addDoc(collection(db, `${currentFamily}_${currentSection}`), item);
-                    if(currentSection !== 'calendar') break; 
-                }
-            }
-            
-            document.getElementById('new-item-input').value=""; document.getElementById('contact-detail-input').value=""; document.getElementById('location-input').value=""; 
-            document.getElementById('rec-unit').value="none"; window.toggleRecurrenceInputs();
-            document.querySelectorAll('#assign-who-container .chip').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('.day-chip.active').forEach(c => c.classList.remove('active'));
-        });
-
-        document.getElementById('save-note-btn').addEventListener('click', async () => {
-            const title = document.getElementById('note-title-input').value; const content = document.getElementById('note-content-input').value; const editId = document.getElementById('editing-note-id').value;
-            if(!content) return alert("Inserisci il contenuto della nota.");
-            if (editId) { await updateDoc(doc(db, `${currentFamily}_notes`, editId), { title: title, text: content, timestamp: serverTimestamp() }); document.getElementById('editing-note-id').value = ""; document.getElementById('save-note-btn').innerText = "Salva Nota"; } 
-            else { await addDoc(collection(db, `${currentFamily}_notes`), { title: title, text: content, timestamp: serverTimestamp() }); }
-            document.getElementById('note-title-input').value = ""; document.getElementById('note-content-input').value = "";
-        });
-
         window.del = async (id, section, seriesId) => {
             if(seriesId && seriesId !== 'null') {
                 const ans = prompt("Digita 1 per eliminare SOLO QUESTO evento.\nDigita 2 per eliminare TUTTA LA SERIE.\n(Lascia vuoto per annullare)");
@@ -1258,7 +1180,6 @@
         };
 
         window.toggle = async (id, st, section) => { await updateDoc(doc(db, `${currentFamily}_${section}`, id), {done:st}); };
-        window.editNote = (id) => { const note = allDataCache.find(n => n.id === id); if (note) { document.getElementById('note-title-input').value = note.title || ""; document.getElementById('note-content-input').value = note.text || ""; document.getElementById('editing-note-id').value = id; document.getElementById('save-note-btn').innerText = "Aggiorna Nota"; window.scrollTo({ top: 0, behavior: 'smooth' });}};
         window.exportGoogle = (t,d) => { const x=d.replace(/-/g,''); window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(t)}&dates=${x}/${x}`,'_blank');};
 
     </script>
