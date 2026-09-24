@@ -112,8 +112,8 @@
 
         .hidden { display: none !important; }
 
-        #list-container { padding: 0 20px 100px 20px; } 
-        .card { background: var(--bg-card); padding: 18px; border-radius: 16px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; transition: 0.2s; box-shadow: 0 2px 6px var(--shadow); gap: 10px; }
+        #list-container { padding: 0 20px 100px 20px; overflow-x: hidden; } 
+        .card { background: var(--bg-card); padding: 18px; border-radius: 16px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; transition: 0.2s; box-shadow: 0 2px 6px var(--shadow); gap: 10px; min-width: 0; width: 100%; box-sizing: border-box; overflow: hidden; }
         
         .note-card { flex-direction: column; align-items: flex-start; gap: 12px; }
         .note-title { font-size: 1.15rem; color: var(--text-main); width: 100%; margin: 0; }
@@ -130,7 +130,7 @@
         .date-time { font-size: 0.7rem; color: var(--text-main); background: var(--bg-card); border-radius: 4px; padding: 3px 0; margin-top: 6px; font-weight: 600; border: 1px solid var(--border); }
         
         .due-date-display { font-size: 0.75rem; color: var(--alert); font-weight: 500; display: block; margin-top: 4px; }
-        .location-link { display: inline-flex; align-items: center; color: var(--text-sub); text-decoration: none; font-size: 0.8rem; margin-top: 8px; transition: 0.2s; background: var(--bg-body); padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .location-link { display: inline-flex; align-items: center; color: var(--text-sub); text-decoration: none; font-size: 0.8rem; margin-top: 8px; transition: 0.2s; background: var(--bg-body); padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border); max-width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
         .location-link:hover { color: var(--primary); border-color: var(--primary); }
         
         .cat-dot { height: 8px; width: 8px; border-radius: 50%; display: inline-block; margin-right: 8px; vertical-align: middle; }
@@ -146,16 +146,16 @@
         .kpi-data-title { font-size: 0.75rem; color: var(--text-sub); font-weight: 500; }
         .kpi-data-val { font-size: 1.4rem; font-weight: bold; color: var(--text-main); font-family: var(--font-title); }
 
-        .widget-grid { display: grid; grid-template-columns: 1fr; gap: 20px; align-content: start; }
-        @media (min-width: 800px) { .widget-grid { grid-template-columns: 1fr 1fr; } }
+        .widget-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; align-content: start; width: 100%; }
+        @media (min-width: 800px) { .widget-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
         
-        .widget-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; box-shadow: var(--shadow); transition: transform 0.2s, opacity 0.2s; }
+        .widget-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; box-shadow: var(--shadow); transition: transform 0.2s, opacity 0.2s; min-width: 0; width: 100%; box-sizing: border-box; overflow: hidden; }
         .widget-box[draggable="true"] { cursor: grab; }
         .widget-box[draggable="true"]:active { cursor: grabbing; }
         
         .widget-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 15px; }
-        .widget-header h3 { font-size: 1.15rem; color: var(--text-main); }
-        .link-all { font-size: 0.8rem; color: var(--primary); display: flex; align-items: center; cursor: pointer; font-weight: 600; }
+        .widget-header h3 { font-size: 1.15rem; color: var(--text-main); margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .link-all { font-size: 0.8rem; color: var(--primary); display: flex; align-items: center; cursor: pointer; font-weight: 600; flex-shrink: 0; }
         .link-all span { font-size: 16px; margin-left: 4px; }
         .widget-content .card { box-shadow: none; border-color: var(--border); margin-bottom: 10px; padding: 12px 15px; }
 
@@ -1001,7 +1001,7 @@
                 const d = data.date ? new Date(data.date) : new Date();
                 const dStr = data.date || getLocalISODate(new Date());
                 actions = `<span class="material-symbols-outlined" style="color:var(--text-sub); cursor:pointer;" onclick="window.exportGoogle('${data.text}','${dStr}')">calendar_add_on</span>`;
-                const locHtml = data.location ? `<br><a href="https://maps.google.com/?q=${encodeURIComponent(data.location)}" target="_blank" class="location-link" style="display:inline-flex; align-items:center; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"><span class="material-symbols-outlined" style="font-size:16px; margin-right:4px;">location_on</span> <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${data.location}</span></a>` : '';
+                const locHtml = data.location ? `<div style="margin-top:8px; width:100%; overflow:hidden;"><a href="https://maps.google.com/?q=${encodeURIComponent(data.location)}" target="_blank" class="location-link" style="display:inline-flex; align-items:center; max-width:100%; box-sizing:border-box;"><span class="material-symbols-outlined" style="font-size:16px; margin-right:4px; flex-shrink:0;">location_on</span> <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:block;">${data.location}</span></a></div>` : '';
                 const timeHtml = data.time ? `<div class="date-time">${data.time}</div>` : "";
 
                 content = `<span class="material-symbols-outlined" style="color:${checkColor}; margin-right:10px; cursor:pointer; font-size:28px; flex-shrink:0;" onclick="window.toggle('${data.id}',${!data.done},'${sectionType}')">${checkIcon}</span>
