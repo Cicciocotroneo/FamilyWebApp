@@ -567,7 +567,9 @@
             const select = document.getElementById('presence-user-select');
             select.innerHTML = '';
             familySettings.members.forEach(m => select.innerHTML += `<option value="${m}">${m}</option>`);
-            if(auth.currentUser && familySettings.members.length > 0) { select.value = myMemberName; }
+            if(auth.currentUser && familySettings.members.length > 0) {
+                select.value = myMemberName;
+            }
             window.renderPresenceGrid();
             document.getElementById('presence-modal').classList.remove('hidden');
         };
@@ -788,19 +790,22 @@
             clearSubscribes();
             if (!currentFamily) return;
 
-            // Scarica intere collection in locale per evitare ogni bug/limite di Firebase con indici mancanti
             const collectionsToFetch = ['todos', 'shopping', 'calendar', 'chat'];
             let loadedCount = 0;
             
             collectionsToFetch.forEach(col => {
                 const unsub = onSnapshot(collection(db, `${currentFamily}_${col}`), (snap) => {
-                    dashboardData[col] = [];
-                    snap.forEach(d => dashboardData[col].push({id: d.id, ...d.data()}));
-                    loadedCount++;
-                    if(currentSection === 'dashboard') renderDashboard();
+                    try {
+                        dashboardData[col] = [];
+                        snap.forEach(d => dashboardData[col].push({id: d.id, ...d.data()}));
+                        loadedCount++;
+                        if(currentSection === 'dashboard') renderDashboard();
+                    } catch (err) {
+                        document.getElementById('list-container').innerHTML = '<div style="text-align:center; padding:40px; color:var(--alert);">Errore interno: ' + err.message + '</div>';
+                    }
                 }, (error) => {
                     console.error("Errore lettura database:", error);
-                    document.getElementById('list-container').innerHTML = '<div style="text-align:center; padding:40px; color:var(--alert);">Connessione interrotta o errore di lettura dal server.</div>';
+                    document.getElementById('list-container').innerHTML = '<div style="text-align:center; padding:40px; color:var(--alert);">Connessione interrotta o errore di lettura. Ricarica la pagina.</div>';
                 });
                 unsubscribes.push(unsub);
             });
@@ -873,7 +878,11 @@
             const futuri = dashboardData.calendar.filter(c => !c.done && (!c.date || (c.date >= todayStr && c.date <= limitDateStr)) && isAssignedToUser(c.assigned, currentDashboardUser));
             const upcEvents = [...scaduti, ...futuri].sort((a,b)=> (a.date||'9999') > (b.date||'9999') ? 1 : -1);
 
-            const chatsList = dashboardData.chat.filter(c => !c.archived && isAssignedToUser(c.tagged, currentDashboardUser)).sort((a,b)=> (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+            const chatsList = dashboardData.chat.filter(c => !c.archived && isAssignedToUser(c.tagged, currentDashboardUser)).sort((a,b)=> {
+                const timeA = a.timestamp && a.timestamp.seconds ? a.timestamp.seconds : 0;
+                const timeB = b.timestamp && b.timestamp.seconds ? b.timestamp.seconds : 0;
+                return timeB - timeA;
+            });
 
             const w_sw = `
                 <div class="widget-box">
@@ -887,7 +896,7 @@
                     <div class="widget-content">
                         ${legendHtml}
                         ${swHtml}
-                        <button onclick="window.openPresenceModal()" style="margin-top:15px; width:100%; padding:10px; border-radius:12px; border:1px solid var(--border); background:var(--bg-body); color:var(--text-main); font-weight:600; cursor:pointer; font-family:var(--font-main);">Modifica Turni</button>
+                        <button onclick="window.openPresenceModal()" style="margin-top:15px; width:100%; padding:10px; border-radius:12px; border:1px solid var(--border); background:var(--bg-body); color:var(--text-main); font-weight:600; cursor:pointer; font-family:var(--font-main);">Modifica Turni Smart Working</button>
                     </div>
                 </div>
             `;
@@ -992,17 +1001,25 @@
             const col = `${currentFamily}_${section}`;
             
             const unsub = onSnapshot(collection(db, col), (snap) => {
-                allDataCache = []; 
-                snap.forEach(d => allDataCache.push({id:d.id, ...d.data()}));
-                
-                if (section === 'calendar') {
-                    allDataCache.sort((a,b) => (a.date||'9999') > (b.date||'9999') ? 1 : -1);
-                } else {
-                    allDataCache.sort((a,b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
-                }
+                try {
+                    allDataCache = []; 
+                    snap.forEach(d => allDataCache.push({id:d.id, ...d.data()}));
+                    
+                    if (section === 'calendar') {
+                        allDataCache.sort((a,b) => (a.date||'9999') > (b.date||'9999') ? 1 : -1);
+                    } else {
+                        allDataCache.sort((a,b) => {
+                            const timeA = a.timestamp && a.timestamp.seconds ? a.timestamp.seconds : 0;
+                            const timeB = b.timestamp && b.timestamp.seconds ? b.timestamp.seconds : 0;
+                            return timeB - timeA;
+                        });
+                    }
 
-                if(isCalendarMode && section === 'calendar') renderWeekCalendarGrid();
-                renderList();
+                    if(isCalendarMode && section === 'calendar') renderWeekCalendarGrid();
+                    renderList();
+                } catch (err) {
+                    document.getElementById('list-container').innerHTML = '<div style="padding:20px; color:var(--alert); text-align:center;">Errore elaborazione dati: ' + err.message + '</div>';
+                }
             }, (error) => {
                 console.error("Firebase read error:", error);
                 document.getElementById('list-container').innerHTML = '<div style="text-align:center; padding:40px; color:var(--alert);">Errore di connessione al database. Ricarica la pagina.</div>';
@@ -1180,6 +1197,7 @@
         };
 
         window.toggle = async (id, st, section) => { await updateDoc(doc(db, `${currentFamily}_${section}`, id), {done:st}); };
+        window.editNote = (id) => { const note = allDataCache.find(n => n.id === id); if (note) { document.getElementById('note-title-input').value = note.title || ""; document.getElementById('note-content-input').value = note.text || ""; document.getElementById('editing-note-id').value = id; document.getElementById('save-note-btn').innerText = "Aggiorna Nota"; window.scrollTo({ top: 0, behavior: 'smooth' });}};
         window.exportGoogle = (t,d) => { const x=d.replace(/-/g,''); window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(t)}&dates=${x}/${x}`,'_blank');};
 
     </script>
