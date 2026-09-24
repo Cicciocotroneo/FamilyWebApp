@@ -504,10 +504,12 @@
                     familySettings = { ...familySettings, ...docSnap.data() };
                     if(!familySettings.presenze) familySettings.presenze = {};
                 }
+                
                 if (auth.currentUser) {
                     currentAuthorName = auth.currentUser.email.split('@')[0];
                     myMemberName = familySettings.members.find(m => auth.currentUser.email.toLowerCase().startsWith(m.toLowerCase())) || currentAuthorName;
                 }
+
                 renderDropdowns(); renderSettingsView();
                 if(currentSection === 'dashboard') renderDashboard();
             });
@@ -525,7 +527,9 @@
             const select = document.getElementById('presence-user-select');
             select.innerHTML = '';
             familySettings.members.forEach(m => select.innerHTML += `<option value="${m}">${m}</option>`);
-            if(auth.currentUser && familySettings.members.length > 0) { select.value = myMemberName; }
+            if(auth.currentUser && familySettings.members.length > 0) {
+                select.value = myMemberName;
+            }
             window.renderPresenceGrid();
             document.getElementById('presence-modal').classList.remove('hidden');
         };
@@ -716,6 +720,7 @@
                     title.innerText = "Spesa"; newItemInput.placeholder = "Cosa manca?"; 
                 }
             }
+            // Simple query
             loadData(section);
         };
 
@@ -737,10 +742,11 @@
         };
 
         function loadDashboardData() {
-            document.getElementById('list-container').innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-sub);">Recupero dati...</div>';
+            document.getElementById('list-container').innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-sub);">Sincronizzazione in corso...</div>';
             clearSubscribes();
             if (!currentFamily) return;
 
+            // Queries normali
             const queries = { 
                 todos: collection(db, `${currentFamily}_todos`), 
                 shopping: collection(db, `${currentFamily}_shopping`), 
@@ -825,7 +831,10 @@
             const futuri = dashboardData.calendar.filter(c => !c.done && (!c.date || (c.date >= todayStr && c.date <= limitDateStr)) && isAssignedToUser(c.assigned, currentDashboardUser)).sort((a,b)=> (a.date||'9999') > (b.date||'9999') ? 1 : -1);
             const upcEvents = [...scaduti, ...futuri];
 
-            let chatsList = dashboardData.chat.filter(c => !c.archived && isAssignedToUser(c.tagged, currentDashboardUser)).sort((a,b)=> (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+            // Filtro e ordinamento JS locale (invece di query complessa)
+            let chatsList = dashboardData.chat
+                .filter(c => !c.archived && isAssignedToUser(c.tagged, currentDashboardUser))
+                .sort((a,b)=> (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
 
             const w_sw = `
                 <div class="widget-box">
@@ -956,6 +965,7 @@
                 if(isCalendarMode && section === 'calendar') renderWeekCalendarGrid();
                 renderList();
             }, (error) => {
+                console.error("Firebase read error:", error);
                 document.getElementById('list-container').innerHTML = '<div style="text-align:center; padding:40px; color:var(--alert);">Errore di connessione.</div>';
             });
             unsubscribes.push(unsub);
@@ -1248,6 +1258,7 @@
         };
 
         window.toggle = async (id, st, section) => { await updateDoc(doc(db, `${currentFamily}_${section}`, id), {done:st}); };
+        window.editNote = (id) => { const note = allDataCache.find(n => n.id === id); if (note) { document.getElementById('note-title-input').value = note.title || ""; document.getElementById('note-content-input').value = note.text || ""; document.getElementById('editing-note-id').value = id; document.getElementById('save-note-btn').innerText = "Aggiorna Nota"; window.scrollTo({ top: 0, behavior: 'smooth' });}};
         window.exportGoogle = (t,d) => { const x=d.replace(/-/g,''); window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(t)}&dates=${x}/${x}`,'_blank');};
 
     </script>
