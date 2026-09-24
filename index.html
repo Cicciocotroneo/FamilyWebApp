@@ -187,14 +187,6 @@
         #auth-container input { width: 100%; max-width: 320px; height: 55px; margin-bottom: 15px; border: 1px solid var(--border); border-radius: 12px; padding: 0 20px; font-size: 16px; font-family: var(--font-main); }
         #login-btn { width: 100%; max-width: 320px; height: 55px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; font-family: var(--font-main); cursor: pointer; }
         
-        /* Stile pagina guida */
-        .guide-section { background: var(--bg-card); border-radius: 16px; padding: 25px; border: 1px solid var(--border); margin-bottom: 20px; line-height: 1.6; }
-        .guide-section h3 { color: var(--primary); margin-top: 0; margin-bottom: 15px; }
-        .guide-section p { color: var(--text-sub); font-size: 0.95rem; margin-bottom: 10px; }
-        .guide-section ol { color: var(--text-sub); font-size: 0.95rem; padding-left: 20px; }
-        .guide-section li { margin-bottom: 8px; }
-        .guide-section code { background: var(--accent-bg); padding: 2px 6px; border-radius: 4px; color: var(--text-main); font-family: monospace; font-size: 0.85rem;}
-
         @media (max-width: 600px) {
             .kpi-card { padding: 10px; }
         }
@@ -204,12 +196,30 @@
 
     <div id="auth-container">
         <h1>Family Hub</h1>
-        <p style="color:var(--text-sub); margin-bottom: 40px;">Il centro della tua casa.</p>
+        <p style="color:var(--text-sub); margin-bottom: 30px;">Il centro della tua casa.</p>
         <input type="email" id="email-input" placeholder="Email">
         <input type="password" id="password-input" placeholder="Password">
         <button id="login-btn">Entra</button>
-        <p onclick="window.resetPassword()" style="color:var(--primary); cursor:pointer; margin-top:20px; font-size: 0.9rem;">Password dimenticata?</p>
-        <p id="login-status" style="margin-top: 20px; color: var(--alert); font-size: 0.9rem;"></p>
+        
+        <div style="display:flex; justify-content:space-between; width:100%; max-width:320px; margin-top:20px;">
+            <p onclick="window.resetPassword()" style="color:var(--primary); cursor:pointer; margin:0; font-size: 0.9rem; font-weight:500;">Password dimenticata?</p>
+            <p onclick="document.getElementById('auth-guide').classList.toggle('hidden')" style="color:var(--text-sub); cursor:pointer; margin:0; font-size: 0.9rem; display:flex; align-items:center; gap:4px; font-weight:500;"><span class="material-symbols-outlined" style="font-size:18px;">help</span> Guida</p>
+        </div>
+        
+        <p id="login-status" style="margin-top: 15px; color: var(--alert); font-size: 0.9rem;"></p>
+
+        <!-- GUIDA & SETUP (Nella pagina di Login) -->
+        <div id="auth-guide" class="hidden" style="margin-top:20px; background:var(--bg-card); padding:20px; border-radius:12px; border:1px solid var(--border); text-align:left; max-width:320px; font-size:0.85rem; width:100%; box-shadow:var(--shadow);">
+            <h4 style="margin-top:0; color:var(--primary); font-family:var(--font-title); font-size:1.1rem; margin-bottom:10px;">Creare il tuo Family Hub</h4>
+            <ol style="padding-left:18px; margin:0 0 15px 0; color:var(--text-sub); line-height:1.5;">
+                <li style="margin-bottom:6px;">Vai su Firebase Console e crea un progetto.</li>
+                <li style="margin-bottom:6px;">Abilita <b>Authentication</b> (Email/Password) e <b>Firestore Database</b>.</li>
+                <li style="margin-bottom:6px;">Aggiungi un'app Web e copia le chiavi del <code>firebaseConfig</code>.</li>
+                <li style="margin-bottom:6px;">Sostituisci le chiavi nel codice <code>index.html</code> e metti la tua email come <code>SUPER_ADMIN_EMAIL</code>.</li>
+                <li>Registrati qui, vai in Impostazioni e abilita i familiari tramite la Console Admin.</li>
+            </ol>
+            <button onclick="document.getElementById('auth-guide').classList.add('hidden')" style="width:100%; padding:8px; border-radius:8px; border:1px solid var(--border); background:var(--bg-body); cursor:pointer; font-weight:bold; color:var(--text-main);">Chiudi Guida</button>
+        </div>
     </div>
 
     <div id="app-container" class="hidden">
@@ -221,7 +231,6 @@
             <div class="header-controls">
                 <i class="material-symbols-outlined" onclick="window.toggleThemePalette()" title="Cambia Stile">palette</i>
                 <i id="theme-toggle" class="material-symbols-outlined" onclick="window.toggleDarkMode()">dark_mode</i>
-                <i class="material-symbols-outlined" onclick="window.nav('guide')" title="Guida & Admin">help</i>
                 <i class="material-symbols-outlined" onclick="window.nav('settings')">settings</i>
                 <i class="material-symbols-outlined" onclick="window.logout()">logout</i>
             </div>
@@ -328,7 +337,7 @@
                     <p style="font-size:0.85rem; color:var(--text-sub); margin-bottom:15px;">Usa questa sezione per autorizzare nuove email ad accedere all'app. Crea una riga nel database associando l'email al codice famiglia.</p>
                     <input type="email" id="admin-user-email" placeholder="Email Utente da abilitare" style="margin-bottom:10px; width:100%; height:45px; border:1px solid var(--border); border-radius:12px; padding:0 15px;">
                     <input type="text" id="admin-family-code" placeholder="Codice Famiglia (es. ROSSI)" style="margin-bottom:10px; text-transform:uppercase; width:100%; height:45px; border:1px solid var(--border); border-radius:12px; padding:0 15px;">
-                    <button onclick="window.adminAssociate()" style="background:var(--warning); color:white; border:none; width:100%; height:45px; border-radius:12px; font-weight:bold; cursor:pointer;">Abilita Utente</button>
+                    <button onclick="window.adminAssociate()" style="background:var(--warning); color:white; border:none; width:100%; height:45px; border-radius:12px; font-weight:bold; cursor:pointer;">Associa Ora</button>
                     <p id="admin-status" style="font-size:0.8rem; margin-top:10px;"></p>
                 </div>
                 
@@ -359,34 +368,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- GUIDA & SETUP -->
-            <div id="guide-view" class="hidden settings-view">
-                <div class="guide-section">
-                    <h3><span class="material-symbols-outlined" style="vertical-align:middle;">rocket_launch</span> Creare un proprio Family Hub</h3>
-                    <p>Vuoi slegarti dall'amministratore originale e creare una tua istanza dell'app gratuita e indipendente su Google Firebase? Ecco i passaggi:</p>
-                    <ol>
-                        <li>Vai su <a href="https://console.firebase.google.com/" target="_blank" style="color:var(--primary)">Firebase Console</a> e crea un nuovo progetto (es. "MioHub").</li>
-                        <li>Nel menu a sinistra, vai su <b>Authentication</b> -> Get Started -> Abilita "Email/Password".</li>
-                        <li>Vai su <b>Firestore Database</b> -> Create Database. Scegli le regole "Test Mode" (per iniziare) o usa regole di base.</li>
-                        <li>Vai nelle <b>Impostazioni del progetto</b> (l'ingranaggio in alto a sinistra), scorri in basso, aggiungi un'app Web (simbolo `</>`) e copia le chiavi del <code>firebaseConfig</code>.</li>
-                        <li>Apri il file <code>index.html</code> di questa app, trova la costante <code>firebaseConfig</code> e sostituiscila con le tue chiavi.</li>
-                        <li>Nello stesso file, trova la variabile <code>SUPER_ADMIN_EMAIL</code> e scrivi la tua email (es. mario.rossi@gmail.com).</li>
-                        <li>Salva il file e mettilo online (su GitHub Pages, Netlify o dove preferisci).</li>
-                    </ol>
-                </div>
-                <div class="guide-section">
-                    <h3><span class="material-symbols-outlined" style="vertical-align:middle;">admin_panel_settings</span> Come abilitare gli utenti</h3>
-                    <p>Una volta creata la tua app:</p>
-                    <ol>
-                        <li>Apri l'app e registrati con l'email che hai impostato come Super Admin.</li>
-                        <li>Entra in Impostazioni (l'icona ingranaggio) e usa la <b>Console Super Admin</b> (che ora appare solo a te).</li>
-                        <li>Scrivi la tua email e inventa un codice per la tua famiglia (es. "ROSSI"). Clicca "Associa Ora". Esci e rientra nell'app. Ora sei dentro!</li>
-                        <li>Per far entrare tua moglie o i tuoi figli: fagli creare un account (email e password) nella schermata di login. Poi tu vai nella Console Super Admin, scrivi la loro email, lo stesso codice "ROSSI", e associali.</li>
-                    </ol>
-                </div>
-            </div>
-
         </main>
 
         <nav class="bottom-nav">
@@ -543,6 +524,8 @@
                 if (docSnap.exists()) {
                     familySettings = { ...familySettings, ...docSnap.data() };
                     if(!familySettings.presenze) familySettings.presenze = {};
+                    if(!familySettings.members) familySettings.members = [];
+                    if(!familySettings.categories) familySettings.categories = [];
                 }
                 
                 if (auth.currentUser) {
@@ -700,7 +683,6 @@
             document.getElementById('list-container').innerHTML = '';
             
             document.getElementById('settings-view').classList.add('hidden');
-            document.getElementById('guide-view').classList.add('hidden');
             document.getElementById('add-bar-container').classList.add('hidden');
             document.getElementById('note-editor-container').classList.add('hidden');
             document.getElementById('calendar-view-container').classList.add('hidden');
@@ -715,7 +697,6 @@
             }
 
             if (section === 'settings') { document.getElementById('settings-view').classList.remove('hidden'); document.getElementById('page-title').innerText = "Impostazioni"; return; }
-            if (section === 'guide') { document.getElementById('guide-view').classList.remove('hidden'); document.getElementById('page-title').innerText = "Guida & Setup"; return; }
             if (section === 'dashboard') { document.getElementById('page-title').innerText = "Home"; loadDashboardData(); return; }
 
             document.querySelector('.filter-row').classList.remove('hidden');
@@ -878,11 +859,13 @@
             const futuri = dashboardData.calendar.filter(c => !c.done && (!c.date || (c.date >= todayStr && c.date <= limitDateStr)) && isAssignedToUser(c.assigned, currentDashboardUser));
             const upcEvents = [...scaduti, ...futuri].sort((a,b)=> (a.date||'9999') > (b.date||'9999') ? 1 : -1);
 
-            const chatsList = dashboardData.chat.filter(c => !c.archived && isAssignedToUser(c.tagged, currentDashboardUser)).sort((a,b)=> {
-                const timeA = a.timestamp && a.timestamp.seconds ? a.timestamp.seconds : 0;
-                const timeB = b.timestamp && b.timestamp.seconds ? b.timestamp.seconds : 0;
-                return timeB - timeA;
-            });
+            const chatsList = dashboardData.chat
+                .filter(c => !c.archived && isAssignedToUser(c.tagged, currentDashboardUser))
+                .sort((a,b) => {
+                    const timeA = a.timestamp && a.timestamp.seconds ? a.timestamp.seconds : 0;
+                    const timeB = b.timestamp && b.timestamp.seconds ? b.timestamp.seconds : 0;
+                    return timeB - timeA;
+                });
 
             const w_sw = `
                 <div class="widget-box">
@@ -922,7 +905,7 @@
             const w_cal = `
                 <div class="widget-box">
                     <div class="widget-header">
-                        <h3>Agenda Eventi</h3>
+                        <h3>Agenda Eventi e Scadenze</h3>
                         <div style="display:flex; align-items:center;">
                             <span class="link-all" onclick="window.nav('calendar')">Vedi tutti <span class="material-symbols-outlined" style="font-size:16px;">arrow_forward</span></span>
                             <div class="order-controls">
@@ -940,9 +923,9 @@
             const w_chat = `
                 <div class="widget-box">
                     <div class="widget-header">
-                        <h3>Bacheca Famiglia</h3>
+                        <h3>Dalla bacheca di famiglia</h3>
                         <div style="display:flex; align-items:center;">
-                            <span class="link-all" onclick="window.nav('chat')">Bacheca completa <span class="material-symbols-outlined" style="font-size:16px;">arrow_forward</span></span>
+                            <span class="link-all" onclick="window.nav('chat')">Vai alla bacheca <span class="material-symbols-outlined" style="font-size:16px;">arrow_forward</span></span>
                             <div class="order-controls">
                                 <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('chat')}, -1)">expand_less</i>
                                 <i class="material-symbols-outlined" onclick="window.moveWidget(${widgetOrder.indexOf('chat')}, 1)">expand_more</i>
