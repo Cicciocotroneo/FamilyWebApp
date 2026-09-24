@@ -147,7 +147,7 @@
         .kpi-data-val { font-size: 1.4rem; font-weight: bold; color: var(--text-main); font-family: var(--font-title); }
 
         .widget-grid { display: grid; grid-template-columns: 1fr; gap: 20px; align-content: start; }
-        @media (min-width: 800px) { .widget-grid { grid-template-columns: 1fr 1fr; } .bacheca-widget { grid-column: 1 / -1; } }
+        @media (min-width: 800px) { .widget-grid { grid-template-columns: 1fr 1fr; } }
         
         .widget-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; box-shadow: var(--shadow); transition: transform 0.2s, opacity 0.2s; }
         .widget-box[draggable="true"] { cursor: grab; }
@@ -381,8 +381,8 @@
         let familySettings = { members: ["Mamma", "Papà"], categories: [{name:"Generale", color:"#859B8B"}], presenze: {} };
         
         let currentDashboardUser = "";
-        let currentAuthorName = ""; // Nome dell'utente loggato basato sull'email
-        let myMemberName = "";      // Nome mappato dalla lista famiglia
+        let currentAuthorName = "";
+        let myMemberName = "";
         
         let isCalendarMode = false;
         let weekStartDate = new Date();
@@ -392,6 +392,12 @@
         let editingItemSection = null;
         
         const memberColors = ['#E11D48', '#2563EB', '#10B981', '#F59E0B', '#8B5CF6', '#14B8A6', '#F43F5E'];
+
+        // Helper timezone-safe per le date YYYY-MM-DD
+        function getLocalISODate(d) {
+            const date = d || new Date();
+            return date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
+        }
 
         window.toggleDarkMode = () => {
             document.body.classList.toggle('dark-mode');
@@ -742,7 +748,7 @@
             familySettings.members.forEach((m, i) => { colorMap[m] = memberColors[i % memberColors.length]; });
 
             let swHtml = '';
-            const dayNames = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì'];
+            const dayNames = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven'];
             
             for(let i=0; i<5; i++) {
                 let loopDate = new Date(baseDate);
@@ -764,7 +770,7 @@
                 
                 swHtml += `
                     <div style="display:flex; justify-content:space-between; align-items:center; padding: 10px 0; ${borderStyle}">
-                        <div style="font-weight:600; font-size:0.95rem; width: 90px; color:var(--text-main);">${dateStr}</div>
+                        <div style="font-weight:600; font-size:0.95rem; width: 70px; color:var(--text-main);">${dateStr}</div>
                         <div style="flex:1; display:flex; flex-direction:column; gap:6px;">
                             <div style="display:flex; align-items:center; font-size:0.85rem;"><span class="material-symbols-outlined" style="font-size:16px; margin-right:8px; color:var(--warning);">light_mode</span> ${amDots}</div>
                             <div style="display:flex; align-items:center; font-size:0.85rem;"><span class="material-symbols-outlined" style="font-size:16px; margin-right:8px; color:var(--primary);">dark_mode</span> ${pmDots}</div>
@@ -782,24 +788,21 @@
             let userOpts = `<option value="">Vista Generale: Tutti</option>`;
             familySettings.members.forEach(m => userOpts += `<option value="${m}" ${m===currentDashboardUser?'selected':''}>Focus su: ${m}</option>`);
 
-            const limitDateStr = new Date(today.getTime() + (7 * 24 * 60 * 60 * 1000)).toISOString().split('T')[0];
+            const limitDateStr = getLocalISODate(new Date(today.getTime() + (7 * 24 * 60 * 60 * 1000)));
 
             const pendingTodos = dashboardData.todos.filter(t => isAssignedToUser(t.assigned, currentDashboardUser));
             const pendingShop = dashboardData.shopping.filter(s => isAssignedToUser(s.assigned, currentDashboardUser));
             const allPendingReqs = [...pendingTodos, ...pendingShop].sort((a,b)=> (a.date||'9999') > (b.date||'9999') ? 1 : -1);
 
-            const scaduti = dashboardData.calendar.filter(c => c.date && c.date < today.toISOString().split('T')[0] && isAssignedToUser(c.assigned, currentDashboardUser));
-            const futuri = dashboardData.calendar.filter(c => (!c.date || (c.date >= today.toISOString().split('T')[0] && c.date <= limitDateStr)) && isAssignedToUser(c.assigned, currentDashboardUser)).sort((a,b)=> (a.date||'9999') > (b.date||'9999') ? 1 : -1);
+            const scaduti = dashboardData.calendar.filter(c => c.date && c.date < getLocalISODate(today) && isAssignedToUser(c.assigned, currentDashboardUser));
+            const futuri = dashboardData.calendar.filter(c => (!c.date || (c.date >= getLocalISODate(today) && c.date <= limitDateStr)) && isAssignedToUser(c.assigned, currentDashboardUser)).sort((a,b)=> (a.date||'9999') > (b.date||'9999') ? 1 : -1);
             const upcEvents = [...scaduti, ...futuri];
 
-            // Filtra chat non archiviate per la Dashboard
             const chats = dashboardData.chat.filter(c => !c.archived && isAssignedToUser(c.tagged, currentDashboardUser));
 
             let html = `
-                <!-- FILTRO -->
                 <div class="dash-header-select"><select onchange="window.changeDashUser(this.value)">${userOpts}</select></div>
 
-                <!-- KPI / CONTATORI -->
                 <div class="kpi-grid">
                     <div class="kpi-card" onclick="window.nav('todos')">
                         <div class="kpi-icon"><span class="material-symbols-outlined">checklist</span></div>
@@ -815,7 +818,6 @@
                     </div>
                 </div>
 
-                <!-- WIDGETS A GRIGLIA DRAGGABLE -->
                 <div class="widget-grid" id="main-widget-grid">
                     
                     <div class="widget-box" data-widget-id="smart-working">
@@ -826,7 +828,7 @@
                             <div class="card" style="flex-direction:column; align-items:stretch; gap:0; margin-bottom:0; border:none; box-shadow:none; padding:0;">
                                 ${legendHtml}
                                 ${swHtml}
-                                <button onclick="window.openPresenceModal()" style="margin-top:15px; width:100%; padding:10px; border-radius:12px; border:1px solid var(--border); background:var(--bg-body); color:var(--text-main); font-weight:600; cursor:pointer; font-family:var(--font-main);">Modifica Turni Smart Working</button>
+                                <button onclick="window.openPresenceModal()" style="margin-top:15px; width:100%; padding:10px; border-radius:12px; border:1px solid var(--border); background:var(--bg-body); color:var(--text-main); font-weight:600; cursor:pointer; font-family:var(--font-main);">Modifica Turni</button>
                             </div>
                         </div>
                     </div>
@@ -843,7 +845,7 @@
 
                     <div class="widget-box" data-widget-id="agenda">
                         <div class="widget-header">
-                            <h3>Agenda Eventi e Scadenze</h3>
+                            <h3>Agenda e Scadenze</h3>
                             <span class="link-all" onclick="window.nav('calendar')">Vedi tutti <span class="material-symbols-outlined">arrow_forward</span></span>
                         </div>
                         <div class="widget-content">
@@ -851,9 +853,9 @@
                         </div>
                     </div>
 
-                    <div class="widget-box bacheca-widget" data-widget-id="bacheca">
+                    <div class="widget-box" data-widget-id="bacheca">
                         <div class="widget-header">
-                            <h3>Dalla bacheca di famiglia</h3>
+                            <h3>Dalla bacheca</h3>
                             <span class="link-all" onclick="window.nav('chat')">Vai alla bacheca <span class="material-symbols-outlined">arrow_forward</span></span>
                         </div>
                         <div class="widget-content">
@@ -900,7 +902,7 @@
             });
             
             if(filtered.length === 0) listContainerLocal.innerHTML = "<div style='text-align:center; color:var(--text-sub); margin-top:40px;'>Elenco vuoto.</div>";
-            let scrolled = false; const today = new Date().toISOString().split('T')[0];
+            let scrolled = false; const today = getLocalISODate(new Date());
 
             filtered.forEach(data => {
                 if (currentSection === 'calendar' && !scrolled && data.date >= today && !selectedDate) {
@@ -965,7 +967,6 @@
                 return `<div class="card chat-card">${checkboxHtml}<div style="width:100%;"><div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span class="chat-author">${data.author}</span> <span class="chat-time">${timeStr}</span></div><div style="font-size:1rem; white-space:pre-wrap; margin-bottom:5px;">${data.text}</div><div>${chatTags}</div></div> <div style="display:flex; flex-direction:column; gap:15px; justify-content:center; align-items:center; margin-left:10px;">${actionButtons}</div></div>`;
             }
 
-            // Azioni standard
             editAction = `<span class="material-symbols-outlined" style="color:var(--warning); cursor:pointer;" onclick="window.editItem('${data.id}','${sectionType}')">edit</span>`;
             deleteAction = `<span class="material-symbols-outlined" style="color:var(--alert); cursor:pointer;" onclick="window.del('${data.id}','${sectionType}', ${seriesIdSafe})">delete</span>`;
 
@@ -979,7 +980,7 @@
 
             if (sectionType === 'calendar') {
                 const d = data.date ? new Date(data.date) : new Date();
-                const dStr = data.date || new Date().toISOString().split('T')[0];
+                const dStr = data.date || getLocalISODate(new Date());
                 actions = `<span class="material-symbols-outlined" style="color:var(--text-sub); cursor:pointer;" onclick="window.exportGoogle('${data.text}','${dStr}')">calendar_add_on</span>`;
                 const locHtml = data.location ? `<br><a href="https://maps.google.com/?q=${encodeURIComponent(data.location)}" target="_blank" class="location-link" style="display:inline-flex; align-items:center; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"><span class="material-symbols-outlined" style="font-size:16px; margin-right:4px;">location_on</span> <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${data.location}</span></a>` : '';
                 const timeHtml = data.time ? `<div class="date-time">${data.time}</div>` : "";
@@ -1023,9 +1024,9 @@
             for(let i=0; i<7; i++) {
                 let currentDay = new Date(weekStartDate);
                 currentDay.setDate(currentDay.getDate() + i);
-                const dStr = currentDay.toISOString().split('T')[0];
                 
-                const isToday = dStr === new Date().toISOString().split('T')[0];
+                const dStr = getLocalISODate(currentDay);
+                const isToday = dStr === getLocalISODate(new Date());
                 const bgStyle = isToday ? 'border-left: 4px solid var(--primary); background:var(--bg-body);' : '';
                 
                 const dayEvents = allDataCache.filter(ev => ev.date === dStr && !ev.done);
@@ -1124,7 +1125,7 @@
                         d.setDate(d.getDate() + dayOffset + (w * rInt * 7));
                         if (w === 0 && d < baseDate) continue; 
                         const item = { text: txt, timestamp: serverTimestamp(), done: false, category: cat, assigned: who, time: tVal, seriesId: seriesId };
-                        if(locVal) item.location = locVal; item.date = d.toISOString().split('T')[0];
+                        if(locVal) item.location = locVal; item.date = getLocalISODate(d);
                         await addDoc(collection(db, `${currentFamily}_${currentSection}`), item);
                     }
                 }
@@ -1141,7 +1142,7 @@
                             if(rUnit === 'week') d.setDate(d.getDate() + (i * rInt * 7));
                             if(rUnit === 'month') d.setMonth(d.getMonth() + (i * rInt));
                             if(rUnit === 'year') d.setFullYear(d.getFullYear() + (i * rInt));
-                            item.date = d.toISOString().split('T')[0];
+                            item.date = getLocalISODate(d);
                         } else { item.date = dVal; }
                     } else if(currentSection === 'todos') { if(dVal) item.date = dVal; } 
                     else if(currentSection === 'contacts') { item.detail = document.getElementById('contact-detail-input').value || ""; }
